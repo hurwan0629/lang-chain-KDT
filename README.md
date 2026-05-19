@@ -7,3 +7,8 @@
 
 총 139일
 
+---
+
+## Python Version
+
+Python 3.12.10
