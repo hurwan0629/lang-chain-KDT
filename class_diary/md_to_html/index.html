@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Class Diary</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #202124;
+      --muted: #63665f;
+      --line: #d9ddd2;
+      --green: #2f6f5e;
+      --blue: #285f89;
+      --soft-green: #eaf3ee;
+      --shadow: 0 18px 48px rgba(30, 40, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(47, 111, 94, 0.08), rgba(246, 247, 244, 0) 300px),
+        var(--bg);
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      max-width: 680px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .diary-list {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .diary-card {
+      display: grid;
+    }
+
+    .diary-link {
+      display: grid;
+      grid-template-columns: minmax(120px, 180px) 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 10px 28px rgba(30, 40, 36, 0.08);
+      color: inherit;
+      text-decoration: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .diary-link:hover,
+    .diary-link:focus-visible {
+      border-color: rgba(47, 111, 94, 0.45);
+      box-shadow: var(--shadow);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .date {
+      display: inline-grid;
+      min-height: 92px;
+      padding: 16px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--soft-green);
+      color: var(--green);
+      font-size: 1.18rem;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .content h2 {
+      margin: 0 0 6px;
+      color: var(--blue);
+      font-size: 1.24rem;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .content p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .count {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 24px, 960px);
+        padding-top: 30px;
+      }
+
+      .diary-link {
+        grid-template-columns: 1fr;
+      }
+
+      .date {
+        min-height: auto;
+        justify-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <p class="eyebrow">Class Diary</p>
+      <h1>수업 일지</h1>
+      <p class="summary">날짜별로 정리한 수업 기록입니다. 새 HTML 파일을 추가할 때 아래 목록에 항목을 하나 더 추가하면 됩니다.</p>
+    </header>
+
+    <main>
+      <ul class="diary-list" aria-label="날짜별 수업 일지 목록">
+        <li class="diary-card">
+          <a class="diary-link" href="./2026-05-19.html">
+            <span class="date">2026-05-19</span>
+            <span class="content">
+              <h2>AI 영상 객체 탐지 및 분석 플랫폼 과정</h2>
+              <p>오리엔테이션, 수업 진행 방식, 평가, 커리큘럼, AI 활용 관점 정리</p>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="count">총 1개의 수업 일지</p>
+    </main>
+  </div>
+</body>
+</html>
