@@ -7,3 +7,5 @@
 
 총 139일
 
+## 커밋 규칙:
+`[YYYY-mm-dd HH:MM] [note|code|html|chore]: [description]`
