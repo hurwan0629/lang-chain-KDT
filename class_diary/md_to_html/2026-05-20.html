@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-05-20 수업 일지</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #202124;
+      --muted: #63665f;
+      --line: #d9ddd2;
+      --green: #2f6f5e;
+      --blue: #285f89;
+      --amber: #9a6425;
+      --rose: #b6515b;
+      --soft-green: #eaf3ee;
+      --soft-blue: #eaf1f7;
+      --soft-amber: #f8efe2;
+      --shadow: 0 18px 48px rgba(30, 40, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(47, 111, 94, 0.08), rgba(246, 247, 244, 0) 320px),
+        var(--bg);
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      line-height: 1.72;
+      letter-spacing: 0;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      margin-bottom: 18px;
+      color: var(--green);
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 28px;
+      align-items: end;
+      min-height: 265px;
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(47, 111, 94, 0.94), rgba(40, 95, 137, 0.88)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='520' viewBox='0 0 900 520'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.18)' stroke-width='2'%3E%3Cpath d='M70 380h180l92-180 96 250 95-150h245'/%3E%3Cpath d='M102 118h180M102 166h250M102 214h130M590 106h190M590 154h126M590 202h218'/%3E%3Ccircle cx='342' cy='200' r='8' fill='rgba(255,255,255,0.5)'/%3E%3Ccircle cx='438' cy='450' r='8' fill='rgba(255,255,255,0.5)'/%3E%3Ccircle cx='533' cy='300' r='8' fill='rgba(255,255,255,0.5)'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: cover;
+      box-shadow: var(--shadow);
+      color: #fff;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.8rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      max-width: 720px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.06rem;
+    }
+
+    .meta {
+      display: grid;
+      gap: 12px;
+      align-self: stretch;
+      align-content: end;
+    }
+
+    .meta-item {
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .meta-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      display: block;
+      margin-top: 3px;
+      font-size: 1.02rem;
+      font-weight: 800;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 26px;
+      margin-top: 28px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 10px 28px rgba(30, 40, 36, 0.08);
+    }
+
+    .toc h2 {
+      margin: 0 0 14px;
+      color: var(--green);
+      font-size: 0.95rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      border-top: 1px solid rgba(217, 221, 210, 0.72);
+      color: var(--muted);
+      font-size: 0.94rem;
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--green);
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+    }
+
+    section {
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 12px 32px rgba(30, 40, 36, 0.08);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 1.5rem;
+      line-height: 1.32;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      color: var(--blue);
+      font-size: 1.08rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0;
+      padding-left: 1.35rem;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    a {
+      color: var(--blue);
+    }
+
+    strong {
+      color: var(--rose);
+      font-weight: 800;
+    }
+
+    code {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .note-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .note {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+    }
+
+    .note h3 {
+      margin-top: 0;
+    }
+
+    .quote {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--green);
+      border-radius: 0 8px 8px 0;
+      background: var(--soft-green);
+      color: #30423c;
+      font-weight: 650;
+    }
+
+    .highlight {
+      padding: 16px 18px;
+      border: 1px solid rgba(154, 100, 37, 0.22);
+      border-radius: 8px;
+      background: var(--soft-amber);
+      color: #4f3a24;
+    }
+
+    .codex-tip {
+      margin: 18px 0;
+      border: 1px solid rgba(40, 95, 137, 0.24);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      color: #243847;
+    }
+
+    .codex-tip summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      color: var(--blue);
+      font-weight: 850;
+    }
+
+    .codex-tip summary::marker {
+      color: var(--green);
+    }
+
+    .codex-tip-content {
+      padding: 0 18px 16px;
+      border-top: 1px solid rgba(40, 95, 137, 0.16);
+    }
+
+    .codex-tip-content p:last-child,
+    .codex-tip-content ul:last-child,
+    .codex-tip-content ol:last-child {
+      margin-bottom: 0;
+    }
+
+    .resource-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .resource-links li {
+      margin: 0;
+    }
+
+    .resource-links a {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+    }
+
+    .resource-links a:hover {
+      text-decoration: underline;
+    }
+
+    .media {
+      margin: 18px 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+    }
+
+    .media img {
+      display: block;
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 22px 0;
+      background: var(--line);
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .layout,
+      .note-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 30px;
+      }
+
+      .toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 24px, 1120px);
+        padding-top: 22px;
+      }
+
+      section {
+        padding: 22px;
+      }
+
+      .hero {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a class="back-link" href="./index.html">목록으로 돌아가기</a>
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Class Diary</p>
+        <h1>2026-05-20 수업 일지</h1>
+        <p>파이썬의 특징, 개발자의 도메인 한계, 취업 관점, 파일 형식, VSCode와 가상환경 준비를 정리했습니다.</p>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="meta-label">주제</span>
+          <span class="meta-value">파이썬 시작과 개발 환경</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">핵심 관점</span>
+          <span class="meta-value">스스로 해결하는 능력</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="toc" aria-label="목차">
+        <h2>목차</h2>
+        <a href="#python-start">파이썬으로 시작하기</a>
+        <a href="#domain">개발자의 한계</a>
+        <a href="#career">IT계열의 취업</a>
+        <a href="#debugging">프로그래밍 언어에서 힘든점</a>
+        <a href="#file-types">파일의 형태</a>
+        <a href="#setup">다운 링크와 환경 준비</a>
+        <a href="#venv">가상환경 팁</a>
+      </aside>
+
+      <main>
+        <section id="python-start">
+          <h2>파이썬으로 시작하기</h2>
+          <p><a href="https://ryuzyproject.tistory.com/277">참고 링크</a></p>
+
+          <div class="note-grid">
+            <article class="note">
+              <h3>간결함</h3>
+              <p>간결한 문법 덕분에 빠른 개발과 높은 생산성을 기대할 수 있다.</p>
+            </article>
+            <article class="note">
+              <h3>읽기 쉬움</h3>
+              <p>사람의 언어와 비슷한 형태를 가지며, CPython 기준으로는 소스 코드를 바이트코드로 컴파일한 뒤 인터프리터가 실행한다.</p>
+            </article>
+            <article class="note">
+              <h3>넓은 생태계</h3>
+              <p>데이터, 웹, 인공지능, 자동화, 스케줄링 등에서 검증된 라이브러리를 활용할 수 있다.</p>
+            </article>
+          </div>
+
+          <details class="codex-tip">
+            <summary>codex의팁: 인터프리터 언어를 조금 더 정확히 보기</summary>
+            <div class="codex-tip-content">
+              <p>파이썬을 “한 줄씩 읽어서 실행한다”라고 설명하면 입문 단계에서는 이해하기 쉽지만, 실제 CPython은 먼저 <code>.py</code> 코드를 바이트코드로 바꾸고 그 바이트코드를 파이썬 가상 머신이 실행한다.</p>
+              <p>그래서 문법 오류는 실행 전에 잡히는 경우가 많고, 실행 중에 도달한 코드에서 런타임 오류가 발생할 수 있다.</p>
+            </div>
+          </details>
+
+          <h3>단점</h3>
+          <p>기계에 직접 최적화된 코드 형태가 아니기 때문에 순수 파이썬으로 작성한 CPU 중심 로직은 C, Assembly에 비해 실행 속도가 낮을 수 있다.</p>
+
+          <details class="codex-tip">
+            <summary>codex의팁: 파이썬이 항상 느린 것은 아님</summary>
+            <div class="codex-tip-content">
+              <p>파이썬 자체 반복문은 느릴 수 있지만, NumPy, OpenCV, PyTorch 같은 라이브러리는 내부 핵심 연산이 C, C++, CUDA 등으로 구현된 경우가 많다. 그래서 데이터 분석과 AI 분야에서는 파이썬을 “빠른 연산을 직접 하는 언어”라기보다 “빠른 라이브러리를 연결하고 조율하는 언어”로 보는 편이 정확하다.</p>
+            </div>
+          </details>
+        </section>
+
+        <section id="domain">
+          <h2>개발자의 한계가 될 수 있는 부분</h2>
+          <p>개발자는 도메인 지식이 없기 때문에 해당 분야의 전문가만큼 효율적인 로직을 짜는 것이 어려운 경우가 많다.</p>
+
+          <figure class="media">
+            <img src="https://www.smart-words.org/jokes/project-tree-swing.png" alt="프로젝트 요구사항이 다르게 전달되는 상황을 표현한 밈">
+          </figure>
+
+          <p>실제로는 과학자가 AI에 먼저 관심을 가졌지만, 현재는 과학자가 아닌 개발자들이 AI를 개발하는 경우가 많아졌다.</p>
+          <p>이런 흐름에서 어떤 교수님은 개발자가 아니라 본인이 직접 만드는 편이 더 낫겠다고 생각했고, 배우기 쉬운 파이썬이 인기를 얻게 된 사례도 있다.</p>
+
+          <div class="divider"></div>
+
+          <h3>팁</h3>
+          <p>많은 언어를 배우는 것도 좋지만, 선생님의 추천 언어는 다음과 같다.</p>
+          <ul>
+            <li>Python</li>
+            <li>JavaScript 또는 TypeScript</li>
+          </ul>
+        </section>
+
+        <section id="career">
+          <h2>IT계열의 취업</h2>
+          <p>어느 직군이든 신입은 어렵지만, 선생님은 IT 직군이 그나마 낫다고 하셨다.</p>
+          <p>인문계열은 학벌이나 레벨을 많이 보는 편이지만, 이공계열에서는 학벌이나 성별보다 실력을 더 많이 보기 때문에 유리한 면이 있다.</p>
+          <p>경력이 우대받는 것은 사실이지만, IT는 경력이 우대받는 폭이 훨씬 크다.</p>
+
+          <h3>왜일까?</h3>
+          <p>경력직의 경우에는 <strong>포폴이 괜찮은 사람</strong>을 말한다. 개발에서는 경쟁이 매우 심하고 실무 경험에 따라 개발 속도가 크게 달라지기 때문이다.</p>
+          <p>예를 들어 A사와 B사의 팀 구성에 따라 경쟁 구도가 완전히 달라질 수 있다.</p>
+          <p class="highlight">반대로 말하면 경력과 포폴이 쌓이면 강력한 경쟁력이 될 수 있다. 단, 잘하는 개발자일 때의 이야기다.</p>
+
+          <h3>OS란? - Operating System</h3>
+          <p>컴퓨터, 냉장고 등 장치를 다루며 운영해주는 시스템을 말한다.</p>
+          <p>본인(허완)은 <strong>사용자와 프로그램이 컴퓨터 또는 기기를 다룰 수 있게 해주는, 하드웨어 바로 위에 존재하는 소프트웨어</strong>라고 생각한다.</p>
+        </section>
+
+        <section id="debugging">
+          <h2>프로그래밍 언어에서 힘든점</h2>
+          <p>요즘에는 LLM이 워낙 잘 찾아주지만, 과거에는 지금보다 에러를 찾는 능력이 훨씬 중요했다.</p>
+          <p>과거에는 구글이 강력한 도구였고, 공부를 하거나 에러를 찾을 때 많이 쓰였다. Swift, Go처럼 일반 단어와 겹치는 코딩 용어가 있어 문제를 찾는 데 시간이 걸리기도 했다.</p>
+
+          <h3>AI에 관하여</h3>
+          <p>AI는 기본적으로 학습 데이터와 사용자가 제공한 입력 컨텍스트를 바탕으로 답을 만들기 때문에 비즈니스 환경, 특히 보험이나 금융 분야에서는 온라인 LLM 사용이 제한될 수 있다.</p>
+          <p class="quote">따라서 스스로 해결하는 능력을 기를 수 있어야 한다.</p>
+
+          <details class="codex-tip">
+            <summary>codex의팁: LLM을 쓸 때 조심할 점</summary>
+            <div class="codex-tip-content">
+              <p>LLM은 모르는 내용을 그럴듯하게 말할 수 있고, 최신 정보나 회사 내부 규칙은 모를 수 있다. 업무에서 쓸 때는 입력한 정보가 외부 서비스로 나가도 되는지, 답변 근거가 검증 가능한지, 실제 코드나 문서와 맞는지를 확인해야 한다.</p>
+            </div>
+          </details>
+        </section>
+
+        <section id="file-types">
+          <h2>파일의 형태</h2>
+          <p>파이썬은 보통 두 가지 파일 형태를 사용한다.</p>
+          <div class="note-grid">
+            <article class="note">
+              <h3><code>.py</code></h3>
+              <p>파이썬으로 작성된 일반적인 소스코드다. 순차적으로 실행되며 <strong>완성된 프로그램</strong>을 만들 때 사용한다.</p>
+              <p>함수와 클래스를 통해 구조와 유지보수에 유리하다.</p>
+            </article>
+            <article class="note">
+              <h3><code>.ipynb</code></h3>
+              <p>Jupyter Notebook 형식의 파일이다. 코드를 셀로 나누어 노트와 연구를 하기 위해 사용한다.</p>
+              <p>데이터 분석, 머신러닝 실험, 시각화, 교육, 강의 자료 작성 등에 쓰인다.</p>
+            </article>
+            <article class="note">
+              <h3>수업 활용</h3>
+              <p>당분간은 노트 필기를 위해 <code>.ipynb</code>를 쓰게 될 것이라고 한다.</p>
+            </article>
+          </div>
+
+          <details class="codex-tip">
+            <summary>codex의팁: <code>.py</code>와 <code>.ipynb</code>를 고르는 기준</summary>
+            <div class="codex-tip-content">
+              <p><code>.ipynb</code>는 실험, 설명, 시각화, 수업 필기처럼 중간 결과를 보며 진행할 때 편하다. 반대로 실제 서비스 코드, 반복 실행할 스크립트, 테스트가 필요한 코드는 <code>.py</code>로 정리하는 편이 유지보수에 좋다.</p>
+            </div>
+          </details>
+        </section>
+
+        <section id="setup">
+          <h2>다운 링크와 환경 준비</h2>
+          <p>이번 과정에서는 파이썬 라이브러리의 안정성을 위해 아래 버전을 사용한다.</p>
+          <ul class="resource-links">
+            <li><a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Windows 파이썬 3.12.10 64-bit 다운</a></li>
+            <li><a href="https://www.python.org/downloads/release/python-31210/">파이썬 3.12.10 링크</a></li>
+            <li><a href="https://code.visualstudio.com/">VSCode</a></li>
+          </ul>
+
+          <p>선생님은 3.12.7 버전으로 실행하셨다.</p>
+          <p class="highlight">윈도우에서 설치할 때 초반에 나오는 <code>Add python.exe to PATH</code> 옵션을 눌러주어야 한다.</p>
+
+          <details class="codex-tip">
+            <summary>codex의팁: Python 버전 표기와 PATH</summary>
+            <div class="codex-tip-content">
+              <p>현재 링크는 Python <code>3.12.10</code> 설치 파일을 가리킨다. <code>1.12.10</code>은 오타로 볼 수 있다. PATH는 터미널에서 <code>python</code> 또는 <code>py</code> 명령을 바로 찾게 해주는 환경 변수다.</p>
+              <p>설치 후에는 PowerShell에서 <code>python --version</code> 또는 <code>py --version</code>으로 설치 버전을 확인하면 된다.</p>
+            </div>
+          </details>
+
+          <h3>VSCode</h3>
+          <p>VSCode는 텍스트 편집 툴로, 언어 환경이라기보다는 코드를 작성하는 공간이다. 러키 메모장 정도로 볼 수 있다.</p>
+          <p>VSCode는 플러그인을 통해 언어에 맞는 편집 기능을 제공한다. 파이썬의 경우 Microsoft의 <code>Pylance</code>, 코드 정렬을 위한 <code>Black Formatter</code> 등을 Extensions에서 설치할 수 있다.</p>
+
+          <figure class="media">
+            <img src="https://codeit-assets.s3.ap-northeast-2.amazonaws.com/tutorials/88/dr65renp8-image.png" alt="VSCode Extension 화면">
+          </figure>
+
+          <p>VSCode는 내부 터미널 기능도 제공하여 추가 작업을 편하게 진행할 수 있다.</p>
+
+          <details class="codex-tip">
+            <summary>codex의팁: VSCode와 Python은 역할이 다름</summary>
+            <div class="codex-tip-content">
+              <p>VSCode는 코드를 작성하고 실행을 편하게 돕는 편집기다. 실제 파이썬 코드를 실행하는 것은 설치된 Python 인터프리터이며, VSCode의 Python 확장과 Pylance는 자동완성, 오류 표시, 실행 버튼, 디버깅 같은 개발 편의 기능을 제공한다.</p>
+            </div>
+          </details>
+        </section>
+
+        <section id="venv">
+          <h2>가상환경 팁</h2>
+          <p>파이썬을 사용할 때 <code>venv</code>라는 가상환경을 사용하면 프로젝트별로 라이브러리를 분리해서 관리할 수 있다. 또한 외부 공유와 재현도 편해진다.</p>
+          <p><code>python -m venv .venv</code>로 만들었다면 폴더 이름은 <code>.venv</code>다. 그래서 윈도우 PowerShell 활성화 경로는 보통 <code>.\.venv\Scripts\Activate.ps1</code>가 된다.</p>
+          <ol>
+            <li>프로젝트 폴더 만들기</li>
+            <li>프로젝트 폴더에 들어가기</li>
+            <li><code>python -m venv .venv</code> 작성하기</li>
+            <li>폴더에서 <code>.\.venv\Scripts\Activate.ps1</code>를 PowerShell로 실행하기. 윈도우 기준이며, macOS나 Linux는 <code>source .venv/bin/activate</code>를 사용한다.</li>
+            <li>필요한 라이브러리를 <code>pip install [라이브러리 명]</code>으로 설치하기</li>
+            <li><code>pip freeze &gt; requirements.txt</code>로 다른 사람이 같은 라이브러리를 사용할 수 있게 만들기</li>
+          </ol>
+          <p><code>pip freeze &gt; requirements.txt</code>는 현재 가상환경에 설치된 모든 패키지와 버전을 고정해서 기록한다. 재현성은 좋지만, 불필요한 패키지도 같이 들어갈 수 있으니 새 프로젝트에서는 필요한 패키지만 설치한 직후에 만드는 것이 좋다.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
