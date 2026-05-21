@@ -12,3 +12,6 @@
 ## Python Version
 
 Python 3.12.10
+
+## 커밋 규칙:
+`[YYYY-mm-dd HH:MM] [note|code|html|chore]: [description]`
