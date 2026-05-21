@@ -27,4 +27,4 @@ s1 = Student("허완")
 s2 = Student("홍길동")
 s3 = Student("길삼이")
 
-print(s1.__name)
+print(s1.name)
