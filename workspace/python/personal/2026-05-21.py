@@ -33,7 +33,7 @@ print(compiled.co_names)  # 네임테이블
 #              32 RETURN_CONST             2 (None) [10, 20, None] [x, y, print]
 
 """
-0. RESUME: 최초 실행으로 추정
+0. RESUME: 최초 실행 또는 재개 내부 명령어
 2. x = 10
 - LOAD_CONST: 실행 스택에 10 올리기 
 - STORE_NAME: 스택에서 값을 꺼내서 이름 x에 연결함 -> 현재 namespace에 x -> 10 연결
