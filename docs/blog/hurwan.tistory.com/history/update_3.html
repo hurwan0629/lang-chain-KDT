@@ -1,0 +1,581 @@
+<div>
+<style>
+  .tech-post {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --card: rgba(255, 255, 255, 0.94);
+    --accent: #19b97c;
+    --accent-dark: #119164;
+    --aurora-green: rgba(120, 255, 196, 0.24);
+    --aurora-green-soft: rgba(82, 255, 173, 0.14);
+    --aurora-blue: rgba(130, 210, 255, 0.13);
+    --aurora-purple: rgba(186, 156, 255, 0.12);
+    --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 18px 80px;
+    color: var(--text);
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Noto Sans KR", "Malgun Gothic", sans-serif;
+    line-height: 1.9;
+    word-break: keep-all;
+  }
+
+  .tech-post * {
+    box-sizing: border-box;
+  }
+
+  .post-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 38px 28px;
+    border: 1px solid rgba(25, 185, 124, 0.12);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+      radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+      radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+      linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .post-hero::after {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background:
+      radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+      radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+    filter: blur(18px);
+    pointer-events: none;
+  }
+
+  .post-hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .post-kicker {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.08);
+    color: var(--accent-dark);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .post-title {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+    color: #111827;
+  }
+
+  .post-subtitle {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .post-section {
+    margin-top: 52px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 18px;
+    font-size: 27px;
+    line-height: 1.35;
+    letter-spacing: -0.04em;
+    color: #111827;
+  }
+
+  .section-title::before {
+    content: "";
+    width: 8px;
+    height: 28px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #83ffc0, #19b97c);
+    box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+    flex-shrink: 0;
+  }
+
+  .post-card {
+    margin: 18px 0;
+    padding: 24px 22px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+      radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .card-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.03em;
+  }
+
+  .tech-post p {
+    margin: 10px 0;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .tech-post p code,
+  .tech-post li code,
+  .post-note code,
+  .read-table code {
+    display: inline-block;
+    padding: 0.08em 0.38em;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #1f2937;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 0.92em;
+    font-weight: 600;
+    line-height: 1.55;
+    vertical-align: baseline;
+  }
+
+  .flow-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 16px 0 4px;
+  }
+
+  .flow-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid rgba(25, 185, 124, 0.15);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.94);
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .post-note {
+    margin: 18px 0;
+    padding: 18px 20px;
+    border-left: 4px solid var(--accent);
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+    color: #334155;
+  }
+
+  .cell-label {
+    margin: 16px 0 6px !important;
+    color: #6b7280 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .code-box {
+    margin: 8px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(25, 185, 124, 0.16);
+    border-radius: 14px;
+    background:
+      linear-gradient(135deg, rgba(236, 253, 245, 0.94), rgba(248, 250, 252, 0.98));
+    color: #14532d;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  .code-box code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+  }
+
+  .post-divider {
+    margin: 30px 0;
+    height: 1px;
+    border: none;
+    background: linear-gradient(90deg, transparent, rgba(25, 185, 124, 0.2), transparent);
+  }
+
+  .stack > * + * {
+    margin-top: 10px;
+  }
+
+
+
+  .post-toc {
+    margin-top: 24px;
+    padding: 22px 22px 20px;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+      radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .toc-title {
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid rgba(25, 185, 124, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+
+  .toc-list a:hover {
+    border-color: rgba(25, 185, 124, 0.24);
+    background: rgba(236, 253, 245, 0.82);
+    color: var(--accent-dark);
+  }
+
+  .toc-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.09);
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .post-section {
+    scroll-margin-top: 22px;
+  }
+
+  .read-table {
+    width: 100%;
+    margin: 12px 0 18px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  }
+
+  .read-table th,
+  .read-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .read-table tr:last-child th,
+  .read-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .read-table th {
+    width: 34%;
+    background: rgba(236, 253, 245, 0.72);
+    color: #14532d;
+    font-weight: 800;
+  }
+
+  @media (max-width: 720px) {
+    .tech-post {
+      padding: 26px 14px 60px;
+    }
+
+    .post-hero {
+      padding: 28px 20px;
+      border-radius: 22px;
+    }
+
+
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-box {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+  }
+</style>
+</div>
+<div>
+<style>
+  .output-box {
+    margin: 8px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(255, 255, 255, 0.96));
+    color: #334155;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  }
+  .output-box code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+  }
+</style>
+</div>
+<article class="tech-post"><header class="post-hero">
+<div class="post-hero-inner">
+<div class="post-kicker">Python &middot; Compile &middot; Bytecode &middot; dis &middot; Code Object</div>
+<h1 class="post-title">파이썬의 컴파일과 바이트코드의 실행</h1>
+<p class="post-subtitle" data-ke-size="size16">Python의 컴파일 결과물을 더 정밀이 확인해 보았습니다.</p>
+</div>
+</header><nav class="post-toc" aria-label="목차">
+<h2 class="toc-title" data-ke-size="size26">목차</h2>
+<ul class="toc-list" style="list-style-type: disc;" data-ke-list-type="disc">
+<li><a href="#section-01"><span class="toc-index">01</span><span>바이트코드를 직접 확인해보기</span></a></li>
+<li><a href="#section-02"><span class="toc-index">02</span><span>compile()과 코드 객체</span></a></li>
+<li><a href="#section-03"><span class="toc-index">03</span><span>명령어 출력은 어떻게 읽을까?</span></a></li>
+<li><a href="#section-04"><span class="toc-index">04</span><span>상수테이블과 네임테이블</span></a></li>
+<li><a href="#section-05"><span class="toc-index">05</span><span>실행 흐름</span></a></li>
+<li><a href="#section-06"><span class="toc-index">06</span><span>메모리에는 무엇이 올라가 있을까?</span></a></li>
+<li><a href="#section-07"><span class="toc-index">07</span><span>정리</span></a></li>
+</ul>
+</nav>
+<section id="section-01" class="post-section">
+<h2 class="section-title" data-ke-size="size26">바이트코드를 직접 확인해보기</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">파이썬 코드는 우리가 작성한 문자열 그대로 실행되는 것처럼 보이지만, 내부적으로는 먼저 코드 객체로 컴파일되고 그 안에 바이트코드, 상수 테이블, 이름 테이블 같은 정보가 만들어집니다.</p>
+<p data-ke-size="size16">이번에는 <code>dis</code> 라이브러리를 사용해서 간단한 파이썬 코드가 어떤 명령어들로 나뉘어 실행되는지 확인해보았습니다.</p>
+</div>
+<div class="post-card stack">
+<p class="cell-label" data-ke-size="size16">In: 코드</p>
+<pre class="code-box python"><code>import dis
+
+code = """
+x = 10
+y = x + 20
+print(y)
+"""
+# compile(source, filename, mode)
+# exec는 복수의 문장
+compiled = compile(code, "&lt;string&gt;", "exec")
+dis.dis(compiled)
+print(compiled.co_code)   # 바이트코드
+print(compiled.co_consts) # 상수테이블
+print(compiled.co_names)  # 네임테이블</code></pre>
+<p class="cell-label" data-ke-size="size16">Out: 출력 예시</p>
+<pre class="output-box routeros"><code>  0           0 RESUME                   0
+
+  2           2 LOAD_CONST               0 (10)
+              4 STORE_NAME               0 (x)
+
+  3           6 LOAD_NAME                0 (x)
+              8 LOAD_CONST               1 (20)
+             10 BINARY_OP                0 (+)
+             14 STORE_NAME               1 (y)
+
+  4          16 PUSH_NULL
+             18 LOAD_NAME                2 (print)
+             20 LOAD_NAME                1 (y)
+             22 CALL                     1
+             30 POP_TOP
+             32 RETURN_CONST             2 (None)
+b'\x97\x00d\x00Z\x00e\x00d\x01z\x00\x00\x00Z\x01\x02\x00e\x02e\x01\xab\x01\x00\x00\x00\x00\x00\x00\x01\x00y\x02'
+(10, 20, None)
+('x', 'y', 'print')</code></pre>
+</div>
+<div class="post-note"><code>dis.dis(compiled)</code>는 바이트코드를 사람이 읽기 좋은 형태로 풀어 보여줍니다. <code>compiled.co_code</code>는 실제 바이트열이고, <code>co_consts</code>와 <code>co_names</code>는 바이트코드가 참조하는 상수와 이름 목록입니다.</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-02" class="post-section">
+<h2 class="section-title" data-ke-size="size26">compile()과 코드 객체</h2>
+<div class="post-card stack">
+<p data-ke-size="size16"><code>compile(source, filename, mode)</code>는 파이썬 소스 코드를 코드 객체로 바꾸는 함수입니다.</p>
+<p data-ke-size="size16">여기서 <code>source</code>는 실행할 코드 문자열이고, <code>filename</code>은 에러 메시지나 디버깅에서 표시될 이름입니다.</p>
+<p data-ke-size="size16">마지막 <code>mode</code>에는 <code>exec</code>, <code>eval</code>, <code>single</code> 같은 값이 들어갈 수 있습니다.</p>
+<p data-ke-size="size16">이번 예시처럼 여러 줄의 문장으로 구성된 코드는 코드 객체로 컴파일한 뒤, 그 결과물을 <code>dis</code>로 풀어서 내부 명령어 흐름을 확인할 수 있습니다.</p>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-03" class="post-section">
+<h2 class="section-title" data-ke-size="size26">명령어 출력은 어떻게 읽을까?</h2>
+<div class="post-card stack">
+<p data-ke-size="size16"><code>dis</code> 결과는 처음 보면 숫자가 많아서 헷갈리지만, 한 줄만 떼어놓고 보면 다음처럼 읽을 수 있습니다.</p>
+<p class="cell-label" data-ke-size="size16">출력 예시</p>
+<pre class="output-box routeros"><code>2           2 LOAD_CONST               0 (10)</code></pre>
+<table class="read-table" data-ke-align="alignLeft">
+<tbody>
+<tr>
+<th>첫번째 값</th>
+<td>원본 코드 줄 번호</td>
+</tr>
+<tr>
+<th>두번째 값</th>
+<td>bytecode 명령어 위치</td>
+</tr>
+<tr>
+<th>세번째 값</th>
+<td>명령어 이름</td>
+</tr>
+<tr>
+<th>네번째 값</th>
+<td>명령어 인자 번호</td>
+</tr>
+<tr>
+<th>다섯번째 값</th>
+<td>사람이 보기 좋게 해석한 값</td>
+</tr>
+</tbody>
+</table>
+<p data-ke-size="size16">예를 들어 <code>LOAD_CONST 0 (10)</code>에서 <code>0</code>은 상수 테이블의 0번 값을 뜻하고, 사람이 보기 좋게 해석하면 그 값은 <code>10</code>입니다.</p>
+</div>
+<div class="post-note">중요한 점은 <code>0</code>, <code>1</code>, <code>2</code> 같은 숫자가 무조건 실제 값 자체를 뜻하는 것이 아니라, 대체로 테이블 안에서 몇 번째 값을 참조하는지 나타내는 번호라는 점입니다.</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-04" class="post-section">
+<h2 class="section-title" data-ke-size="size26">상수테이블과 네임테이블</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">코드 객체 안에는 여러 정보가 들어있습니다.</p>
+<p data-ke-size="size16">그중 이번 코드에서 눈으로 확인하기 좋은 것은 <code>co_code</code>, <code>co_consts</code>, <code>co_names</code>입니다.</p>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">co_code</h3>
+<p data-ke-size="size16"><code>co_code</code>는 실제 바이트코드 명령어들이 들어있는 바이트열입니다.</p>
+<p data-ke-size="size16">다만 사람이 바로 읽기 좋은 형태는 아니기 때문에 보통은 <code>dis.dis()</code>를 통해 명령어 이름으로 변환해서 확인합니다.</p>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">co_consts</h3>
+<p data-ke-size="size16"><code>co_consts</code>는 코드에서 사용된 상수 목록입니다.</p>
+<p data-ke-size="size16">이번 코드에서는 <code>10</code>, <code>20</code>, <code>None</code>이 들어갑니다.</p>
+<pre class="output-box routeros"><code>compiled.co_consts
+# (10, 20, None)</code></pre>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">co_names</h3>
+<p data-ke-size="size16"><code>co_names</code>는 코드에서 등장하는 이름 목록입니다.</p>
+<p data-ke-size="size16">이번 코드에서는 <code>x</code>, <code>y</code>, <code>print</code>가 들어갑니다.</p>
+<pre class="output-box stylus"><code>compiled.co_names
+# ('x', 'y', 'print')</code></pre>
+</div>
+<div class="post-note"><code>co_consts</code>와 <code>co_names</code>는 실행하면서 계속 늘어나는 공간이라기보다는, 컴파일 시점에 코드 객체 안에 준비된 참조 목록에 가깝습니다. 실제 변수 값 연결은 실행 중 네임스페이스에서 이루어집니다.</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-05" class="post-section">
+<h2 class="section-title" data-ke-size="size26">실행 흐름</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">이번 코드를 바이트코드 기준으로 따라가면 다음과 같은 흐름으로 볼 수 있습니다.</p>
+<p class="cell-label" data-ke-size="size16">실행 흐름 정리</p>
+<pre class="output-box routeros"><code>0. RESUME: 최초 실행 또는 재개 내부 명령어
+2. x = 10
+- LOAD_CONST: 실행 스택에 10 올리기 
+- STORE_NAME: 스택에서 값을 꺼내서 이름 x에 연결함 -&gt; 현재 namespace에 x -&gt; 10 연결
+
+3. y = x + 20
+- LOAD_NAME: x가 가리키는 값 10을 스택에 올림
+- LOAD_CONST: 20을 실행 스택에 올리기
+- BINARY_OP: 이진 계산 실행 (30을 스택에 올림)
+- STORE_NAME: 30을 꺼내 y에 바인딩하기
+
+4. print(y)
+- PUSH_NULL: 함수 호출을 위한 내부 준비값
+- LOAD_NAME: print함수 객체를 스택에 올림
+- LOAD_NAME: y가 가리키는 값 30을 스택에 올림
+- CALL 1: 인자 1개로 print(30) 호출
+- POP_TOP: print가 반환한 None을 버림
+- RETURN_CONST: 코드 블록 전체가 None을 반환하고 종료</code></pre>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-06" class="post-section">
+<h2 class="section-title" data-ke-size="size26">메모리에는 무엇이 올라가 있을까?</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">상수 테이블, 네임 테이블, 바이트코드는 모두 Python 프로세스의 메모리 안에 존재합니다.</p>
+<p data-ke-size="size16">다만 이들을 실제 실행 스택이나 변수 저장 공간과 완전히 같은 것으로 보면 헷갈릴 수 있습니다.</p>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">구분해서 보기</h3>
+<p data-ke-size="size16">- <code>co_code</code>: 실행할 바이트코드 명령어 목록</p>
+<p data-ke-size="size16">- <code>co_consts</code>: 코드에서 참조하는 상수 목록</p>
+<p data-ke-size="size16">- <code>co_names</code>: 코드에서 참조하는 이름 목록</p>
+<p data-ke-size="size16">- 실행 스택: 명령어가 계산 중 임시로 값을 올려두는 공간</p>
+<p data-ke-size="size16">- 네임스페이스: <code>x</code>, <code>y</code> 같은 이름과 실제 객체의 연결을 저장하는 매핑 구조</p>
+</div>
+<div class="flow-box"><span class="flow-chip">바이트코드</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">테이블 번호 참조</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">스택에서 계산</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">네임스페이스에 바인딩</span></div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-07" class="post-section">
+<h2 class="section-title" data-ke-size="size26">정리</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">이번 예시를 통해 파이썬 코드가 단순히 위에서 아래로 실행되는 것처럼 보이지만, 내부적으로는 바이트코드 명령어 단위로 쪼개져 실행된다는 점을 확인할 수 있었습니다.</p>
+<p data-ke-size="size16"><code>x = 10</code>은 상수 <code>10</code>을 스택에 올린 뒤 <code>x</code>에 연결하는 흐름입니다.</p>
+<p data-ke-size="size16"><code>y = x + 20</code>은 <code>x</code>의 값과 상수 <code>20</code>을 스택에 올리고, 더한 결과를 <code>y</code>에 연결하는 흐름입니다.</p>
+<p data-ke-size="size16"><code>print(y)</code>는 <code>print</code> 함수와 인자 <code>y</code>의 값을 준비한 뒤, 함수 호출 결과를 버리고 코드 블록을 종료하는 흐름입니다.</p>
+</div>
+<div class="post-note">결국 핵심은 <b>코드 객체 안의 테이블을 참조하고, 실행 스택에서 계산하고, 네임스페이스에 이름과 객체를 연결한다</b>는 흐름입니다.</div>
+</section>
+</article>
