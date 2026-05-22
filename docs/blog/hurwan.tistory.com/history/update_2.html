@@ -1,0 +1,631 @@
+<div>
+<style>
+  .tech-post {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --card: rgba(255, 255, 255, 0.94);
+    --accent: #19b97c;
+    --accent-dark: #119164;
+    --aurora-green: rgba(120, 255, 196, 0.24);
+    --aurora-green-soft: rgba(82, 255, 173, 0.14);
+    --aurora-blue: rgba(130, 210, 255, 0.13);
+    --aurora-purple: rgba(186, 156, 255, 0.12);
+    --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 18px 80px;
+    color: var(--text);
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Noto Sans KR", "Malgun Gothic", sans-serif;
+    line-height: 1.9;
+    word-break: keep-all;
+  }
+
+  .tech-post * {
+    box-sizing: border-box;
+  }
+
+  .post-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 38px 28px;
+    border: 1px solid rgba(25, 185, 124, 0.12);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+      radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+      radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+      linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .post-hero::after {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background:
+      radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+      radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+    filter: blur(18px);
+    pointer-events: none;
+  }
+
+  .post-hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .post-kicker {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.08);
+    color: var(--accent-dark);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .post-title {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+    color: #111827;
+  }
+
+  .post-subtitle {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .post-section {
+    margin-top: 52px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 18px;
+    font-size: 27px;
+    line-height: 1.35;
+    letter-spacing: -0.04em;
+    color: #111827;
+  }
+
+  .section-title::before {
+    content: "";
+    width: 8px;
+    height: 28px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #83ffc0, #19b97c);
+    box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+    flex-shrink: 0;
+  }
+
+  .post-card {
+    margin: 18px 0;
+    padding: 24px 22px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+      radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .card-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.03em;
+  }
+
+  .tech-post p {
+    margin: 10px 0;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .tech-post p code,
+  .tech-post li code,
+  .post-note code,
+  .read-table code {
+    display: inline-block;
+    padding: 0.08em 0.38em;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #1f2937;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 0.92em;
+    font-weight: 600;
+    line-height: 1.55;
+    vertical-align: baseline;
+  }
+
+  .flow-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 16px 0 4px;
+  }
+
+  .flow-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid rgba(25, 185, 124, 0.15);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.94);
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .post-note {
+    margin: 18px 0;
+    padding: 18px 20px;
+    border-left: 4px solid var(--accent);
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+    color: #334155;
+  }
+
+  .cell-label {
+    margin: 16px 0 6px !important;
+    color: #6b7280 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .code-box {
+    margin: 8px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(25, 185, 124, 0.16);
+    border-radius: 14px;
+    background:
+      linear-gradient(135deg, rgba(236, 253, 245, 0.94), rgba(248, 250, 252, 0.98));
+    color: #14532d;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  .code-box code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+  }
+
+  .post-divider {
+    margin: 30px 0;
+    height: 1px;
+    border: none;
+    background: linear-gradient(90deg, transparent, rgba(25, 185, 124, 0.2), transparent);
+  }
+
+  .stack > * + * {
+    margin-top: 10px;
+  }
+
+
+
+  .post-toc {
+    margin-top: 24px;
+    padding: 22px 22px 20px;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+      radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .toc-title {
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid rgba(25, 185, 124, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+
+  .toc-list a:hover {
+    border-color: rgba(25, 185, 124, 0.24);
+    background: rgba(236, 253, 245, 0.82);
+    color: var(--accent-dark);
+  }
+
+  .toc-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.09);
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .post-section {
+    scroll-margin-top: 22px;
+  }
+
+  .read-table {
+    width: 100%;
+    margin: 12px 0 18px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  }
+
+  .read-table th,
+  .read-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .read-table tr:last-child th,
+  .read-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .read-table th {
+    width: 34%;
+    background: rgba(236, 253, 245, 0.72);
+    color: #14532d;
+    font-weight: 800;
+  }
+
+  @media (max-width: 720px) {
+    .tech-post {
+      padding: 26px 14px 60px;
+    }
+
+    .post-hero {
+      padding: 28px 20px;
+      border-radius: 22px;
+    }
+
+
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-box {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+  }
+</style>
+</div>
+<div>
+<style>
+  .output-box {
+    margin: 8px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(255, 255, 255, 0.96));
+    color: #334155;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  }
+  .output-box code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+  }
+</style>
+</div>
+<article class="tech-post"><header class="post-hero">
+<div class="post-hero-inner">
+<div class="post-kicker">Python &middot; Variable &middot; Memory &middot; Namespace &middot; globals()</div>
+<h1 class="post-title">파이썬 변수와 메모리는 어떻게 연결될까?</h1>
+<p class="post-subtitle" data-ke-size="size16">해당 내용은 2026-05-21 수업 내용을 바탕으로 정리했습니다.</p>
+</div>
+</header><nav class="post-toc" aria-label="목차">
+<h2 class="toc-title" data-ke-size="size26">목차</h2>
+<ul class="toc-list" style="list-style-type: disc;" data-ke-list-type="disc">
+<li><a href="#section-01"><span class="toc-index">01</span><span>변수란 무엇일까?</span></a></li>
+<li><a href="#section-02"><span class="toc-index">02</span><span>문자열 변수의 값 변경</span></a></li>
+<li><a href="#section-03"><span class="toc-index">03</span><span>정수 변수의 값 변경</span></a></li>
+<li><a href="#section-04"><span class="toc-index">04</span><span>사용자 클래스 객체의 값 변경</span></a></li>
+<li><a href="#section-05"><span class="toc-index">05</span><span>파이썬과 CPython의 메모리 관리</span></a></li>
+<li><a href="#section-06"><span class="toc-index">06</span><span>불변 객체란?</span></a></li>
+<li><a href="#section-07"><span class="toc-index">07</span><span>변수 이름은 어디에 저장될까?</span></a></li>
+<li><a href="#section-08"><span class="toc-index">08</span><span>globals()로 네임스페이스 확인하기</span></a></li>
+<li><a href="#section-09"><span class="toc-index">09</span><span>정리</span></a></li>
+</ul>
+</nav>
+<section id="section-01" class="post-section">
+<h2 class="section-title" data-ke-size="size26">변수란 무엇일까?</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">변수는 프로그램에서 데이터를 저장하기 위해 사용하는 이름입니다.</p>
+<p data-ke-size="size16">조금 더 정확하게 말하면, 변수는 값을 직접 담는 상자라기보다는 메모리에 만들어진 객체를 참조하는 이름에 가깝습니다.</p>
+<p data-ke-size="size16">값을 직접 다루는 대신 변수 이름을 통해 데이터를 읽고 변경할 수 있으며, 프로그램 실행 중에 다른 값을 가리키도록 바뀔 수 있습니다.</p>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">변수를 사용하는 이유</h3>
+<p data-ke-size="size16">변수를 사용하면 데이터를 매번 직접 작성하지 않고 이름으로 다시 사용할 수 있습니다.</p>
+<p data-ke-size="size16">즉, 변수는 데이터를 효율적으로 관리하고 재사용하기 위해 필요한 기본 도구입니다.</p>
+<div class="flow-box"><span class="flow-chip">값 생성</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">객체 저장</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">변수 이름이 참조</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">필요할 때 재사용</span></div>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-02" class="post-section">
+<h2 class="section-title" data-ke-size="size26">문자열 변수의 값 변경</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">먼저 문자열을 변수에 넣고, 이후 다른 문자열로 바꾸는 예시입니다.</p>
+<p class="cell-label" data-ke-size="size16">In: 코드</p>
+<pre class="code-box python"><code>a = "memory"
+print(f"a: {a}")
+print(f"type of a: {type(a)}")
+print(f"memory_id: {id(a)}")
+
+a = "hello"
+print()
+print("a -&gt; hello")
+
+print(f"a: {a}")
+print(f"type of a: {type(a)}")
+print(f"memory_id: {id(a)}")
+
+# str 타입은 불변 객체라서 id가 바뀔 수 있습니다.</code></pre>
+<p class="cell-label" data-ke-size="size16">Out: 출력 예시</p>
+<pre class="output-box routeros"><code>a: memory
+type of a: &lt;class 'str'&gt;
+memory_id: 2503423516784
+
+a -&gt; hello
+a: hello
+type of a: &lt;class 'str'&gt;
+memory_id: 2503422366064</code></pre>
+</div>
+<div class="post-note">여기에서 중요한 점은 <b>a라는 변수 이름이 바뀐 것이 아니라, a가 바라보는 객체가 바뀌었다</b>는 점입니다.</div>
+<div class="post-card stack">
+<p data-ke-size="size16">문자열은 대표적인 불변 객체입니다.</p>
+<p data-ke-size="size16">따라서 <code>a = "hello"</code>처럼 새 값을 대입하면 기존 문자열 객체의 내부 값이 바뀌는 것이 아니라, 새로운 문자열 객체를 만들고 변수 <code>a</code>가 그 객체를 다시 가리키게 됩니다.</p>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-03" class="post-section">
+<h2 class="section-title" data-ke-size="size26">정수 변수의 값 변경</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">정수도 문자열과 마찬가지로 불변 객체입니다.</p>
+<p class="cell-label" data-ke-size="size16">In: 코드</p>
+<pre class="code-box python"><code>a = 1
+print(f"a: {a}")
+print(f"type of a: {type(a)}")
+print(f"memory_id: {id(a)}")
+
+a = 2
+print("a -&gt; int(2)")
+
+print(f"a: {a}")
+print(f"type of a: {type(a)}")
+print(f"memory_id: {id(a)}")</code></pre>
+<p class="cell-label" data-ke-size="size16">Out: 출력 예시</p>
+<pre class="output-box routeros"><code>a: 1
+type of a: &lt;class 'int'&gt;
+memory_id: 140712299940280
+
+a -&gt; int(2)
+a: 2
+type of a: &lt;class 'int'&gt;
+memory_id: 140712299940312</code></pre>
+</div>
+<div class="post-card stack">
+<p data-ke-size="size16"><code>a = 1</code>을 실행하면 <code>1</code>이라는 정수 객체가 만들어지고, 변수 <code>a</code>는 그 객체를 참조합니다.</p>
+<p data-ke-size="size16">이후 <code>a = 2</code>를 실행하면 <code>1</code> 객체가 <code>2</code>로 수정되는 것이 아닙니다.</p>
+<p data-ke-size="size16">새로운 <code>2</code> 객체를 참조하도록 변수 <code>a</code>의 연결이 바뀌는 방식입니다.</p>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-04" class="post-section">
+<h2 class="section-title" data-ke-size="size26">사용자 클래스 객체의 값 변경</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">이번에는 직접 만든 클래스 객체를 사용해 보았습니다.</p>
+<p class="cell-label" data-ke-size="size16">In: 코드</p>
+<pre class="code-box python"><code>class ExampleClass():
+    def __init__(self, name: str):
+        print(f"class init. name: {name}")
+        self.name = name
+    
+    def setName(self, name: str):
+       self.name = name
+    
+    def getName(self):
+       return self.name
+
+a = ExampleClass("a")
+print(f"id(a): {a}")
+
+a.setName("apple")
+print(a.getName())
+print(f"id(a): {a}")</code></pre>
+<p class="cell-label" data-ke-size="size16">Out: 출력 예시</p>
+<pre class="output-box stylus"><code>class init. name: a
+id(a): &lt;__main__.ExampleClass object at 0x00000246DE808770&gt;
+apple
+id(a): &lt;__main__.ExampleClass object at 0x00000246DE808770&gt;</code></pre>
+</div>
+<div class="post-card stack">
+<p data-ke-size="size16">이 예시에서는 객체의 주소가 그대로 유지됩니다.</p>
+<p data-ke-size="size16">왜냐하면 <code>a</code>가 다른 객체를 새로 가리킨 것이 아니라, 기존 객체 내부의 <code>name</code> 필드 값만 바뀌었기 때문입니다.</p>
+<p data-ke-size="size16">즉, 변수 <code>a</code>가 바라보는 객체 자체는 그대로이고, 그 객체 안의 상태만 변경된 것입니다.</p>
+</div>
+<div class="flow-box"><span class="flow-chip">a</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">ExampleClass 객체</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">name: "a"</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">name: "apple"</span></div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-05" class="post-section">
+<h2 class="section-title" data-ke-size="size26">파이썬과 CPython의 메모리 관리</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">앞선 예시에서 문자열과 정수는 값을 바꾸었을 때 다른 객체를 참조하는 모습을 보였습니다.</p>
+<p data-ke-size="size16">반면 사용자 클래스 객체는 같은 객체 내부의 값이 바뀌었기 때문에 객체 주소가 유지되었습니다.</p>
+<p data-ke-size="size16">이 흐름을 이해하려면 프로그램에서 자주 언급되는 메모리 영역을 간단히 정리할 필요가 있습니다.</p>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">대표적인 메모리 영역</h3>
+<p data-ke-size="size16">- 힙: 실행 중 동적으로 만들어지는 객체와 데이터가 저장되는 공간</p>
+<p data-ke-size="size16">- 스택: 함수 호출 정보, 인자, 지역 변수 참조 등이 관리되는 공간</p>
+<p data-ke-size="size16">- 데이터 영역: 전역 변수나 static처럼 프로그램 시작부터 끝까지 유지되는 값이 저장되는 공간</p>
+<p data-ke-size="size16">- 코드 영역: 실행할 코드, 명령어, 함수 코드 등이 존재하는 공간</p>
+</div>
+<div class="post-note">파이썬에서는 우리가 다루는 값들이 대부분 객체로 관리됩니다. 그래서 <b>변수 이름 자체</b>와 <b>그 이름이 참조하는 객체</b>를 구분해서 보는 것이 중요합니다.</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-06" class="post-section">
+<h2 class="section-title" data-ke-size="size26">불변 객체란?</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">불변 객체는 한 번 만들어진 뒤 내부 값을 직접 바꿀 수 없는 객체입니다.</p>
+<p data-ke-size="size16">대표적으로 <code>int</code>, <code>str</code>, <code>tuple</code> 같은 자료형이 있습니다.</p>
+</div>
+<div class="post-card stack">
+<p data-ke-size="size16">예를 들어 <code>a = 1</code>이라고 작성하면 <code>1</code>이라는 객체가 만들어지고, 변수 <code>a</code>는 그 객체를 가리킵니다.</p>
+<p data-ke-size="size16">이후 <code>a = 2</code>를 실행하면 <code>1</code> 객체의 값이 바뀌는 것이 아니라, <code>2</code> 객체가 준비되고 변수 <code>a</code>가 다시 그 객체를 가리키게 됩니다.</p>
+</div>
+<div class="flow-box"><span class="flow-chip">a = 1</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">a가 1 객체 참조</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">a = 2</span> <span class="flow-arrow">&gt;</span> <span class="flow-chip">a가 2 객체 참조</span></div>
+<div class="post-card stack">
+<p data-ke-size="size16">반대로 사용자 클래스 객체처럼 내부 상태를 바꿀 수 있는 객체는 같은 객체를 유지한 채 속성 값만 바뀔 수 있습니다.</p>
+<p data-ke-size="size16">그래서 <code>ExampleClass</code> 예시에서는 <code>name</code> 값이 <code>"a"</code>에서 <code>"apple"</code>로 바뀌어도 객체의 주소는 그대로 유지되었습니다.</p>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-07" class="post-section">
+<h2 class="section-title" data-ke-size="size26">변수 이름은 어디에 저장될까?</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">파이썬에서 변수 이름은 네임스페이스(namespace)라는 공간에서 관리됩니다.</p>
+<p data-ke-size="size16">네임스페이스는 쉽게 말해 <code>{이름: 객체}</code> 형태의 매핑 구조라고 볼 수 있습니다.</p>
+<p data-ke-size="size16">그래서 <code>a = 1</code>을 실행하면 대략적으로는 <code>1</code> 객체가 만들어지고, 현재 네임스페이스에 <code>a</code>라는 이름이 그 객체를 가리키도록 등록됩니다.</p>
+</div>
+<div class="post-card stack">
+<p class="cell-label" data-ke-size="size16">개념적으로 보면</p>
+<pre class="code-box plaintext"><code>a = 1
+
+# 대략적인 이미지
+namespace = {
+    "a": 1 객체의 참조
+}</code></pre>
+<p data-ke-size="size16">이때 객체 자체에는 타입 정보, 참조 횟수 같은 메타데이터가 함께 관리됩니다.</p>
+<p data-ke-size="size16">즉, <code>a</code>라는 이름은 네임스페이스 쪽에서 관리되고, <code>1</code> 객체는 객체 나름대로 타입과 값에 대한 정보를 가지고 있다고 이해하면 됩니다.</p>
+</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-08" class="post-section">
+<h2 class="section-title" data-ke-size="size26">globals()로 네임스페이스 확인하기</h2>
+<div class="post-card stack">
+<p data-ke-size="size16"><code>globals()</code>는 현재 실행 중인 모듈의 전역 네임스페이스를 나타내는 딕셔너리를 반환하는 내장 함수입니다.</p>
+<p data-ke-size="size16">이 딕셔너리를 통해 전역 범위에 정의된 변수, 함수, 클래스 이름과 실제 객체 간의 연결을 확인할 수 있습니다.</p>
+</div>
+<div class="post-card stack">
+<p class="cell-label" data-ke-size="size16">In: 코드</p>
+<pre class="code-box python"><code>from pprint import pprint
+
+# pprint(globals())
+print(globals().keys())
+pprint(globals()["__name__"])</code></pre>
+<p class="cell-label" data-ke-size="size16">Out: 출력 예시</p>
+<pre class="output-box prolog"><code>dict_keys(['__name__', '__doc__', '__package__', '__loader__', '__spec__',
+'__builtin__', '__builtins__', '_ih', '_oh', '_dh', 'In', 'Out',
+'get_ipython', 'exit', 'quit', 'open', '_', '__', '___',
+'__vsc_ipynb_file__', '_i', '_ii', '_iii', '_i1', 'np', 'nd',
+'a', 'ExampleClass', 'pprint'])
+'__main__'</code></pre>
+</div>
+<div class="post-card stack">
+<h3 class="card-title" data-ke-size="size23">globals() 주요 키 정리</h3>
+<p data-ke-size="size16">- 사용자 변수/함수/클래스: 내가 직접 만든 이름들</p>
+<p data-ke-size="size16">- <code>__name__</code>: 현재 실행 환경의 이름</p>
+<p data-ke-size="size16">- <code>__builtins__</code>: <code>print</code>, <code>len</code>, <code>int</code> 같은 기본 내장 기능 모음</p>
+<p data-ke-size="size16">- <code>In</code>: 실행한 입력 코드 목록</p>
+<p data-ke-size="size16">- <code>Out</code>: 출력 결과 목록</p>
+<p data-ke-size="size16">- <code>_</code>: 직전 출력값</p>
+<p data-ke-size="size16">- <code>_i</code>: 직전 입력 코드</p>
+<p data-ke-size="size16">- <code>get_ipython</code>: Jupyter/IPython 환경 제어 함수</p>
+<p data-ke-size="size16">- <code>exit</code>, <code>quit</code>: 실행 환경 종료용 객체</p>
+<p data-ke-size="size16">- <code>open</code>: 파일 열기 함수</p>
+</div>
+<div class="post-note"><code>globals()</code>를 보면 파이썬에서 변수 이름이 단순히 눈에 보이는 글자가 아니라, 실제로는 네임스페이스라는 딕셔너리 구조 안에서 객체와 연결되어 관리된다는 점을 확인할 수 있습니다.</div>
+</section>
+<hr class="post-divider" data-ke-style="style1" />
+<section id="section-09" class="post-section">
+<h2 class="section-title" data-ke-size="size26">정리</h2>
+<div class="post-card stack">
+<p data-ke-size="size16">파이썬에서 변수는 값을 직접 담는 상자라기보다 객체를 가리키는 이름에 가깝습니다.</p>
+<p data-ke-size="size16">불변 객체인 <code>int</code>, <code>str</code>은 값을 바꿀 때 기존 객체를 수정하는 것이 아니라 새 객체를 참조하는 방식으로 동작합니다.</p>
+<p data-ke-size="size16">반면 사용자 클래스 객체처럼 내부 상태를 바꿀 수 있는 객체는 같은 객체를 유지한 채 속성 값만 변경될 수 있습니다.</p>
+<p data-ke-size="size16">마지막으로 <code>globals()</code>를 통해 현재 전역 네임스페이스를 확인하면, 변수 이름과 객체가 어떤 식으로 연결되어 있는지 조금 더 구체적으로 이해할 수 있습니다.</p>
+</div>
+</section>
+</article>
