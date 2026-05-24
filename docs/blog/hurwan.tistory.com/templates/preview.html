@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주말 동안 진행한 데이터 분석과 통계 기초 공부 기록</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <p class="post-kicker">Weekend Study Log</p>
+      <h1 class="post-title">주말 동안 진행한 데이터 분석과 통계 기초 공부 기록</h1>
+      <p class="post-subtitle">2026년 5월 23일부터 5월 24일까지 작업한 데이터 분석, 통계, 파이썬 기초 학습 기록입니다.</p>
+    </header>
+
+    <nav class="post-toc">
+      <strong>목차</strong>
+      <ol>
+        <li><a href="#section-01">전체 타임라인</a></li>
+        <li><a href="#section-02">데이터 분석 실습</a></li>
+        <li><a href="#section-03">통계 이론 정리</a></li>
+        <li><a href="#section-04">파이썬 기초 복습</a></li>
+        <li><a href="#section-05">벡터와 행렬 연습</a></li>
+        <li><a href="#section-06">작업 파일</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">전체 타임라인</h2>
+      <table class="read-table">
+        <thead>
+          <tr>
+            <th>시간</th>
+            <th>작업 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-05-23</td>
+            <td><code>pandas</code>와 <code>matplotlib</code>를 사용해서 평균, 중앙값, 이상치, 시각화, z-score를 복습했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-23</td>
+            <td>왜도, 첨도, 오른쪽/왼쪽 꼬리 분포, 정규화, 표준화를 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-23</td>
+            <td>파이썬 변수, 객체, 참조, <code>==</code>와 <code>is</code>, 가변 객체와 불변 객체, 연산자 내부 동작을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-23</td>
+            <td><code>데이터 과학을 위한 통계 2판</code>을 기준으로 EDA, 데이터 타입, 위치 추정, 평균, 중앙값, 절사평균을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-23 18:28</td>
+            <td><code>통계 및 파이썬 기반 이론 공부</code> 커밋을 생성했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 10:24</td>
+            <td>전날 읽던 통계 책 내용을 이어서 정리하기 시작했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 오전</td>
+            <td>위치 추정, 인구에 따른 살인 비율 예시, 가중평균, 가중중간값을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 오전</td>
+            <td>변이 추정, 표준편차, 분산, 평균절대편차, 중위절대편차, 백분위수, IQR을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 오전</td>
+            <td>상자그림, 도수분포표, 히스토그램, 밀도그림을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 오전</td>
+            <td>이진 데이터, 범주 데이터, 최빈값, 기댓값, 막대도표, 파이그림, 상관관계를 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 11:45</td>
+            <td><code>1시간정도 p.31~p.55 1.8 전까지 읽음</code> 커밋을 생성했습니다.</td>
+          </tr>
+          <tr>
+            <td>2026-05-24 17:30</td>
+            <td>벡터 내적, 코사인 유사도, 행렬곱 shape, 행렬곱 계산 문제를 연습했습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">데이터 분석 실습</h2>
+      <div class="post-card stack">
+        <h3>평균, 중앙값, 이상치</h3>
+        <ul>
+          <li><code>pandas.Series</code>로 점수 데이터를 만들었습니다.</li>
+          <li>평균과 중앙값을 구했습니다.</li>
+          <li>이상치가 포함되었을 때 평균이 크게 달라지는 모습을 확인했습니다.</li>
+          <li>이상치를 제거한 데이터와 제거하지 않은 데이터를 비교했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>matplotlib 시각화</h3>
+        <ul>
+          <li>히스토그램을 그렸습니다.</li>
+          <li>박스플롯을 그렸습니다.</li>
+          <li>산점도를 그렸습니다.</li>
+          <li>선 그래프를 그렸습니다.</li>
+          <li>막대그래프를 그렸습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>z-score</h3>
+        <ul>
+          <li>평균과 표준편차를 사용해서 <code>z_score</code>를 계산했습니다.</li>
+          <li>점수 데이터별 z-score를 구했습니다.</li>
+          <li>z-score 히스토그램을 그렸습니다.</li>
+          <li>sigma 구간을 기준으로 데이터를 확인했습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="post-section" id="section-03">
+      <h2 class="section-title">통계 이론 정리</h2>
+      <div class="post-card stack">
+        <h3>2026-05-23 정리</h3>
+        <ul>
+          <li><code>데이터 과학을 위한 통계 2판</code> 목차를 정리했습니다.</li>
+          <li>탐색적 데이터 분석을 정리했습니다.</li>
+          <li>수치형 데이터, 범주형 데이터, 이진 데이터, 순서형 데이터를 정리했습니다.</li>
+          <li>테이블 데이터, 데이터 프레임, 인덱스를 정리했습니다.</li>
+          <li>위치 추정, 평균, 가중평균, 중간값, 백분위수, 가중 중간값, 절사평균, 로버스트, 특잇값을 정리했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>2026-05-24 정리</h3>
+        <ul>
+          <li>인구에 따른 살인 비율의 위치 추정 예시를 정리했습니다.</li>
+          <li>평균, 절사평균, 중간값 비교 내용을 정리했습니다.</li>
+          <li>가중평균과 가중중간값을 정리했습니다.</li>
+          <li>변이 추정, 편차, 분산, 표준편차, 평균절대편차, 중위절대편차를 정리했습니다.</li>
+          <li>범위, 순서 통계량, 백분위수, 사분위범위를 정리했습니다.</li>
+          <li>상자그림, 도수분포표, 히스토그램, 밀도그림을 정리했습니다.</li>
+          <li>이진 데이터와 범주 데이터 탐색을 정리했습니다.</li>
+          <li>최빈값, 기댓값, 막대도표, 파이그림을 정리했습니다.</li>
+          <li>상관계수, 상관행렬, 산점도를 정리했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>왜도, 첨도, 스케일링</h3>
+        <ul>
+          <li>오른쪽 왜도와 왼쪽 왜도를 정리했습니다.</li>
+          <li>오른쪽 꼬리가 긴 분포와 왼쪽 꼬리가 긴 분포를 정리했습니다.</li>
+          <li>평균, 중앙값, 최빈값과 왜도의 관계를 정리했습니다.</li>
+          <li>첨도 개념을 정리했습니다.</li>
+          <li>스케일링이 필요한 이유를 정리했습니다.</li>
+          <li>Min-Max 정규화와 표준화를 정리했습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="post-section" id="section-04">
+      <h2 class="section-title">파이썬 기초 복습</h2>
+      <div class="post-card stack">
+        <h3>변수, 객체, 참조</h3>
+        <ul>
+          <li>파이썬의 객체 참조 방식을 정리했습니다.</li>
+          <li>변수와 객체의 관계를 정리했습니다.</li>
+          <li>네임스페이스가 변수명과 객체 주소를 연결하는 방식을 정리했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3><code>==</code>와 <code>is</code></h3>
+        <ul>
+          <li><code>==</code>가 값 비교에 사용된다는 내용을 정리했습니다.</li>
+          <li><code>is</code>가 같은 객체를 바라보는지 확인하는 연산자라는 내용을 정리했습니다.</li>
+          <li>리스트 예제로 <code>==</code>와 <code>is</code> 결과를 확인했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>가변 객체와 불변 객체</h3>
+        <ul>
+          <li>정수, 문자열, 불리언 같은 불변 객체를 정리했습니다.</li>
+          <li>리스트 같은 가변 객체를 정리했습니다.</li>
+          <li>얕은 복사와 깊은 복사를 정리했습니다.</li>
+          <li>튜플 안에 리스트가 들어간 경우를 정리했습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>숫자 타입, 문자열, 연산자</h3>
+        <ul>
+          <li><code>int</code>, <code>float</code>, <code>bool</code>, <code>complex</code>를 정리했습니다.</li>
+          <li><code>str</code>이 불변 시퀀스 객체라는 내용을 정리했습니다.</li>
+          <li>연산자가 내부적으로 타입별 연산 로직과 연결된다는 내용을 정리했습니다.</li>
+          <li><code>__add__</code>, <code>and</code>, <code>or</code>, <code>not</code> 예제를 확인했습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="post-section" id="section-05">
+      <h2 class="section-title">벡터와 행렬 연습</h2>
+      <div class="post-card stack">
+        <h3>코사인 유사도</h3>
+        <ul>
+          <li>코사인 유사도 공식을 정리했습니다.</li>
+          <li>두 벡터의 내적과 크기의 곱을 사용해서 코사인 유사도를 구하는 방식을 정리했습니다.</li>
+          <li><code>A = [1, 0]</code>, <code>B = [0, 1]</code> 예제를 풀었습니다.</li>
+          <li><code>A = [1, 2]</code>, <code>B = [2, 4]</code> 예제를 풀었습니다.</li>
+        </ul>
+      </div>
+
+      <div class="post-card stack">
+        <h3>행렬곱</h3>
+        <ul>
+          <li><code>A @ B = (m, n) @ (n, k) = (m, k)</code> 형태를 정리했습니다.</li>
+          <li>행렬곱이 가능한 shape 조건을 정리했습니다.</li>
+          <li>2x2 행렬과 2x1 행렬의 곱을 계산했습니다.</li>
+          <li>2x3 행렬과 3x2 행렬의 곱을 계산했습니다.</li>
+          <li>3x3 행렬과 3x2 행렬의 곱을 계산했습니다.</li>
+          <li><code>A.shape = (5, 4)</code>, <code>B.shape = (4, 3)</code>일 때 결과 shape를 확인했습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="post-section" id="section-06">
+      <h2 class="section-title">작업 파일</h2>
+      <table class="read-table">
+        <thead>
+          <tr>
+            <th>파일</th>
+            <th>작업 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>2026-05-22_data_analysis_basic_review.ipynb</code></td>
+            <td>데이터 분석 기초 복습, 시각화, z-score 내용을 추가했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>2026-05-23_data_analysis_from_skewed.ipynb</code></td>
+            <td>왜도, 첨도, 스케일링, 정규화, 표준화를 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>2026-05-23_python_basic_review.ipynb</code></td>
+            <td>파이썬 타입, 객체 참조, 가변성과 불변성, 연산자 동작을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>2026-05-23_statistics_basic_learn.md</code></td>
+            <td>통계 책 기반으로 EDA, 데이터 타입, 위치 추정을 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>2026-05-24_statistics_basic_learn.md</code></td>
+            <td>위치 추정, 변이 추정, 데이터 분포, 범주 데이터, 상관관계를 정리했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>2026-05-24_basic_statistics_study_and_practice.md</code></td>
+            <td>코사인 유사도, 벡터 내적, 행렬곱을 연습했습니다.</td>
+          </tr>
+          <tr>
+            <td><code>requirements.txt</code></td>
+            <td>Jupyter와 IPython 관련 패키지를 추가했습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </article>
+</body>
+</html>
