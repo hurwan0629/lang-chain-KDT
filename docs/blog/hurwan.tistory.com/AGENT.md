@@ -20,6 +20,16 @@
 - `templates/preview.html`: 디자인 확인용 샘플 페이지다. 실제 업로드 글이 아니다.
 - `templates/post_template.html`: 새 HTML을 만들 때 사용하는 최소 골격이다.
 
+## 디자인 버전 규칙
+
+- `history/5_v1.html`에 사용된 스타일은 기본 디자인 `v1`로 부른다.
+- 현재 `templates/style.css`는 토글 요소가 추가된 `v1.1`이다.
+- 같은 디자인 방향에서 요소가 추가, 수정, 삭제되면 `v1.1`, `v1.2`처럼 소수 버전을 올린다.
+- 레이아웃, 색감, 카드 구조, 목차 구조 등 전체 인상이 달라지는 새 디자인을 만들면 `v2`로 올린다.
+- `history/`에 새 최종 HTML을 만들 때는 글 번호와 디자인 버전을 함께 파일명에 적는다.
+- 예: `5_v1.html`, `5_v1.1.html`, `6_v1.html`, `6_v2.html`
+- 기존 번호 HTML 또는 기존 버전 HTML은 덮어쓰지 않는다.
+
 ## 작업 흐름
 
 1. 새 `.md` 또는 `.html` 파일을 받으면 먼저 원문을 읽는다.
@@ -49,15 +59,32 @@
 
 ## 스타일 기준
 
-- 전체 래퍼는 `.tech-post`를 사용한다.
-- 기본 톤은 흰 배경, 초록 포인트 컬러(`#19b97c`), 밝은 카드형 레이아웃을 유지한다.
-- 글 상단에는 `.post-hero`를 사용하고, `post-kicker`, `post-title`, `post-subtitle` 구조를 둔다.
-- 목차는 `.post-toc`으로 만들고, 각 섹션은 `section-01`, `section-02` 같은 id를 가진다.
-- 본문 섹션은 `.post-section`, 카드형 설명은 `.post-card.stack`을 사용한다.
+- 스타일은 기존 `history/4.html` 계열과 `templates/style.css`를 기준으로 유지한다.
+- 전체 래퍼는 `.tech-post`를 사용하고, 최대 폭은 기존처럼 `860px` 기준을 유지한다.
+- 글 상단에는 둥근 카드형 `.post-hero`를 사용하고, 내부에 `.post-hero-inner`를 둔다.
+- hero는 흰 배경, 초록 포인트 컬러(`#19b97c`), 부드러운 aurora 계열 radial-gradient, 큰 border-radius를 유지한다.
+- `post-kicker`, `post-title`, `post-subtitle` 구조를 유지한다.
+- 목차는 `.post-toc` 안에 `.toc-title`, `.toc-list`, `.toc-index` 구조를 사용한다.
+- 목차 항목은 기존처럼 2열 버튼형 그리드로 보이게 만들고, 모바일에서는 1열로 떨어지게 한다.
+- 목차나 본문에 외부 링크가 있으면 사용자가 클릭 가능하다는 것을 알 수 있도록 `커밋 보기` 또는 `커밋 보러가기` 텍스트를 별도 링크로 노출한다.
+- 각 섹션은 `section-01`, `section-02` 같은 id를 가진 `.post-section`을 사용한다.
+- 섹션 제목은 `.section-title`을 사용하고, 왼쪽 초록 세로 막대(`.section-title::before`) 스타일을 유지한다.
+- 섹션 사이에는 필요한 경우 `.post-divider`를 사용해 기존 글과 같은 구분선을 넣는다.
+- 본문 카드형 설명은 `.post-card.stack`을 사용한다.
+- 카드 제목은 `.card-title` 또는 `.post-card h3` 스타일을 사용한다.
 - 강조 노트는 `.post-note`를 사용한다.
 - 표는 `.read-table`을 사용한다.
 - 코드 블록 또는 계산 예시는 `.output-box` 또는 `.code-box`를 사용한다.
 - 일반 본문 문단은 `font-weight: 500`, `color: #334155` 기준을 유지한다.
+
+## 타임라인 스타일 기준
+
+- 학습 로그나 작업 로그는 `.study-timeline`과 `.timeline-item`을 사용해 세로 타임라인으로 만든다.
+- 타임라인 왼쪽 선은 초록 gradient를 사용하고, 각 항목의 동그라미 마커는 선의 정중앙에 위치해야 한다.
+- 현재 기준 좌표는 데스크톱에서 `.study-timeline { padding-left: 36px; }`, `.study-timeline::before { left: 10px; width: 2px; }`, `.timeline-item::before { left: -35px; width: 14px; border: 3px; }`이다.
+- 모바일 기준 좌표는 `.study-timeline { padding-left: 32px; }`, `.timeline-item::before { left: -31px; }`이다.
+- 타임라인 항목 안에는 날짜/시간을 `.timeline-meta`, 제목을 `.timeline-title`, 커밋 링크를 `.commit-link`로 표시한다.
+- 커밋 링크는 파란색 텍스트로 `커밋 보러가기`처럼 명확히 표시한다.
 
 ## 인라인 코드 처리
 
@@ -88,7 +115,7 @@ HTML 생성 전 다음을 확인한다.
 
 - 기존 번호 HTML을 직접 덮어쓰지 않는다.
 - 기존 글 개선본은 `update_1.html`, `update_2.html`처럼 만든다.
-- 새 글은 다음 번호의 HTML 파일로 만든다.
+- 새 글은 다음 번호와 디자인 버전을 포함한 HTML 파일로 만든다. 예: `5_v1.html`
 - 디자인 확인은 `templates/preview.html`에서 한다.
 - 최종 업로드 HTML은 단일 파일이어야 하므로 `templates/style.css` 내용을 `<style>` 태그로 인라인 삽입한다.
 - 공통 골격은 `templates/post_template.html`을 우선 참고한다.
