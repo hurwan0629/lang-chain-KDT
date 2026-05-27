@@ -3,338 +3,368 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>주말 동안의 데이터 과학 기초와 파이썬 원리 공부 기록</title>
+  <title>파이썬의 반복은 어떻게 동작할까</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <article class="tech-post">
     <header class="post-hero">
       <div class="post-hero-inner">
-        <p class="post-kicker">Weekend Study Log</p>
-        <h1 class="post-title">주말 동안의 데이터 과학 기초와 파이썬 원리 공부 기록</h1>
-        <p class="post-subtitle">2026년 5월 23일부터 5월 24일까지 작업한 데이터 분석, 통계, 파이썬 기초 학습 기록입니다.</p>
+        <p class="post-kicker">Python Basic</p>
+        <h1 class="post-title">파이썬의 반복은 어떻게 동작할까</h1>
+        <p class="post-subtitle">set 순회 결과를 확인하고, 직접 연결된 박스 구조를 만들어보며 <code>for</code>, <code>iter()</code>, <code>yield</code>가 어떻게 이어지는지 확인한 기록입니다.</p>
       </div>
     </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code>s = {"apple", "banana", "cat", "dog"}
+s1 = {"apple", "banana", "cat", "dog"}
+print(s)
+print(s1)
+
+for i in range(1, 10):
+  for j in {"apple", "banana", "cat", "dog"}:
+    print(j, end=" ")
+  print()
+
+
+class ExampleBox():
+
+  def __init__(self, prev, next, data):
+    self.prev = prev
+    self.curr = self
+    self.next = next
+    self.data = data
+
+  def append(self, data):
+    # 내가 맨 뒤면
+    if self.next is None:
+      self.next = ExampleBox(self, None, data)
+    # 앞에 칸이 있으면 연결해주기
+    else:
+      # 기존 앞칸과 새 칸 연결해주기. (이때 내 prev는 아직 기존 앞칸과 연결되어있음)
+      self.next.prev = ExampleBox(self, self.next, data)
+      # 내 앞칸을 기존 앞칸의 next와 연결해주기
+      self.next = self.next.prev
+
+    return self.next
+
+  def prepend(self, data):
+    # 만약에 해당 박스가 맨 앞의 박스라면
+    if self.prev is None:
+      self.prev = ExampleBox(None, self, data)
+    # 앞에 칸이 있으면 연결해주기
+    else:
+      # 기존 앞칸과 새 칸 연결해주기. (이때 내 prev는 아직 기존 앞칸과 연결되어있음)
+      self.prev.next = ExampleBox(self.prev, self, data)
+      # 내 앞칸을 기존 앞칸의 next와 연결해주기
+      self.prev = self.prev.next
+
+    return self.prev
+
+  def __next__(self):
+    if self.next is not None:
+      return self.next
+    raise StopIteration
+
+
+class BoxSpace():
+
+  def __init__(self, data):
+    self.starting_point = ExampleBox(None, None, data)
+
+  def __iter__(self):
+    curr = self.starting_point
+
+    while curr is not None:
+      yield curr.data
+      curr = curr.next
+    # # # # [정확하지 않은 방식] # # # #
+    # l = [curr.data]               #
+
+    # while (a := next(curr)):
+    #   curr = a
+    #   if a is not None:
+    #     l.append(a.data)
+    #   else:
+    #     break
+
+    # return iter(l)
+
+b = BoxSpace(1)
+
+import random
+
+curr = b.starting_point
+
+for i in range(10):
+  r =  random.randint(i**2, i**4)
+  curr = curr.append(r)
+
+for d in iter(b):
+  print(d)
+
+print([i for i in iter(b)])
+
+
+
+# print(next(next(b.starting_point)))
+
+# s = iter([1, 2, 3, 4])
+
+# while True:
+#   if a := next(s):
+#     print(a)
+
+
+for c in "asdf":
+  print(c)</code></pre>
+    </details>
 
     <nav class="post-toc" aria-label="목차">
       <h2 class="toc-title">목차</h2>
       <ul class="toc-list">
         <li>
-          <a class="toc-main" href="#section-01"><span class="toc-index">01</span><span>전체 타임라인</span></a>
+          <a class="toc-main" href="#section-01"><span class="toc-index">01</span><span>set을 반복해보기</span></a>
         </li>
         <li>
-          <a class="toc-main" href="#section-02"><span class="toc-index">02</span><span>데이터 분석 실습</span></a>
+          <a class="toc-main" href="#section-02"><span class="toc-index">02</span><span>직접 박스 연결하기</span></a>
         </li>
         <li>
-          <a class="toc-main" href="#section-03"><span class="toc-index">03</span><span>통계 이론 정리</span></a>
+          <a class="toc-main" href="#section-03"><span class="toc-index">03</span><span>iter와 yield</span></a>
         </li>
         <li>
-          <a class="toc-main" href="#section-04"><span class="toc-index">04</span><span>파이썬 기초 복습</span></a>
+          <a class="toc-main" href="#section-04"><span class="toc-index">04</span><span>문자열도 반복된다</span></a>
         </li>
         <li>
-          <a class="toc-main" href="#section-05"><span class="toc-index">05</span><span>벡터와 행렬 연습</span></a>
-        </li>
-        <li>
-          <a class="toc-main" href="#section-06"><span class="toc-index">06</span><span>작업 파일</span></a>
+          <a class="toc-main" href="#section-05"><span class="toc-index">05</span><span>정리</span></a>
         </li>
       </ul>
     </nav>
 
     <section class="post-section" id="section-01">
-      <h2 class="section-title">전체 타임라인</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">커밋 보러가기</a>
-      <div class="study-timeline">
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-23</p>
-          <p>파이썬 변수, 객체, 참조, <code>==</code>와 <code>is</code>, 가변 객체와 불변 객체, 연산자 내부 동작을 정리했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">통계 및 파이썬 기반 이론 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
-        </article>
+      <h2 class="section-title">set을 반복해보기</h2>
+      <div class="post-card stack">
+        <h3>같은 값을 가진 set 두 개 출력</h3>
+        <p>먼저 같은 문자열을 가진 <code>set</code> 두 개를 만들고, 출력 결과와 반복 결과를 확인했습니다.</p>
+        <details class="source-toggle" open>
+          <summary>set 반복 코드 보기</summary>
+          <pre class="source-box"><code>s = {"apple", "banana", "cat", "dog"}
+s1 = {"apple", "banana", "cat", "dog"}
+print(s)
+print(s1)
 
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-23</p>
-          <p><code>pandas</code>와 <code>matplotlib</code>를 사용해서 평균, 중앙값, 이상치, 시각화, z-score를 복습했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">통계 및 파이썬 기반 이론 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
-        </article>
+for i in range(1, 10):
+  for j in {"apple", "banana", "cat", "dog"}:
+    print(j, end=" ")
+  print()</code></pre>
+        </details>
+      </div>
 
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-23</p>
-          <p>왜도, 첨도, 오른쪽/왼쪽 꼬리 분포, 정규화, 표준화를 정리했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">통계 및 파이썬 기반 이론 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
-        </article>
+      <div class="post-card stack">
+        <h3>출력 결과</h3>
+        <p>실행 결과에서는 같은 구성의 <code>set</code>이 같은 순서로 출력되었고, 반복문 안에서도 같은 순서가 반복되었습니다.</p>
+        <pre class="source-box"><code>{'cat', 'banana', 'dog', 'apple'}
+{'cat', 'banana', 'dog', 'apple'}
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple
+cat banana dog apple</code></pre>
+      </div>
 
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-23 18:28</p>
-          <p><code>데이터 과학을 위한 통계 2판</code>을 기준으로 EDA, 데이터 타입, 위치 추정, 평균, 중앙값, 절사평균을 정리했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">통계 및 파이썬 기반 이론 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
-        </article>
-
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-24 10:24 ~ 11:45</p>
-          <p><code>데이터 과학을 위한 통계 2판</code>에서 인구, 위치 추정, 변이 추정, 상자그림, 데이터 분포, 범주 데이터, 최빈값, 기댓값, 상관관계를 정리했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/2cf2a7ec99b079caa5129497238005c3fbb1f3a8">1시간정도 p.31~p.55 1.8 전까지 읽음</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/2cf2a7ec99b079caa5129497238005c3fbb1f3a8">커밋 보러가기</a>
-        </article>
-
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-24 17:30 전후</p>
-          <p>벡터 내적과 코사인 유사도 공식을 정리하고 예제를 풀었습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">통계학 기초 이후 벡터, 행렬, softmax, loss 등 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">커밋 보러가기</a>
-        </article>
-
-        <article class="timeline-item">
-          <p class="timeline-meta">2026-05-24 17:30 전후</p>
-          <p>행렬곱 shape 조건과 행렬곱 계산 문제를 직접 연습했습니다.</p>
-          <h3 class="timeline-title"><a href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">통계학 기초 이후 벡터, 행렬, softmax, loss 등 공부</a></h3>
-          <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">커밋 보러가기</a>
-        </article>
+      <div class="post-note">
+        <code>set</code>은 리스트처럼 넣은 순서를 보존하는 자료형은 아니지만, 반복 가능한 객체이기 때문에 <code>for</code>문에서 값을 하나씩 꺼낼 수 있습니다.
       </div>
     </section>
 
     <hr class="post-divider">
 
     <section class="post-section" id="section-02">
-      <h2 class="section-title">데이터 분석 실습</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
+      <h2 class="section-title">직접 박스 연결하기</h2>
       <div class="post-card stack">
-        <h3>평균, 중앙값, 이상치</h3>
-        <p><strong>GPT</strong>를 이용하여 <code>pandas.Series</code>를 통해 점수 데이터를 받아서 평균, 중앙값, 사분위수, 이상치 등을 구하는 과정을 가져보았습니다.</p>
-      </div>
+        <h3>ExampleBox</h3>
+        <p>다음으로 앞 칸과 뒤 칸을 기억하는 <code>ExampleBox</code>를 만들었습니다. 각 박스는 <code>prev</code>, <code>next</code>, <code>data</code>를 가지고 있고, <code>append()</code>와 <code>prepend()</code>로 중간에 새 박스를 연결합니다.</p>
+        <details class="source-toggle" open>
+          <summary>ExampleBox 코드 보기</summary>
+          <pre class="source-box"><code>class ExampleBox():
 
-      <div class="post-card stack">
-        <h3>matplotlib 시각화</h3>
-        <p>몇 가지 시각화 방법들을 이용하여 어떤 식으로 시각화가 되는지에 대한 감을 잡기 시작했습니다. 사용해본 시각화는 다음과 같습니다.</p>
-        <ul class="post-list">
-          <li>히스토그램을 그렸습니다.</li>
-          <li>박스플롯을 그렸습니다.</li>
-          <li>선 그래프를 그렸습니다.</li>
-          <li>막대그래프를 그렸습니다.</li>
-        </ul>
-      </div>
+  def __init__(self, prev, next, data):
+    self.prev = prev
+    self.curr = self
+    self.next = next
+    self.data = data
 
-      <div class="post-card stack">
-        <h3>z-score</h3>
-        <p>평균과 표준편차를 이용해서 <code>z-score</code>를 계산해 보았습니다.</p>
-        <p>이후에 이것이 <strong>표준화</strong>와 함께 쓰인다는 것을 알았습니다.</p>
+  def append(self, data):
+    # 내가 맨 뒤면
+    if self.next is None:
+      self.next = ExampleBox(self, None, data)
+    # 앞에 칸이 있으면 연결해주기
+    else:
+      # 기존 앞칸과 새 칸 연결해주기. (이때 내 prev는 아직 기존 앞칸과 연결되어있음)
+      self.next.prev = ExampleBox(self, self.next, data)
+      # 내 앞칸을 기존 앞칸의 next와 연결해주기
+      self.next = self.next.prev
+
+    return self.next
+
+  def prepend(self, data):
+    # 만약에 해당 박스가 맨 앞의 박스라면
+    if self.prev is None:
+      self.prev = ExampleBox(None, self, data)
+    # 앞에 칸이 있으면 연결해주기
+    else:
+      # 기존 앞칸과 새 칸 연결해주기. (이때 내 prev는 아직 기존 앞칸과 연결되어있음)
+      self.prev.next = ExampleBox(self.prev, self, data)
+      # 내 앞칸을 기존 앞칸의 next와 연결해주기
+      self.prev = self.prev.next
+
+    return self.prev
+
+  def __next__(self):
+    if self.next is not None:
+      return self.next
+    raise StopIteration</code></pre>
+        </details>
       </div>
     </section>
 
     <hr class="post-divider">
 
     <section class="post-section" id="section-03">
-      <h2 class="section-title">통계 이론 정리</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/2cf2a7ec99b079caa5129497238005c3fbb1f3a8">커밋 보러가기</a>
+      <h2 class="section-title">iter와 yield</h2>
       <div class="post-card stack">
-        <h3>2026-05-23 정리</h3>
-        <p><code>데이터 과학을 위한 통계 2판</code>을 읽기 시작하며 글쓴이의 말, 기본적인 통계 용어들과 데이터의 종류 등을 읽으며 정리해보았습니다.</p>
+        <h3>BoxSpace를 반복 가능하게 만들기</h3>
+        <p><code>BoxSpace</code>에서는 시작점을 저장하고, <code>__iter__()</code> 안에서 현재 박스의 <code>data</code>를 <code>yield</code>한 뒤 다음 박스로 이동하게 만들었습니다.</p>
+        <details class="source-toggle" open>
+          <summary>BoxSpace 코드 보기</summary>
+          <pre class="source-box"><code>class BoxSpace():
+
+  def __init__(self, data):
+    self.starting_point = ExampleBox(None, None, data)
+
+  def __iter__(self):
+    curr = self.starting_point
+
+    while curr is not None:
+      yield curr.data
+      curr = curr.next
+    # # # # [정확하지 않은 방식] # # # #
+    # l = [curr.data]               #
+
+    # while (a := next(curr)):
+    #   curr = a
+    #   if a is not None:
+    #     l.append(a.data)
+    #   else:
+    #     break
+
+    # return iter(l)</code></pre>
+        </details>
       </div>
 
       <div class="post-card stack">
-        <h3>2026-05-24 정리</h3>
-        <p>대략적인 비율을 구하는 과정을 잠깐 예시와 함께 확인했습니다. 예시는 <strong>미국 주별 살인율</strong>이었습니다.</p>
-        <p>그리고 평균절대편차, 중위절대편차와 가중평균 등과 같은 새로운 개념, 또는 알았지만 오랜만에 복기하는 개념을 공부했습니다.</p>
+        <h3>값을 추가하고 순회하기</h3>
+        <p><code>BoxSpace(1)</code>을 만든 뒤, 랜덤값을 뒤에 계속 붙이고 <code>iter(b)</code>로 순회했습니다.</p>
+        <details class="source-toggle" open>
+          <summary>순회 코드 보기</summary>
+          <pre class="source-box"><code>b = BoxSpace(1)
+
+import random
+
+curr = b.starting_point
+
+for i in range(10):
+  r =  random.randint(i**2, i**4)
+  curr = curr.append(r)
+
+for d in iter(b):
+  print(d)
+
+print([i for i in iter(b)])</code></pre>
+        </details>
       </div>
 
       <div class="post-card stack">
-        <h3>왜도, 첨도, 스케일링</h3>
-        <p>왜도, 첨도, 스케일링(<strong>정규화</strong>와 <strong>표준화</strong>) 등을 공부하며 기본적인 데이터 분석과 정규화를 알았습니다.</p>
-        <p>왜도와 첨도는 엄청 중요하다기보다는 일단 한 번 보고 넘어가는 데이터의 특징 정도로 이해하였습니다. 정규화와 표준화는 항상 쓰이며, 비슷하면서도 신경 써야 할 부분인 것 같았습니다. 이 과정에서 <code>Min-Max</code> 정규화를 알았습니다.</p>
+        <h3>출력 결과</h3>
+        <p>노트북 실행 당시에는 아래와 같이 시작값부터 뒤에 붙은 값까지 차례대로 출력되었습니다.</p>
+        <pre class="source-box"><code>1
+0
+1
+9
+27
+42
+270
+782
+1736
+242
+3207
+[1, 0, 1, 9, 27, 42, 270, 782, 1736, 242, 3207]</code></pre>
       </div>
     </section>
 
     <hr class="post-divider">
 
     <section class="post-section" id="section-04">
-      <h2 class="section-title">파이썬 기초 복습</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/be6e7e12870135c2bec2fe792dc0d0ea8eb03d2d">커밋 보러가기</a>
+      <h2 class="section-title">문자열도 반복된다</h2>
       <div class="post-card stack">
-        <h3>변수, 객체, 참조</h3>
-        <p>파이썬의 기본적인 <strong>객체 참조 방식</strong>에 대한 복습과 불변/가변 객체, 네임스페이스 등을 알았습니다.</p>
-      </div>
-
-      <div class="post-card stack">
-        <h3><code>==</code>와 <code>is</code></h3>
-        <p><code>==</code>와 <code>is</code>를 바탕으로 메모리가 어떤 식으로 저장되는지를 공부하였습니다.</p>
-      </div>
-
-      <div class="post-card stack">
-        <h3>가변 객체와 불변 객체</h3>
-        <p>가변 객체와 불변 객체를 나누어 공부하였으며, 얕은 복사와 깊은 복사, 메모리를 그대로 복사하는 방법에 대해서 배웠습니다. 이때 <code>copy</code> 모듈도 함께 확인했습니다.</p>
-      </div>
-
-      <div class="post-card stack">
-        <h3>숫자 타입, 문자열, 연산자</h3>
-        <p>타입들의 매직 메서드 기반 연산자들과 <code>str</code>이 시퀀스 객체라는 내용 등을 공부하고 정리하였습니다.</p>
+        <h3>문자열 순회</h3>
+        <p>마지막으로 문자열도 <code>for</code>문에서 한 글자씩 꺼낼 수 있다는 것을 확인했습니다.</p>
+        <details class="source-toggle" open>
+          <summary>문자열 반복 코드 보기</summary>
+          <pre class="source-box"><code>for c in "asdf":
+  print(c)</code></pre>
+        </details>
+        <pre class="source-box"><code>a
+s
+d
+f</code></pre>
       </div>
     </section>
 
     <hr class="post-divider">
 
     <section class="post-section" id="section-05">
-      <h2 class="section-title">벡터와 행렬 연습</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">커밋 보러가기</a>
-      <p>그냥 개념과 코딩만 공부하기에는 부족함이 있을 거라 예상하여, 직접 문제 등을 풀어보며 감을 조금 더 높였습니다.</p>
-      <div class="post-card stack">
-        <h3>코사인 유사도</h3>
-        <p>코사인 유사도 공식과 예제를 정리했습니다. 직접 풀어본 문제와 풀이 과정은 아래 토글에 넣었습니다.</p>
-        <details class="source-toggle">
-          <summary>코사인 유사도 풀이 보기</summary>
-          <pre class="source-box"><code>코사인 유사도는 두 벡터의 방향이 얼마나 비슷한지.
-
-[코사인 유사도] = [A]·[B] / ([|A|] x [|B|])
-
-[두 벡터의 내적] / [두 벡터 크기의 곱]
-
-- -1일수록 방향이 완전히 다른 것이고
-- 1일수록 완전히 같은 방향입니다.
-
-문제 1
-A = [1, 0]
-B = [0, 1]
-
-코사인 유사도는?
-
-벡터 내적 = 0
-분모 구할 필요 없음.
-
-> 0
-
-문제 2
-A = [1, 2]
-B = [2, 4]
-
-코사인 유사도는?
-
-벡터 내적 = 10
-분모: 루트 5 곱하기 루트 20 = 2루트5 * 루트5 = 10
-
-따라서 1</code></pre>
-        </details>
-      </div>
-
-      <div class="post-card stack">
-        <h3>행렬곱</h3>
-        <p>행렬곱의 <code>shape</code> 조건과 계산 과정을 직접 연습했습니다. 직접 풀어본 문제와 풀이 과정은 아래 토글에 넣었습니다.</p>
-        <details class="source-toggle">
-          <summary>행렬곱 풀이 보기</summary>
-          <pre class="source-box"><code>A @ B = (m, n) @ (n, k) = (m, k)로 나옵니다.
-두 행렬의 앞부분 속성 개수가 뒷부분 가중치의 행(속성) 개수와 같아야 합니다.
-
-문제 1
-A = [
-  [1, 2],
-  [3, 4]
-]
-
-B = [
-  [5],
-  [6]
-]
-
-A @ B = ?
-
-[
-  [17],
-  [39]
-]
-
-문제 2
-A = [
-  [1, 2, 3],
-  [4, 5, 6]
-]
-
-B = [
-  [1, 2],
-  [3, 4],
-  [5, 6]
-]
-
-A @ B = ?
-
-[
-  [(1 + 6 + 15) = 22, (2 + 8 + 18) = 28],
-  [(4 + 15 + 30) = 49, (8 + 20 + 36) = 64]
-]
-
-문제 3
-X = [
-  [2, 4, 1],
-  [3, 1, 5],
-  [0, 2, 4]
-]
-
-W = [
-  [1, 2],
-  [3, 0],
-  [2, 1]
-]
-
-[
-  [(2 + 12 + 2) = 16, (4 + 0 + 1) = 5],
-  [(3 + 3 + 10) = 16, (6 + 0 + 5) = 11],
-  [(0 + 6 + 8) = 14, (0 + 0 + 4) = 4]
-]
-
-문제 4
-A.shape = (5, 4)
-B.shape = (4, 3)
-A @ B = ?
-
-가능 (A[1], B[0]이 같음)
-
-결과 shape: (5, 3)</code></pre>
-        </details>
-      </div>
-    </section>
-
-    <hr class="post-divider">
-
-    <section class="post-section" id="section-06">
-      <h2 class="section-title">작업 파일</h2>
-      <a class="commit-link" href="https://github.com/hurwan0629/lang-chain-KDT/commit/79fc81a5036e22346473772237eac1f38f4c12c2">커밋 보러가기</a>
+      <h2 class="section-title">정리</h2>
       <table class="read-table">
         <thead>
           <tr>
-            <th>파일</th>
-            <th>작업 내용</th>
+            <th>확인한 것</th>
+            <th>내용</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><code>2026-05-22_data_analysis_basic_review.ipynb</code></td>
-            <td>데이터 분석 기초 복습, 시각화, z-score 내용을 추가했습니다.</td>
+            <td><code>set</code></td>
+            <td>순서를 기준으로 쓰는 자료형은 아니지만 <code>for</code>문으로 순회할 수 있습니다.</td>
           </tr>
           <tr>
-            <td><code>2026-05-23_data_analysis_from_skewed.ipynb</code></td>
-            <td>왜도, 첨도, 스케일링, 정규화, 표준화를 정리했습니다.</td>
+            <td><code>ExampleBox</code></td>
+            <td><code>prev</code>와 <code>next</code>를 저장해서 앞뒤 박스를 연결하는 구조를 만들었습니다.</td>
           </tr>
           <tr>
-            <td><code>2026-05-23_python_basic_review.ipynb</code></td>
-            <td>파이썬 타입, 객체 참조, 가변성과 불변성, 연산자 동작을 정리했습니다.</td>
+            <td><code>__iter__()</code></td>
+            <td>객체가 <code>iter()</code>에 들어갔을 때 어떤 방식으로 값을 하나씩 돌려줄지 정했습니다.</td>
           </tr>
           <tr>
-            <td><code>2026-05-23_statistics_basic_learn.md</code></td>
-            <td>통계 책 기반으로 EDA, 데이터 타입, 위치 추정을 정리했습니다.</td>
+            <td><code>yield</code></td>
+            <td>리스트를 한 번에 만들지 않고, 반복 과정에서 값을 하나씩 넘겨주도록 사용했습니다.</td>
           </tr>
           <tr>
-            <td><code>2026-05-24_statistics_basic_learn.md</code></td>
-            <td>위치 추정, 변이 추정, 데이터 분포, 범주 데이터, 상관관계를 정리했습니다.</td>
-          </tr>
-          <tr>
-            <td><code>2026-05-24_basic_statistics_study_and_practice.md</code></td>
-            <td>코사인 유사도, 벡터 내적, 행렬곱을 연습했습니다.</td>
-          </tr>
-          <tr>
-            <td><code>requirements.txt</code></td>
-            <td>Jupyter와 IPython 관련 패키지를 추가했습니다.</td>
+            <td><code>str</code></td>
+            <td>문자열도 반복 가능한 객체라서 문자 단위로 꺼낼 수 있습니다.</td>
           </tr>
         </tbody>
       </table>
+
+      <div class="post-note">
+        이번 실습은 <code>for</code>문이 단순히 리스트만 도는 문법이 아니라, 반복 가능한 객체와 약속된 메서드를 이용해 값을 하나씩 꺼내는 구조라는 점을 확인하는 과정이었습니다.
+      </div>
     </section>
   </article>
 </body>
