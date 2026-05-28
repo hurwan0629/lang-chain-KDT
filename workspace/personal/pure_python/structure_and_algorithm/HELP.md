@@ -1,0 +1,2 @@
+
+`2026-05-28 08:11` - [자료구조 시작](./2026-05-28_1.md) *해당 공부는 GPT와의 문답으로 이루어졌습니다.* [대화](https://chatgpt.com/g/g-p-6a0fac60a7e08191b3eca2f554160e6f-hagjeomeunhaengje/c/6a17760f-1170-83a3-9f10-8e215e89ebde)
