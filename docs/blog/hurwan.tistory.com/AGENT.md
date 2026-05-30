@@ -55,7 +55,7 @@
 - 표를 `.read-table` 스타일로 변환한다.
 - 코드블록과 계산 예시를 `.code-box` 또는 `.output-box`로 감싼다.
 - 백틱으로 표시된 짧은 코드 표현을 `<code>`로 변환한다.
-- 사용자가 원하면 원본 확인용 `<details class="source-toggle">`를 추가한다.
+- HTML 생성 시 원본 확인용 `<details class="source-toggle">`를 기본으로 추가한다.
 
 ## 스타일 기준
 
@@ -95,7 +95,7 @@
 
 ## 원본 토글
 
-- 사용자가 원문 확인을 원하면 글 상단, hero 아래에 `<details class="source-toggle">`를 추가한다.
+- HTML 생성 시 글 상단, hero 아래에 `<details class="source-toggle">`를 기본으로 추가한다.
 - 첫 번째 원본 토글 제목은 사용자가 별도 지정하지 않으면 `gpt가 디자인 하기 전 원본`을 사용한다.
 <<<<<<< HEAD
 - 추가 학습 메모나 부록은 원본 토글 아래에 별도 토글로 추가한다.
