@@ -1,4 +1,4 @@
-/* Blog design version: v1.1 */
+/* Blog design version: v1.2 */
 .tech-post {
   --bg: #ffffff;
   --text: #1f2937;
@@ -463,8 +463,22 @@
   border-bottom: 0;
 }
 
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
 @media (max-width: 720px) {
   .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
     padding: 26px 14px 60px;
   }
 

@@ -1,0 +1,797 @@
+﻿<style>
+  .tech-post {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --card: rgba(255, 255, 255, 0.94);
+    --accent: #19b97c;
+    --accent-dark: #119164;
+    --aurora-green: rgba(120, 255, 196, 0.24);
+    --aurora-green-soft: rgba(82, 255, 173, 0.14);
+    --aurora-blue: rgba(130, 210, 255, 0.13);
+    --aurora-purple: rgba(186, 156, 255, 0.12);
+    --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 18px 80px;
+    color: var(--text);
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    line-height: 1.72;
+    word-break: keep-all;
+  }
+
+  .tech-post * {
+    box-sizing: border-box;
+  }
+
+  .post-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 38px 28px;
+    border: 1px solid rgba(25, 185, 124, 0.12);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+      radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+      radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+      linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .post-hero::after {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background:
+      radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+      radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+    filter: blur(18px);
+    pointer-events: none;
+  }
+
+  .post-hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .post-kicker {
+    display: inline-block;
+    margin: 0 0 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.08);
+    color: var(--accent-dark);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .post-title {
+    margin: 0;
+    color: #111827;
+    font-size: 34px;
+    line-height: 1.28;
+    letter-spacing: -0.02em;
+  }
+
+  .post-subtitle {
+    max-width: 680px;
+    margin: 16px 0 0;
+    color: #475569;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .post-section {
+    margin-top: 52px;
+    scroll-margin-top: 22px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 18px;
+    color: #111827;
+    font-size: 27px;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title::before {
+    content: "";
+    width: 8px;
+    height: 28px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #83ffc0, #19b97c);
+    box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+    flex-shrink: 0;
+  }
+
+  .post-card {
+    margin: 18px 0;
+    padding: 24px 22px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+      radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .card-title,
+  .post-card h3 {
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .tech-post p {
+    margin: 10px 0;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .tech-post p code,
+  .tech-post li code,
+  .post-note code {
+    display: inline-block;
+    padding: 0.08em 0.38em;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #1f2937;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 0.92em;
+    font-weight: 600;
+    line-height: 1.55;
+    vertical-align: baseline;
+  }
+
+  .post-card ul {
+    margin: 12px 0 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .post-card li {
+    position: relative;
+    margin: 8px 0;
+    padding-left: 18px;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .post-card li::before {
+    content: "";
+    position: absolute;
+    top: 0.72em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .post-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 12px 0;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 14px;
+    background: #fff;
+  }
+
+  .post-note {
+    margin: 18px 0;
+    padding: 18px 20px;
+    border-left: 4px solid var(--accent);
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+    color: #334155;
+  }
+
+  .source-toggle {
+    margin: 18px 0 0;
+    padding: 16px 18px;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+      radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  }
+
+  .source-toggle summary {
+    cursor: pointer;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .source-box {
+    overflow-x: auto;
+    margin: 14px 0 0;
+    padding: 16px 18px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 16px;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .source-box code {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  .post-toc {
+    margin-top: 24px;
+    padding: 22px 22px 20px;
+    border: 1px solid rgba(25, 185, 124, 0.14);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+      radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  }
+
+  .toc-title {
+    display: block;
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc-list li {
+    display: flex;
+    min-width: 0;
+  }
+
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 7px 10px;
+    border: 1px solid rgba(25, 185, 124, 0.16);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.72);
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .toc-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(25, 185, 124, 0.09);
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .post-divider {
+    height: 1px;
+    margin: 38px auto 0;
+    border: 0;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+  }
+
+  @media (min-width: 1024px) {
+    .tech-post {
+      width: min(760px, calc(100vw - 420px));
+      max-width: none;
+      min-width: 620px;
+      margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+      margin-right: 0;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .tech-post {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 26px 14px 60px;
+    }
+
+    .post-hero {
+      padding: 28px 20px;
+      border-radius: 22px;
+    }
+
+    .post-title {
+      font-size: 28px;
+    }
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<article class="tech-post">
+  <header class="post-hero">
+    <div class="post-hero-inner">
+      <p class="post-kicker">Network / OSI 1~3 Layer / Study Log</p>
+      <h1 class="post-title">OSI 7계층 - 1~3계층 개념 보강 정리</h1>
+      <p class="post-subtitle">기존에 알고 있던 네트워크 지식에서 헷갈렸던 프레임, 라우팅, ARP, NAT, IPv6, IPsec 개념을 보강한 기록</p>
+    </div>
+  </header>
+
+  <details class="source-toggle">
+    <summary>gpt가 디자인 하기 전 원본</summary>
+    <pre class="source-box"><code># OSI 7계층 - 1~3계층 개념 보강 정리
+이번에는 기존에 대략적으로 알던 OSI 7계층중 1~3 계층의 구조와 동작 방식, 관련 지식을 더 구체적으로 알아보았습니다.
+
+&gt; 이 글은 OSI 1~3계층을 처음부터 균등하게 정리한 글이라기보다는, 기존에 알고 있던 네트워크 지식에서 부족하거나 헷갈렸던 부분을 보강하며 정리한 학습 기록입니다. 그래서 프레임 구조, 라우팅, ARP, NAT, IPv6, IPsec처럼 이번에 더 확인이 필요했던 개념에 설명이 집중되어 있습니다.
+
+## 1계층 - 물리 계층
+우선 1계층의 정식 명칭은 **물리 계층**입니다. 여기에는 대체로 프로토콜같은 논리적인 작업보다는 주파수, 전파, 케이블 등과 같은 신호를 전달하는 방식에 대한 영역입니다.
+
+주로 0과 1을 통해 데이터를 보내어주는 영역입니다. 
+
+주로 구리선, 광 케이블, 전파와 주파수를 통해 신호의 전달 매체의 역할을 합니다.
+
+개발자로써 이부분은 알면 좋지만 집중적으로 다루게 될 요소는 아닙니다.
+
+## 2계층 - 데이터 링크 계층
+2계층 부터 본격적으로 데이터의 형태가 결정되게 됩니다. 2계층의 구성 요소를 먼저 펼쳐보면
+
+#### 장비
+- L2스위치
+- LAN카드
+- 브릿지
+
+#### 단위
+- MAC
+- 프레임
+
+#### 규격
+- Ethernet (II)
+- IEEE 802.3 (유선 근거리 통신망)
+- CSMA/CD
+- Token Ring
+- IEEE 802.11 (무선 근거리 통신망 - WLAN)
+- CSMA/CA
+- PPP, HDLC, VLAN 등
+
+#### 교환 방식
+- 회선교환
+- 축적교환
+    - 메시지 교환
+    - 패킷교환
+        - 데이터그램
+        - 가상회선
+
+---
+
+### 프레임의 형태
+
+위 내용들은 대부분 각각의 개념으로 따로 존재하는 것이 아닌 다른 계층과 동일하게 유기적으로 연결되어서 사용됩니다.
+
+따라서 네트워크 공부를 할 경우에는 하나하나의 기술과 원리는 아는 것도 중요하지만 한번에 전체의 흐름을 파악하는 것이 더 중요하다 판단하였습니다.
+
+우선 먼저 알면 좋은 것은 프레임의 형태입니다.
+
+프레임은 일반적으로 아래와 같이 생겼습니다. (Ethernet II/IEEE 802.3 기준입니다. WiFi, PPP 등의 경우에는 규격에 맞는 프레임의 형태를 가지게 됩니다.)
+
+![alt text](image-1.png)
+
+이때 맨 앞부분의 8Byte는 일반적으로 프레임으로 치지 않고, 프레임을 전달하는 장치가 `idle` 상태일 때 받기 시작하며 저것을 신호로 이후 데이터를 하나의 프레임으로 인식하게 됩니다.
+
+송수신 MAC의 경우에는 매 홉마다 이동하며 갱신되게 되며 매 라우터 또는 장비가 해당 겉부분 (`payload`를 제외한 부분)을 걷어내고, 새로운 MAC송수신지, 기존의 `Length/Type`를 사용하게 됩니다.
+
+`Length/Type`의 경우에는 햇갈릴 수 있는 부분입니다.
+- 1500 이하의 경우: 데이터의 길이를 뜻합니다. Ethernet II에서는 해당 구간에 `Length`를 대부분 사용하지 않습니다. IEEE 802.3 방식에서 많이 쓰이는 방식입니다.
+- 1536 이상의 경우: 뒤에 오는 `Payload`의 타입을 알려주는 코드입니다. 여기에서 `Type`는 `ARP`, `IPv4`, `ICMP` 등이 될 수 있습니다.
+
+`FCS`의 경우에는 `CRC` 방식을 통해 프레임의 앞부분을 특수한 연산을 통해 제작하게 되는데 송/수신지에서 각각 계산을 하여 이것이 달라졌다면 데이터의 무결성에 문제가 생겼다 판단하여 데이터를 폐기하게 됩니다. 이론상 손상이 있어도 결과값이 같을 수 있지만 이것은 대부분 무시할 수준입니다.
+
+### 장비
+2계층에는 대체로 프레임을 전달해주는 장치가 존재합니다.
+
+비교 대상으로 **허브**를 먼저 보면, 허브는 1계층 장비로 여러개의 포트(구멍)가 존재하여 한쪽에서 들어온 신호를 전체로 뿌리게 됩니다. 하지만 이 방식은 충돌이 일어날 확률이 커 스위치가 더 효율적인 작업이 가능합니다.
+
+**스위치**는 허브에서 발전된 형태로 MAC 테이블을 기반으로 `포트:MAC`를 매칭시켜서 캐싱하는 기능이 있으며 이덕분에 들어온 프레임의 수신 MAC를 알고있다면 즉시 보내주게 됩니다.
+
+&gt; `MAC`는 각각의 NIC(네트워크 인터페이스 카드)에 존재하는 식별 번호로 이는 라우터, 컴퓨터의 NIC 칩, 각종 네트워크 장치에 고유한 6바이트 번호가 매겨져 있습니다. LAN카드는 물리적인 장치로, 외부에서 들어오는 신호를 전기적 신호로 바꿔줍니다. (IP주소 등은 OS가 담당합니다.)
+
+스위치는 경우에 따라 포트들을 그룹으로 묶어 복수의 VLAN을 만들어 같은 VLAN끼리만 브로드캐스트, 직접 연결이 가능하게 해줍니다. 
+
+이외에도 **브릿지**라는 다른 LAN 범위를 라우팅 없이 통신 가능하게 이어주는 장치 또한 존재합니다.
+
+## 3계층 - 네트워크 계층 (IP)
+여기서부터가 정말 중요한 개념이 등장하기 시작합니다. 물론 1, 2계층 또한 중요한 개념이자 문제 해결을 위해서 알아야할 지식이지만 IP의 경우에는 논리적인 네트워크 구성에서 가장 많이, 기초적으로 등장하는 개념이기 때문에 필수적으로, 구체적으로 아는 것이 좋습니다.
+
+우선 IP를 정의하면 **장치의 논리적인 주소**를 말하는 단어입니다.
+
+일반적으로 4바이트와 서브넷 마스크를 사용하는 IPv4를 말하며 최근에는 IPv4의 고갈에 의한 16바이트 크기의 IPv6가 점점 도입되는 추세입니다. 
+
+먼저 IP 계층의 개념들에 대해 이야기 해보자면
+
+#### 기본
+- IPv4
+- IPv6
+- 패킷
+
+#### 장비
+- 라우터
+- L3스위치
+- 게이트웨이
+- 방화벽
+- 라우팅 테이블
+
+#### 프로토콜
+- OSPF
+- IS-IS
+- RIP
+- BGP
+- ARP
+- NDP
+- ICMP
+- IGMP
+
+#### 기술
+- NAT (PAT)
+- VPN
+- Tunneling
+- IPsec
+- L3방화벽
+
+---
+
+&gt; 네트워크 계층에는 포트의 개념이 없습니다! 저는 3계층과 4계층의 정확한 구분이 되어있지 않아서 네트워크 계층에도 포트의 개념이 있는줄 알았습니다.
+
+### 데이터의 형태 - PDU
+
+이야기를 시작해보자면, 우선 **네트워크 계층**에서의 PDU(Protocol Data Unit)는 `패킷`이라는 명칭을 가지게 됩니다.
+
+IPv4의 패킷은 아래와 같이 생겼습니다.
+
+![alt text](image-2.png)
+
+햇갈릴만한 부분만 정리를 해보면
+- `Version`: IPv4의 4가 들어갑니다.
+- `IHL`: 헤더의 길이입니다.
+- `Total Length`: 전체 패킷 길이입니다.
+- `Identification`: 하나의 패킷이 조각화 되었을 때 같은 원천인 것을 나타내기 위한 식별자입니다.
+- `DSCP`: QoS 우선순의를 의미합니다. 사용자가 조작해도 기업 등에서 방어가 가능합니다.
+- `ECN`: 혼잡 알림용 비트입니다.
+- `Flags`: 3bit 짜리 조각화 알림용 비트입니다.
+    - `Reserved`: 항상 0인 기본값입니다.
+    - `DF`: `Don't Fragment`라는 의미의 더이상 조각하지 말라는 의미입니다. 조각화가 필요한 경우에는 `ICMP Type 3 Code 4 (Fragmentation Required)` 메시지를 반환합니다.
+    - `MF`: `More Fragments`라는 의미의 같은 패킷의 조각들이 계속 가고있다는 의미입니다.
+- `TTL`: 더 이동할 수 있는 홉 개수입니다. 라우터, 게이트웨이, L3 스위치 등이 포함됩니다.
+- `Fragment Offset`: 현재 패킷의 원래 위치를 알려줍니다. 앞선 패킷들 크기 (보통 1480) `/ 8`을 통해 계산합니다. 
+- `Options/Padding`: 추가 필드에 쓰입니다. 옵션 필드의 길이가 4바이트 단위로 맞지 않는 경우 Padding으로 채웁니다.
+
+### 통신 방식
+IP계층의 통신은 대부분 라우터를 통해 이루어집니다.
+
+자신 주변의 라우터와 통신을 통해 연결되어있는 상태를 저장 및 주위 라우터와 공유하고, 그 정보들을 토대로 라우터 지도(Map)를 만들게 됩니다.
+
+이렇게 하여 각각의 라우터에는 **라우팅 테이블**이라는 A라우터에 가는 경우 어느 라우터로 보내야 하는지를 논리적으로 알게 됩니다.
+
+#### 라우팅
+이를 통해서 예를 들어 `호스트A(192.168.10.10)`에서 `서버A(10.0.0.2)`로 가기 위해 `호스트A`의 게이트웨이인 `라우터A(211.100.10.0)`으로 보낼 때, `라우터A`는 자신의 라우팅 테이블에서 `10.0.0.2`로 가기 위한 다음 라우터의 주소를 찾아 그 경로인 `라우터B`로 데이터를 보내게 됩니다. (참고로 이 과정에서 프레임의 껍데기가 교체됩니다. 네트워크의 개념은 모두 유기적으로 연결됩니다.) 이런 과정은 `라우터A`뿐 아니라 `호스트A`, `라우터B` 등 경로의 모든 라우팅 장치가 반복하게 되어 `서버A`에 도착하게 됩니다.
+
+#### ARP
+앞선 과정에서 `호스트 -&gt; 라우터`, `라우터 -&gt; 라우터`, `라우터 -&gt; 서버` 로 가는 과정중 프레임의 껍데기가 교체된다 하였는데요, 이때 새로운 껍데기를 만들기 위해선 다음 장치의 MAC주소를 알아야합니다. 이렇게 다음 장치의 MAC 주소를 알기 위해 사용되는 프로토콜이 **ARP**(Address Resolution Protocol) 프로토콜입니다. IP는 아는데 MAC를 모르는 경우, `ARP Request`라는 브로드 캐스트를 보내게 됩니다. 이때 프레임의 수신지 MAC주소에는 `FF:FF:FF:FF:FF:FF`이 들어가며 `ARP Response`로 자신의 MAC로 다시 응답이 돌아오게 됩니다. 이것을 받은 장치는 자신의 ARP 테이블에 해당 정보를 고이 모셔두게 됩니다.
+
+#### NAT
+IP계층의 초반에 설명하였듯, IPv4는 고갈상태입니다. 이를 막는 방법중 하나로 현재 사설IP/공용IP를 나누는 방식을 사용하고 있습니다.
+
+공용 IP는 인터넷에서 직접 라우팅될 수 있는 고유한 주소입니다.
+
+이후 공용 IP를 부여받은 라우터 등은 내부의 호스트들에게 사설 IP와 서브넷 마스크를 이용하여 장치들의 주소를 부여합니다. 이를 통해 내부의 여러 호스트가 하나의 공인 IP를 공유하게 하여 실질 IP의 고갈을 늦추는 방식입니다.
+
+이때, 사설IP와 공인IP를 게이트웨이(라우터)에서 변환해주는 과정을 **NAT**라고 하며 여기에 TCP/UDP의 포트라는 개념이 추가되면 **PAT**가 되는 것입니다. 일반적인 가정/회사 환경의 인터넷 공유는 여러 내부 호스트를 하나의 공인 IP로 구분해야 하므로 PAT 방식이 많이 쓰입니다. 해당 용어는 4계층에서 더 자세히 다루겠습니다. (향후)
+
+### IPv6
+&gt; 이미 세상에는 IPv4가 먼저 쓰였기 때문에 현재는 일부 장치는 IPv6를 지원하고, 일부는 지원하지 않습니다. 때문에 현재는 주류로 쓰이지 않기도 하지만 앞으로 더 많이 쓰이게 될 것으로 보이기 때문에 해당 지식을 아는 것은 매우 중요하다 생각합니다.
+
+일단 IPv6의 패킷의 모습을 보겠습니다.
+
+![alt text](image-4.png)
+
+보이는 바와 같이 기존에 길던 IPv4의 헤더 크기에 비해 IPv6는 헤더의 길이가 40Byte로 고정되어있으며 이는 필요에 의해 `Next Header`을 통해 블록처럼 추가되는 형태를 가졌습니다.
+
+위의 모습은 기본 헤더의 경우이고, 확장 헤더로
+- 홉별 옵션: 모든 라우터가 검사하는 옵션
+- 목적지 옵션: 지정된 라우터가 처리할 옵션
+- 단편화: 패킷 조각화/결합에 쓰이는 정보
+- `AH`(Authentication Header): 인증 및 무결성에 사용 (현재 많이 안쓰임)
+- `ESP`(Encapsulating Security Protocol): 인증, 무결성, 암호화까지 지원하는 기능입니다.
+
+등이 존재합니다.
+
+### IPsec
+IPsec은 IPv6와 함께 자주 언급되는 보안 기술입니다. IPv6뿐 아니라 IPv4에서도 사용할 수 있습니다.
+
+#### ESP
+기존의 IPv6의 프레임 형태는
+`[프레임 헤더(MAC)] [IP 패킷 헤더(IP)] [페이로드] [트레일러]` 형태였습니다.
+
+하지만 경우에 따라 보안을 위해 통신 경로를 안전한 경로로 선택하거나 암호화 등을 해야하는 경우가 있습니다.
+
+여기에서 **터널링**(VPN)과 암호화 기능이 필요했습니다.
+
+터널링은 기존의 패킷을 하나의 가상 경로로 덮어씌워서 
+
+`[프레임 헤더(MAC)] [VPN헤더] [페이로드([IP 패킷 헤더(IP)] [페이로드]) [트레일러]` 형태로 바꾸는 것입니다.
+
+이때 IPsec의 경우에는 더욱 안전한 보안을 위해
+
+`[MAC 헤더] [새 IP 헤더] [ESP 헤더] [ 원본 IP 헤더 | 원래 데이터 ] [ESP 트레일러] [ESP 인증 데이터]` 와 같은 형태로 데이터를 싸서 보내는 것입니다.
+
+이를 통해 
+- 보안: 원본 헤더부터 ESP트레일러까지 암호화 되어 탈취당하여도 볼 수 없습니다.
+- VPN: 터널링을 통해 외부에서 바로 해킹을 시도하지 못하고 회사의 공인 IP를 숨기며 VPN 서버만을 보여주며 회사 내부의 네트워크를 숨길 수 있습니다.
+
+&gt; 참고로 IKE라는 작업을 통해 암호화/인증 방식을 서로 협상하여 결정하게 됩니다.</code></pre>
+  </details>
+
+  <nav class="post-toc" aria-label="목차">
+    <h2 class="toc-title">목차</h2>
+    <ul class="toc-list">
+      <li><a href="#section-01"><span class="toc-index">01</span><span>학습 취지</span></a></li>
+      <li><a href="#section-02"><span class="toc-index">02</span><span>1계층 - 물리 계층</span></a></li>
+      <li><a href="#section-03"><span class="toc-index">03</span><span>2계층 구성 요소</span></a></li>
+      <li><a href="#section-04"><span class="toc-index">04</span><span>프레임의 형태</span></a></li>
+      <li><a href="#section-05"><span class="toc-index">05</span><span>2계층 장비</span></a></li>
+      <li><a href="#section-06"><span class="toc-index">06</span><span>3계층 - 네트워크 계층</span></a></li>
+      <li><a href="#section-07"><span class="toc-index">07</span><span>데이터의 형태 - PDU</span></a></li>
+      <li><a href="#section-08"><span class="toc-index">08</span><span>통신 방식</span></a></li>
+      <li><a href="#section-09"><span class="toc-index">09</span><span>IPv6</span></a></li>
+      <li><a href="#section-10"><span class="toc-index">10</span><span>IPsec</span></a></li>
+    </ul>
+  </nav>
+
+  <section class="post-section" id="section-01">
+    <h2 class="section-title">학습 취지</h2>
+    <div class="post-card stack">
+      <p>이번에는 기존에 대략적으로 알던 OSI 7계층중 1~3 계층의 구조와 동작 방식, 관련 지식을 더 구체적으로 알아보았습니다.</p>
+      <div class="post-note">이 글은 OSI 1~3계층을 처음부터 균등하게 정리한 글이라기보다는, 기존에 알고 있던 네트워크 지식에서 부족하거나 헷갈렸던 부분을 보강하며 정리한 학습 기록입니다. 그래서 프레임 구조, 라우팅, ARP, NAT, IPv6, IPsec처럼 이번에 더 확인이 필요했던 개념에 설명이 집중되어 있습니다.</div>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-02">
+    <h2 class="section-title">1계층 - 물리 계층</h2>
+    <div class="post-card stack">
+      <p>우선 1계층의 정식 명칭은 <strong>물리 계층</strong>입니다. 여기에는 대체로 프로토콜같은 논리적인 작업보다는 주파수, 전파, 케이블 등과 같은 신호를 전달하는 방식에 대한 영역입니다.</p>
+      <p>주로 0과 1을 통해 데이터를 보내어주는 영역입니다.</p>
+      <p>주로 구리선, 광 케이블, 전파와 주파수를 통해 신호의 전달 매체의 역할을 합니다.</p>
+      <p>개발자로써 이부분은 알면 좋지만 집중적으로 다루게 될 요소는 아닙니다.</p>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-03">
+    <h2 class="section-title">2계층 구성 요소</h2>
+    <div class="post-card stack">
+      <p>2계층 부터 본격적으로 데이터의 형태가 결정되게 됩니다. 2계층의 구성 요소를 먼저 펼쳐보면</p>
+      <h3>장비</h3>
+      <ul>
+        <li>L2스위치</li>
+        <li>LAN카드</li>
+        <li>브릿지</li>
+      </ul>
+      <h3>단위</h3>
+      <ul>
+        <li>MAC</li>
+        <li>프레임</li>
+      </ul>
+      <h3>규격</h3>
+      <ul>
+        <li>Ethernet (II)</li>
+        <li>IEEE 802.3 (유선 근거리 통신망)</li>
+        <li>CSMA/CD</li>
+        <li>Token Ring</li>
+        <li>IEEE 802.11 (무선 근거리 통신망 - WLAN)</li>
+        <li>CSMA/CA</li>
+        <li>PPP, HDLC, VLAN 등</li>
+      </ul>
+      <h3>교환 방식</h3>
+      <ul>
+        <li>회선교환</li>
+        <li>축적교환</li>
+        <li>메시지 교환</li>
+        <li>패킷교환</li>
+        <li>데이터그램</li>
+        <li>가상회선</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-04">
+    <h2 class="section-title">프레임의 형태</h2>
+    <div class="post-card stack">
+      <p>위 내용들은 대부분 각각의 개념으로 따로 존재하는 것이 아닌 다른 계층과 동일하게 유기적으로 연결되어서 사용됩니다.</p>
+      <p>따라서 네트워크 공부를 할 경우에는 하나하나의 기술과 원리는 아는 것도 중요하지만 한번에 전체의 흐름을 파악하는 것이 더 중요하다 판단하였습니다.</p>
+      <p>우선 먼저 알면 좋은 것은 프레임의 형태입니다.</p>
+      <p>프레임은 일반적으로 아래와 같이 생겼습니다. (Ethernet II/IEEE 802.3 기준입니다. WiFi, PPP 등의 경우에는 규격에 맞는 프레임의 형태를 가지게 됩니다.)</p>
+      <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/8b3fe0a9a5c3a08c342d0cc4e34c87e0e4980a76/workspace/personal/cs_learning/image-1.png" alt="Ethernet 프레임 구조">
+      <p>이때 맨 앞부분의 8Byte는 일반적으로 프레임으로 치지 않고, 프레임을 전달하는 장치가 <code>idle</code> 상태일 때 받기 시작하며 저것을 신호로 이후 데이터를 하나의 프레임으로 인식하게 됩니다.</p>
+      <p>송수신 MAC의 경우에는 매 홉마다 이동하며 갱신되게 되며 매 라우터 또는 장비가 해당 겉부분 (<code>payload</code>를 제외한 부분)을 걷어내고, 새로운 MAC송수신지, 기존의 <code>Length/Type</code>를 사용하게 됩니다.</p>
+      <p><code>Length/Type</code>의 경우에는 햇갈릴 수 있는 부분입니다.</p>
+      <ul>
+        <li>1500 이하의 경우: 데이터의 길이를 뜻합니다. Ethernet II에서는 해당 구간에 <code>Length</code>를 대부분 사용하지 않습니다. IEEE 802.3 방식에서 많이 쓰이는 방식입니다.</li>
+        <li>1536 이상의 경우: 뒤에 오는 <code>Payload</code>의 타입을 알려주는 코드입니다. 여기에서 <code>Type</code>는 <code>ARP</code>, <code>IPv4</code>, <code>ICMP</code> 등이 될 수 있습니다.</li>
+      </ul>
+      <p><code>FCS</code>의 경우에는 <code>CRC</code> 방식을 통해 프레임의 앞부분을 특수한 연산을 통해 제작하게 되는데 송/수신지에서 각각 계산을 하여 이것이 달라졌다면 데이터의 무결성에 문제가 생겼다 판단하여 데이터를 폐기하게 됩니다. 이론상 손상이 있어도 결과값이 같을 수 있지만 이것은 대부분 무시할 수준입니다.</p>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-05">
+    <h2 class="section-title">2계층 장비</h2>
+    <div class="post-card stack">
+      <p>2계층에는 대체로 프레임을 전달해주는 장치가 존재합니다.</p>
+      <p>비교 대상으로 <strong>허브</strong>를 먼저 보면, 허브는 1계층 장비로 여러개의 포트(구멍)가 존재하여 한쪽에서 들어온 신호를 전체로 뿌리게 됩니다. 하지만 이 방식은 충돌이 일어날 확률이 커 스위치가 더 효율적인 작업이 가능합니다.</p>
+      <p><strong>스위치</strong>는 허브에서 발전된 형태로 MAC 테이블을 기반으로 <code>포트:MAC</code>를 매칭시켜서 캐싱하는 기능이 있으며 이덕분에 들어온 프레임의 수신 MAC를 알고있다면 즉시 보내주게 됩니다.</p>
+      <div class="post-note"><code>MAC</code>는 각각의 NIC(네트워크 인터페이스 카드)에 존재하는 식별 번호로 이는 라우터, 컴퓨터의 NIC 칩, 각종 네트워크 장치에 고유한 6바이트 번호가 매겨져 있습니다. LAN카드는 물리적인 장치로, 외부에서 들어오는 신호를 전기적 신호로 바꿔줍니다. (IP주소 등은 OS가 담당합니다.)</div>
+      <p>스위치는 경우에 따라 포트들을 그룹으로 묶어 복수의 VLAN을 만들어 같은 VLAN끼리만 브로드캐스트, 직접 연결이 가능하게 해줍니다.</p>
+      <p>이외에도 <strong>브릿지</strong>라는 다른 LAN 범위를 라우팅 없이 통신 가능하게 이어주는 장치 또한 존재합니다.</p>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-06">
+    <h2 class="section-title">3계층 - 네트워크 계층 (IP)</h2>
+    <div class="post-card stack">
+      <p>여기서부터가 정말 중요한 개념이 등장하기 시작합니다. 물론 1, 2계층 또한 중요한 개념이자 문제 해결을 위해서 알아야할 지식이지만 IP의 경우에는 논리적인 네트워크 구성에서 가장 많이, 기초적으로 등장하는 개념이기 때문에 필수적으로, 구체적으로 아는 것이 좋습니다.</p>
+      <p>우선 IP를 정의하면 <strong>장치의 논리적인 주소</strong>를 말하는 단어입니다.</p>
+      <p>일반적으로 4바이트와 서브넷 마스크를 사용하는 IPv4를 말하며 최근에는 IPv4의 고갈에 의한 16바이트 크기의 IPv6가 점점 도입되는 추세입니다.</p>
+      <p>먼저 IP 계층의 개념들에 대해 이야기 해보자면</p>
+      <h3>기본</h3>
+      <ul>
+        <li>IPv4</li>
+        <li>IPv6</li>
+        <li>패킷</li>
+      </ul>
+      <h3>장비</h3>
+      <ul>
+        <li>라우터</li>
+        <li>L3스위치</li>
+        <li>게이트웨이</li>
+        <li>방화벽</li>
+        <li>라우팅 테이블</li>
+      </ul>
+      <h3>프로토콜</h3>
+      <ul>
+        <li>OSPF</li>
+        <li>IS-IS</li>
+        <li>RIP</li>
+        <li>BGP</li>
+        <li>ARP</li>
+        <li>NDP</li>
+        <li>ICMP</li>
+        <li>IGMP</li>
+      </ul>
+      <h3>기술</h3>
+      <ul>
+        <li>NAT (PAT)</li>
+        <li>VPN</li>
+        <li>Tunneling</li>
+        <li>IPsec</li>
+        <li>L3방화벽</li>
+      </ul>
+      <div class="post-note">네트워크 계층에는 포트의 개념이 없습니다! 저는 3계층과 4계층의 정확한 구분이 되어있지 않아서 네트워크 계층에도 포트의 개념이 있는줄 알았습니다.</div>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-07">
+    <h2 class="section-title">데이터의 형태 - PDU</h2>
+    <div class="post-card stack">
+      <p>이야기를 시작해보자면, 우선 <strong>네트워크 계층</strong>에서의 PDU(Protocol Data Unit)는 <code>패킷</code>이라는 명칭을 가지게 됩니다.</p>
+      <p>IPv4의 패킷은 아래와 같이 생겼습니다.</p>
+      <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/8b3fe0a9a5c3a08c342d0cc4e34c87e0e4980a76/workspace/personal/cs_learning/image-2.png" alt="IPv4 패킷 구조">
+      <p>햇갈릴만한 부분만 정리를 해보면</p>
+      <ul>
+        <li><code>Version</code>: IPv4의 4가 들어갑니다.</li>
+        <li><code>IHL</code>: 헤더의 길이입니다.</li>
+        <li><code>Total Length</code>: 전체 패킷 길이입니다.</li>
+        <li><code>Identification</code>: 하나의 패킷이 조각화 되었을 때 같은 원천인 것을 나타내기 위한 식별자입니다.</li>
+        <li><code>DSCP</code>: QoS 우선순의를 의미합니다. 사용자가 조작해도 기업 등에서 방어가 가능합니다.</li>
+        <li><code>ECN</code>: 혼잡 알림용 비트입니다.</li>
+        <li><code>Flags</code>: 3bit 짜리 조각화 알림용 비트입니다.</li>
+        <li><code>Reserved</code>: 항상 0인 기본값입니다.</li>
+        <li><code>DF</code>: <code>Don't Fragment</code>라는 의미의 더이상 조각하지 말라는 의미입니다. 조각화가 필요한 경우에는 <code>ICMP Type 3 Code 4 (Fragmentation Required)</code> 메시지를 반환합니다.</li>
+        <li><code>MF</code>: <code>More Fragments</code>라는 의미의 같은 패킷의 조각들이 계속 가고있다는 의미입니다.</li>
+        <li><code>TTL</code>: 더 이동할 수 있는 홉 개수입니다. 라우터, 게이트웨이, L3 스위치 등이 포함됩니다.</li>
+        <li><code>Fragment Offset</code>: 현재 패킷의 원래 위치를 알려줍니다. 앞선 패킷들 크기 (보통 1480) <code>/ 8</code>을 통해 계산합니다.</li>
+        <li><code>Options/Padding</code>: 추가 필드에 쓰입니다. 옵션 필드의 길이가 4바이트 단위로 맞지 않는 경우 Padding으로 채웁니다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-08">
+    <h2 class="section-title">통신 방식</h2>
+    <div class="post-card stack">
+      <p>IP계층의 통신은 대부분 라우터를 통해 이루어집니다.</p>
+      <p>자신 주변의 라우터와 통신을 통해 연결되어있는 상태를 저장 및 주위 라우터와 공유하고, 그 정보들을 토대로 라우터 지도(Map)를 만들게 됩니다.</p>
+      <p>이렇게 하여 각각의 라우터에는 <strong>라우팅 테이블</strong>이라는 A라우터에 가는 경우 어느 라우터로 보내야 하는지를 논리적으로 알게 됩니다.</p>
+      <h3>라우팅</h3>
+      <p>이를 통해서 예를 들어 <code>호스트A(192.168.10.10)</code>에서 <code>서버A(10.0.0.2)</code>로 가기 위해 <code>호스트A</code>의 게이트웨이인 <code>라우터A(211.100.10.0)</code>으로 보낼 때, <code>라우터A</code>는 자신의 라우팅 테이블에서 <code>10.0.0.2</code>로 가기 위한 다음 라우터의 주소를 찾아 그 경로인 <code>라우터B</code>로 데이터를 보내게 됩니다. (참고로 이 과정에서 프레임의 껍데기가 교체됩니다. 네트워크의 개념은 모두 유기적으로 연결됩니다.) 이런 과정은 <code>라우터A</code>뿐 아니라 <code>호스트A</code>, <code>라우터B</code> 등 경로의 모든 라우팅 장치가 반복하게 되어 <code>서버A</code>에 도착하게 됩니다.</p>
+      <h3>ARP</h3>
+      <p>앞선 과정에서 <code>호스트 -&gt; 라우터</code>, <code>라우터 -&gt; 라우터</code>, <code>라우터 -&gt; 서버</code> 로 가는 과정중 프레임의 껍데기가 교체된다 하였는데요, 이때 새로운 껍데기를 만들기 위해선 다음 장치의 MAC주소를 알아야합니다. 이렇게 다음 장치의 MAC 주소를 알기 위해 사용되는 프로토콜이 <strong>ARP</strong>(Address Resolution Protocol) 프로토콜입니다. IP는 아는데 MAC를 모르는 경우, <code>ARP Request</code>라는 브로드 캐스트를 보내게 됩니다. 이때 프레임의 수신지 MAC주소에는 <code>FF:FF:FF:FF:FF:FF</code>이 들어가며 <code>ARP Response</code>로 자신의 MAC로 다시 응답이 돌아오게 됩니다. 이것을 받은 장치는 자신의 ARP 테이블에 해당 정보를 고이 모셔두게 됩니다.</p>
+      <h3>NAT</h3>
+      <p>IP계층의 초반에 설명하였듯, IPv4는 고갈상태입니다. 이를 막는 방법중 하나로 현재 사설IP/공용IP를 나누는 방식을 사용하고 있습니다.</p>
+      <p>공용 IP는 인터넷에서 직접 라우팅될 수 있는 고유한 주소입니다.</p>
+      <p>이후 공용 IP를 부여받은 라우터 등은 내부의 호스트들에게 사설 IP와 서브넷 마스크를 이용하여 장치들의 주소를 부여합니다. 이를 통해 내부의 여러 호스트가 하나의 공인 IP를 공유하게 하여 실질 IP의 고갈을 늦추는 방식입니다.</p>
+      <p>이때, 사설IP와 공인IP를 게이트웨이(라우터)에서 변환해주는 과정을 <strong>NAT</strong>라고 하며 여기에 TCP/UDP의 포트라는 개념이 추가되면 <strong>PAT</strong>가 되는 것입니다. 일반적인 가정/회사 환경의 인터넷 공유는 여러 내부 호스트를 하나의 공인 IP로 구분해야 하므로 PAT 방식이 많이 쓰입니다. 해당 용어는 4계층에서 더 자세히 다루겠습니다. (향후)</p>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-09">
+    <h2 class="section-title">IPv6</h2>
+    <div class="post-card stack">
+      <div class="post-note">이미 세상에는 IPv4가 먼저 쓰였기 때문에 현재는 일부 장치는 IPv6를 지원하고, 일부는 지원하지 않습니다. 때문에 현재는 주류로 쓰이지 않기도 하지만 앞으로 더 많이 쓰이게 될 것으로 보이기 때문에 해당 지식을 아는 것은 매우 중요하다 생각합니다.</div>
+      <p>일단 IPv6의 패킷의 모습을 보겠습니다.</p>
+      <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/8b3fe0a9a5c3a08c342d0cc4e34c87e0e4980a76/workspace/personal/cs_learning/image-4.png" alt="IPv6 패킷 구조">
+      <p>보이는 바와 같이 기존에 길던 IPv4의 헤더 크기에 비해 IPv6는 헤더의 길이가 40Byte로 고정되어있으며 이는 필요에 의해 <code>Next Header</code>을 통해 블록처럼 추가되는 형태를 가졌습니다.</p>
+      <p>위의 모습은 기본 헤더의 경우이고, 확장 헤더로</p>
+      <ul>
+        <li>홉별 옵션: 모든 라우터가 검사하는 옵션</li>
+        <li>목적지 옵션: 지정된 라우터가 처리할 옵션</li>
+        <li>단편화: 패킷 조각화/결합에 쓰이는 정보</li>
+        <li><code>AH</code>(Authentication Header): 인증 및 무결성에 사용 (현재 많이 안쓰임)</li>
+        <li><code>ESP</code>(Encapsulating Security Protocol): 인증, 무결성, 암호화까지 지원하는 기능입니다.</li>
+      </ul>
+      <p>등이 존재합니다.</p>
+    </div>
+  </section>
+
+  <section class="post-section" id="section-10">
+    <h2 class="section-title">IPsec</h2>
+    <div class="post-card stack">
+      <p>IPsec은 IPv6와 함께 자주 언급되는 보안 기술입니다. IPv6뿐 아니라 IPv4에서도 사용할 수 있습니다.</p>
+      <h3>ESP</h3>
+      <p>기존의 IPv6의 프레임 형태는</p>
+      <p><code>[프레임 헤더(MAC)] [IP 패킷 헤더(IP)] [페이로드] [트레일러]</code> 형태였습니다.</p>
+      <p>하지만 경우에 따라 보안을 위해 통신 경로를 안전한 경로로 선택하거나 암호화 등을 해야하는 경우가 있습니다.</p>
+      <p>여기에서 <strong>터널링</strong>(VPN)과 암호화 기능이 필요했습니다.</p>
+      <p>터널링은 기존의 패킷을 하나의 가상 경로로 덮어씌워서</p>
+      <p><code>[프레임 헤더(MAC)] [VPN헤더] [페이로드([IP 패킷 헤더(IP)] [페이로드]) [트레일러]</code> 형태로 바꾸는 것입니다.</p>
+      <p>이때 IPsec의 경우에는 더욱 안전한 보안을 위해</p>
+      <p><code>[MAC 헤더] [새 IP 헤더] [ESP 헤더] [ 원본 IP 헤더 | 원래 데이터 ] [ESP 트레일러] [ESP 인증 데이터]</code> 와 같은 형태로 데이터를 싸서 보내는 것입니다.</p>
+      <p>이를 통해</p>
+      <ul>
+        <li>보안: 원본 헤더부터 ESP트레일러까지 암호화 되어 탈취당하여도 볼 수 없습니다.</li>
+        <li>VPN: 터널링을 통해 외부에서 바로 해킹을 시도하지 못하고 회사의 공인 IP를 숨기며 VPN 서버만을 보여주며 회사 내부의 네트워크를 숨길 수 있습니다.</li>
+      </ul>
+      <div class="post-note">참고로 IKE라는 작업을 통해 암호화/인증 방식을 서로 협상하여 결정하게 됩니다.</div>
+    </div>
+  </section>
+</article>
+
