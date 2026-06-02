@@ -1,4 +1,4 @@
-﻿<div>
+<div>
 <style>
 /* Blog design version: v1.1 */
 .tech-post {
@@ -142,7 +142,9 @@
 .tech-post p code,
 .tech-post li code,
 .post-note code,
-.read-table code {
+.read-table code,
+.post-card h3 code,
+.post-subtitle code {
   display: inline-block;
   padding: 0.08em 0.38em;
   border: 1px solid rgba(148, 163, 184, 0.22);
@@ -185,14 +187,6 @@
   background: var(--accent);
 }
 
-.post-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 14px;
-}
-
 .post-note {
   margin: 18px 0;
   padding: 18px 20px;
@@ -220,7 +214,7 @@
 }
 
 .source-box {
-  overflow-x: auto;
+  overflow-x: hidden;
   margin: 14px 0 0;
   padding: 16px 18px;
   border: 1px solid rgba(148, 163, 184, 0.16);
@@ -230,7 +224,8 @@
   font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
   font-size: 14px;
   line-height: 1.7;
-  white-space: pre;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .source-box code {
@@ -239,6 +234,53 @@
   background: transparent;
   color: inherit;
   font: inherit;
+}
+
+.notebook-source-wrap {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.notebook-file {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.18);
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.notebook-cell {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.cell-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(248, 250, 252, 0.9);
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cell-badge {
+  color: var(--accent-dark);
+}
+
+.notebook-source {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
 }
 
 .post-toc {
@@ -509,418 +551,538 @@
 }
 
 </style>
-<article class="tech-post">
-    <header class="post-hero">
-      <div class="post-hero-inner">
-        <p class="post-kicker">Python Async / OS / Socket</p>
-        <h1 class="post-title">async에서 socket까지 내려가며 이해하기</h1>
-        <p class="post-subtitle"><code>async</code>, <code>await</code>, <code>asyncio</code>, <code>OS I/O</code>, <code>fd</code>, <code>socket</code>, <code>stream</code>이 어떤 순서로 연결되는지 정리한 학습 기록입니다.</p>
-      </div>
-    </header>
-
-    <details class="source-toggle">
-      <summary>gpt가 디자인 하기 전 원본: 학습 과정 메모</summary>
-      <pre class="source-box"><code># GPT를 이용하여 async부터 socket까지 개념 강화 공부 과정
-
-
-일단 정리해볼게
-1. 일단 파이썬의 기본 지원 async 비동기는 스레드 위에서 동작하며 async를 이용하면 호출 시 코루틴 객체를 반환받는다.
-2. 이때 await를 통해 "코루틴 객체 값은 천천히 주세요(준비되면)"라고 말하는데 예를 들어 coro = work()라면 result = coro에서 코루틴이 동작하며 await를 통해 필요없는 스레드 점유시간을 없애줄 수 있다.
-3. 문제는 await를 사용하면 해당 코루틴 내부에서 대기에 해당 코드가 존재하는 스레드 전체가 멈추고, 스레드 위에서 다른 작업이 있을 때 해당 작업에 대한 스레드 스케줄까지 날려먹게 된다. 따라서 이를 막기 위해 하나의 비동기 작업인 이벤트루프를 돌려서 하나의 플랫폼처럼 asyncio Event Loop 위에서 비동기 작업을 수행하게 된다.
-4. 해당 asyncio 바로 위에서 돌아간느 작업은 Future &gt; Task &gt; coroutine 형태로 Task가 실제로 직접 실행되면 스레드를 멈추게하는 coroutine 대신에 작업을 대기해주는 상태를 나타내준다.
-5. Future를 통해 여러개의 Task의 상태를 보고 작업이 완료된 것을 준비해준다. 
-6. EventLoop는 계속해서 루프를 돌면서 작업이 완료된 것을 확인하게 된다.
-&gt; 추가로 Task를 통해 필요한 I/O 작업 등의 비동기 작업은 커널로 요청되어 커널쪽에서 완료되면 요청이 왔던 Task로 반환을 해준다. (Task쪽에서 스트림 객체를 하나 파는 것으로 보인다.)
-
----
-
-&gt; GPT: 처음 정리에서 헷갈린 부분들을 보정함. await는 스레드 전체를 멈추는 게 아니라 현재 코루틴/Task를 멈추고, EventLoop가 다른 Task를 실행할 수 있다고 설명함. Task, Future, Coroutine의 관계도 다시 정리함.
-
----
-
-2.
-await는 기다리겠습니다 라는 의미 아닌가? 그런데 왜 동작까지 얘로 시작하는거야? 그냥 파이썬의 경량화를 위해서 안만든거고 내부 라이브러리인 asyncio로 해결하게 설계되어있는건가
-
-3.
-async나 await 자체는 문제가 없는건가? 그러면 이미 비동기 함수를 taskrun 해놓고 await (코루틴) 해도 작업하던 비동기 작업은 정상적으로 계속 진행되는거네?
-
-나는 time.sleep()가 스레드를 멈추는거를 그냥 일반 스레드가 전체를 멈춘다고 착각한거고.
-
-4. 
-실제로는 
-
-EventLoop &gt; Task(안에 상태/결과 존재) &gt; Coroutine
-
-Future은 너가 자바 스크립트에서 비유한걸 내가 착각한거같고. (맞나? 아무튼 다른언어)
-
-5. 
-위에서 말했듯, 실제 작업은 Task 위에 존재하고, Task안의 상태를 EventLoop가 돌아가면서 확인하는 ㅎ형태.
-
-Gather의 경우에는 작업 여러개를 하나의 Task에 귀속시키는 형태인가
-
-6. 
-OS엥서 알려준걸 어떻게 알게되는거지? 여기에서 함수형 프로그래밍이 나오는거였나
-근데 그게 어떻게 이뤄지는거지?
-
-({await i/o_var}).method1().method2() 하면 `io_var`에 OS가 스트림으로 값을 뿅 하고 바꾸는건가?
-
-7. 
-Task가 코루틴을 관리하는데 코루틴이 스트림, 소켓 등을 관리하면 Task가 어떻게 완료됨을 아는거지?
-
----
-
-&gt; GPT: await의 의미를 더 정확히 설명함. await는 단순 대기뿐 아니라 await 대상이 코루틴이면 현재 Task 안에서 그 코루틴을 실제로 진행시키기도 한다고 설명함. asyncio는 async/await 문법을 실행·관리하는 대표 표준 라이브러리라고 정리함.
-
----
-
-
-2. 
-await는 기다리겠습니다. 가 맞는데 정확히는 "awaitable의 결과가 나올 때까지 코루틴을 멈추고 기다리겠다." 라는 뜻입니다.
-
-await 는 실행중인 작업의 결과를 기다리는 것 뿐 아니라 현재 Task 안에서 실제로 진행시키기도 함.
-
-3. 맞음. 이벤트 루프를 막지만 않으면 된다.
-4. 맞음. 근데 Future은 실제로 파이썬에도 있는 객체임
-5. gather은 여러 Coroutine/Task를 각각 실행 대상으로 만들고 전체 완료를 대표하는 하나의 Future 객체 생성
-6. os 는 그러면 알림을 어떻게 알려주는거지
-
----
-
-&gt; GPT: OS가 I/O 완료를 어떻게 알려주는지 설명함. OS가 변수에 직접 값을 넣는 게 아니라, 소켓이나 fd가 준비되었음을 이벤트 루프에 알리고, asyncio/라이브러리가 데이터를 읽어 Future를 완료시킨다고 설명함.
-
----
-
-
-I/O에서 실제로 with open() 이라던가 네트워크 요청 등처럼 OS 아래에서 물리적으로 실행해야하기 때문에 이를 보호 및 관리해주기 위해 OS가 실행해주는데 이는 실제로 파일 디스크립터를 통해 실제로 디스크/램 등에 커널/파일 등에 저장되어있는 비트등을 바꿔주던가 (입출력의 경우) 네트워크 요청의 경우에는 실제로 받아오는 데이터를 구독하듯이 요청 후 OS가 알려주어야한다. 프로그램은 OS 바로 위에서 돌아가기 때문에 이게 가능하다.
-
-계산의 경우에는 요청 하자마자 OS를 통해서인지 뭔지 아무튼 바로 CPU가 즉시 연산해준다음에 반환하게 된다.
-
----
-
-&gt; GPT: 파일 디스크립터(fd)의 기본 개념을 설명함. fd 0, 1, 2는 stdin/stdout/stderr이고, 파일이나 소켓을 열면 3번 이상의 fd가 발급된다고 설명함. 파일 I/O는 캐시나 커널 버퍼를 거칠 수 있다고 보정함.
-
-
----
-
-
-I/O 요청에 대한 요청 개념은 맞고 여기에서 파일 디스크립터, 기본 커널은 fd (0, 1, 2)이며 추가로 3 이상의 fd가 생성된다.
-
-
-파일 I/O는 물리적으로 고치지 않을 수도, 캐싱될 수 있다. (이것도 사실 물리적으로 변경된다 생각함)
-
-CPU작업은 OS 없이 바로 실행된다. 프로세스, CPU 사용 시간은 OS스케줄러가 배정하지만 계산에는 OS가 쓰이지 않는다. (userspace에서 바로 실행된다.)
-
-
----
-
-&gt; GPT: 프로세스, 스레드, 커널, user space 개념을 설명함. 프로세스는 실행 중인 프로그램의 공간이고, 스레드는 실제 실행 흐름이며, I/O는 커널에 요청해서 처리하는 작업이라고 설명함.
-
-
----
-
-
-프로세스 실행 &gt; OS가 프로세스 영역 및 파일 목록, 소켓 목록, 1개 이상의 스레드를 만들어준다.
-
-OS는 모든 작업을 대신 처리해주는 (계산은 빼고) 작업자.
-
-with open("파일", "권한"):
-은 파일에 대한 권한을 요청하는 코드로 한번 쓰고나서 open()을 통해 파일 열기 요청 &gt; fd 발급, f.read() &gt; 데이터 반환과 같은 작업이 이루어진다.
-
-
-I/O는 프로그램이나 CPU 이외에 한두 계층 이상을 거쳐서 접근해야하는 외부 자원과 연결됩니다.
-
-Task의 경우에도 open(), read()와 비슷하게 "요청하는 작업" &gt; "해줄때까지 기다리는 작업" 의 형태이다.
-
-----
-
-
-&gt; GPT: fd를 더 구체화함. fd는 파일 자체가 아니라 프로세스 내부 번호표이며, 커널의 열린 파일 객체를 가리킨다고 설명함. open(), read(), close()의 흐름과 offset 개념도 설명함.
-
-
----
-
-
-fd는 프로세스 내부 번호표로, OS에서 발급해주는 접근권 같은 것인데
-
-파일이 
-a.txt
-b.csv
-c.py
-가 있고
-프로그램 
-python, java가 돌아갈 때
-
-python에게 {fd3 : a.txt "r", fd4 : c.py "rwx"}
-java에게 {fd3 : a.txt "r"}
-과 같이 준다음에 OS는 위에서 3개에 대해 같은 권한이여도 다른 프로그램이니까 다르게 총 3개의 추가 fd를 인지하고 있다 라고 생각하면 되려나. 그리고 해당 디스크립터를 받으면 캐싱 또는 디스크에서 그 데이터를 가져와주는거고. fd는 `ㅇㅇ 작업 해주기 쿠폰` 같은 느낌인걸로.
-
----
-
-&gt; GPT: fd는 프로세스마다 따로 관리된다고 설명함. Python의 fd 3과 Java의 fd 3은 같은 숫자여도 서로 다른 핸들이며, 같은 파일을 열어도 각 프로세스의 열린 파일 객체와 offset은 따로 관리될 수 있다고 보정함.
-
----
-
-`[소켓] --- 스트림 --- [소켓]` 형태로 보임.
-
-소켓이 포트인가? 싶은데 더 읽어봐야할듯.
-
-스트림은 버퍼를 둔 통신 공간인건가? 어떤 원리로 만들어져있는거지? 버퍼를 두었다고 해도 왜 두는거지? 그냥 밀어버리면 되는건 아닌건가 싶기도 하네. 앞에서 OS같은게 데이터를 처리중이면 버퍼에 쌓아놓아야하니까. 그런건가
-
-소켓도 어떻게 만들어져있는건지 모르겠다
-
---- 
-
-GPT: 소켓, 포트, 스트림, 버퍼의 관계를 설명함. 포트는 주소의 일부이고 소켓은 통신 상태를 가진 커널 객체이며, TCP 소켓에는 send buffer와 receive buffer가 있어 속도 차이와 재전송, 흐름 제어를 처리한다고 설명함.
-
-
----
-
-
-소켓 하나에 fd 하나가 매칭된다.
-TCP연결 앞뒤로 소켓 버퍼가 있는 이유는 한쪽은 TCP 흐름제어때문이고 한쪽은 프로그램 또는 커널이 데이터가 가득 찼을 때를 대비하기 위해서인가?
-포트가 조금 더 바깥쪽에 있고, 소켓은 본체의 가장 바깥쪽인듯.
-
-예를 들어서 포트는 우편함 열어둔거고, 안쪽에서 들어온 우편들을 가지고 집에 넣거나 반대로 보내는게 소켓인듯. (프로그램에 소켓이 포함되는 느낌이고, 포트는 프로그램 바깥에 가까운 느낌. 포트는 컴퓨터 자체의 기능이여서 거기 안에 프로그램을 배치하는거. 그리고 하나의 포트에 여러 fd를 놓을 수도 있고.)
-
-하나의 클라이언트에 하나의 소켓이면 메모리같은게 괜찮은건가? 소켓이 너무 많아지지 않나? 요청할때~응답할때 딱 연결하고 지우거나 GC처럼 점점 사라지나?
-
-아무래도 커널에서 소켓당 버퍼를 받는 명령어가 recv()(recieve) 인듯. 아마 순환하면서 소켓마다 recv() 해주는게 아닐까
-
-아무튼 속도 조절을 위해서, 한번에 많이든 조금씩 빠르게던, 나중에 받던 등등 버퍼는 요긴하게 쓰인다.
-
-아무튼 파이썬의 소켓 구조는 자세히 안봤는데 파이썬 뿐 아니라 운영체제부터 여러 프로그램 모두 소켓에는 프로토콜, 네트워크 정보, 연결상태, 버퍼 등과 같이 통신에 필요한 자원을 가지고 있는듯 함.
-
----
-
-&gt; GPT: 소켓과 스트림의 관계를 설명함. 소켓은 네트워크 통신용 끝점이고, 스트림은 그 통로 위에서 데이터가 순서대로 흐르는 것처럼 보이게 하는 추상화라고 설명함.
-
----
-
-
-
-소켓과 fd는 기본적으로 1:1 이지만, dup(), fork()에 따라 같은 소켓을 여러 fd가 가리킬 수 도 있다. (부모 프로세스를 통해 통신해야할 때 같이)
-
-포트는 정확히는 커널 네트워크 스택이 관리하는 논리적 번호이다. (아무튼 사용자 프로그램 관할 아니고 운영체제 관할)
-
-많은 클라이언트의 소켓 연결의 경우에는 
-- fd개수제한
-- 커널 메모리
-- CPU처리량
-- 서버 백로그: 순서대로 요청 줄세워두고 넘기는거
-- TIME_WAIT 상태 
-- 이벤트루프/비동기
-
-등을 통해 해결이 가능함.
-
-뭔가 자원 제한하는건 알겠는데 서버 백로그나 TIME_WAIT (진짜 끊어졌나 확인하는 상태였나?), 등은 잘 모르겠네. 아무튼 이렇게 제한해도 수백만 클라이언트를 처리할 수 있나? -&gt; 튜닝해서 처리. 이건 조금 다른 영역인거같아서 나중에 공부할 예정. 아마 대규모 트래픽하고 같이 공부할듯... ㅇㅅㅇ</code></pre>
-    </details>
-
-    <details class="source-toggle">
-      <summary>gpt가 디자인 하기 전 원본: 최종 요약</summary>
-      <pre class="source-box"><code>&gt; [이전 공부](C:\Construction_Process_of_an_AI_Video_Object_Detection_and_Analysis_Platform_Utilizing_LangChain\workspace\personal\cs_learning\2026-05-27_15h37m_from_async_to_socket.md)를 최종적으로 한번에 설명하는 공간입니다.
-
-# 흐름
-1. `async`에 대한 의문
-2. 해결 후 `socket`에 대한 탐구
-
-# python의 async 탐구
-첫 발단은 `iterable` 객체와 `yield`, `for` 등에 대해서 알아본 후, 이전부터 이해하는 데 시간이 상대적으로 오래 걸리는 편이었던 `asynchronous`. 즉, 비동기 함수에 대한 탐구를 하려 하였습니다.
-
-*이전에도 공부를 하였지만 1, 2회차에는 만족스럽지 못하여 3번째 공부가 되었습니다.*
-
-## async 기본
-`C`, `Java`, `Python` 등의 프로그래밍 언어는 대부분 비동기를 지원합니다. 이때 **동기**와 **비동기**에 대한 개념이 존재하는데, **동기**는 작업중 스레드를 점유하여 다른 작업이 같이 실행되게 하지 못하는 작업을 말하며 **비동기**는 정 반대로 쉬어가도 되는 작업에서 다른 작업에 작업의 권한을 양보하는 방식의 작업을 말합니다.
-
-파이썬에는 라이브러리 없이 기본적으로 `async`와 `await` 키워드를 지원합니다. `async`는 `async def func1()`과 같이 사용하며 `coro = func1()`을 사용하면 실행된 결과를 반환하는 것이 아닌 **코루틴 함수**에 대한 객체를 반환합니다. **코루틴 함수**란 실행을 중단하고 나중에 재개할 수 있는 함수를 말하며 `func1() == func1()` 의 결과가 `False`로 나오는 것을 통해 해당 `async` 함수는 코루틴 함수 객체를 반환한다는 것을 알 수 있습니다.
-
-![asyncio 참고 이미지](https://mblogthumb-phinf.pstatic.net/MjAyMTA1MjBfMjQx/MDAxNjIxNTE4MjU1Mjg2.aEAwOCZiG9wgB8vTb7VIBW9gqVgYdnz8jNIHfxq8FxMg.7Md8l-hbiCEaLwsvQOXXjub0rz411VG7kbek6AObHB0g.PNG.aspasia_388/1_60iugGBHMF7PPSn-fdQrHQ.png?type=w800)
-
-이렇게 만들어진 `coro`객체는 기본적으로 `await`를 통해 실행될 수 있습니다. `await`는 코루틴 함수 객체를 실행시켜주며 해당 작업을 실행하는 동안 다른 작업을 실행하라는 스레드 권한 양보와 작업중에 `I/O`작업에 의한 대기 시, 코드를 더이상 진행하지 말라는 의미를 가집니다.
-
-
-## asyncio 라이브러리
-`Python`이 기본적으로 지원하는 `async`와 `await`는 하나의 코드에서 동시에 2가지 이상의 코드를 돌리지 못하게 합니다. `await coro`를 하면 현재 코루틴은 `coro`의 결과가 나올 때까지 멈춥니다. 이때 다른 작업을 대신 실행해줄 `Event Loop`가 없다면 비동기의 이점을 살리기 어렵기 때문에, Python에서는 일반적으로 `asyncio`를 통해 여러 코루틴을 Task로 관리합니다.
-
-`asyncio`는 내부적으로 비동기 작업, **`Event Loop`**를 돌리며 그 위에서 `Coroutine` 객체를 감싸주는 `Task`를 만들어 관리합니다. 이 덕분에 하나의 `Coroutine`이 전체 스레드의 진행을 방해하는 일이 사라졌습니다.
-
-- `Task`는 내부적으로 감싸는 `Coroutine`을 실행 및 관리해주고, 상태를 나타내주는 객체입니다.
-- `Event Loop`는 이러한 `Task`들이 올라와 작업이 완료되어 값을 응답받을 수 있는지 확인을 해주는 비동기 작업입니다.
-- `Future`는 요청한 값이 준비 되었는지를 나타내는 객체입니다.
-
-위 3가지 요소를 통해 스레드 자원 낭비 없는 비동기 작업들이 수행되게 됩니다.
-
-![asyncio 참고 이미지](https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fa5wtm5ha679yjxu4wjca.jpg)
-
-## asyncio와 OS
-우리가 일반적으로 설치해서 사용하는 프로그램을 **사용자 프로그램**이라고 부릅니다. 이때, 사용자 프로그램은 신뢰하기도 위험하고 신뢰할 수 있어도 권한을 아무렇게나 주게되면 작업의 순서가 흐트러져 원활한 장치의 사용이 어려워지기 때문에 **사용자 프로그램은 모두 운영체제 위에서 돌아가게 됩니다.**
-
-운영체제는 프로그램들이 보내는 파일 권한 요청에 따라 작업을 수행해줍니다. 예를 들어서 `프로그램A`가 운영체제에 `a.txt` 읽어줘 라고 한다면 운영체제는 `a.txt`를 읽어서 `프로그램A`의 메모리 공간으로 전달해줍니다.
-
-![소켓통신 참고 이미지](https://mark-kim.blog/static/9953b7852494334a2750c89c97fc1ba0/954eb/socket_read_write.webp)
-
-이때, 운영체제가 직접 관리를 해주어도 모든 요청을 수락할 순 없기 때문에 (보안 등의 이유로) 최초 요청 시 `fd`라는 파일 디스크립터 라는 권한을 받게 됩니다. 이는 보통 `[파일] [r(ead) | w(rite) | execute(x)]`의 형태로 구성이 되며 이는 기본 `fd`인 0(`stdin`), 1(`stdout`), 2(`error`) 이후, `fd3` 부터 발급받을 수 있게 됩니다. 이후 프로그램은 이 `fd`를 이용하여 커널에게 `읽기`/`쓰기`와 같은 작업을 요청하고, 커널은 `fd`가 가리키는 파일이나 소켓 같은 자원에 대해 작업을 수행합니다.
-
-위에서 이해했던 `asyncio`의 `Event Loop`의 동작 방식에는 설명하였듯, OS에게 비동기 작업을 요청한 뒤 응답을 기다리지 않고 비동기로 다른 작업을 수행한다 하였습니다. 이때, 운영체제에게서 발급받은 `fd`를 바탕으로 OS에게 해당 `fd`를 사용할 수 있을 때에 깨우라는 요청을 넣은 뒤 스레드 속 해당 작업들은 잠들게 됩니다. 이후에 OS가 알람을 소켓을 통해 보낸 뒤 CPU가 쉬게 된다면 `Event Loop`에서 잠들어있던 작업들이 깨어나 작업을 재개하게 됩니다.
-
-## 소켓과 스트림
-소켓과 스트림은 데이터를 전달하는 여러 방식 중 하나로
-- 소켓: 네트워크를 통한 통신의 끝 점
-- 스트림: 해당 데이터가 흐르는 통로
-- 버퍼: 원활한 흐름 관리를 위한 임시 저장공간
-
-으로 이루어져
-
-`[프로그램A] --- [소켓][IP:포트] --- [버퍼] --- [TCP연결] --- [버퍼] --- [IP:포트][소켓] --- [프로그램B]`와 같이 통신이 됩니다.
-
-이때, Python의 `Event Loop`는 OS에게 특정 `fd`가 읽기/쓰기 가능한 상태가 되면 알려달라고 등록해두고, OS가 준비 완료 이벤트를 알려주면 해당 이벤트를 바탕으로 잠들어 있던 Task를 다시 실행합니다.
-
-이를 통해 비동기 작업이 진행되게 됩니다.</code></pre>
-    </details>
-
-    <nav class="post-toc" aria-label="목차">
-      <h2 class="toc-title">목차</h2>
-      <ul class="toc-list">
-        <li>
-          <a class="toc-main" href="#section-01"><span class="toc-index">01</span><span>출발점: async와 await</span></a>
-        </li>
-        <li>
-          <a class="toc-main" href="#section-02"><span class="toc-index">02</span><span>asyncio가 필요한 이유</span></a>
-        </li>
-        <li>
-          <a class="toc-main" href="#section-03"><span class="toc-index">03</span><span>OS I/O와 fd</span></a>
-        </li>
-        <li>
-          <a class="toc-main" href="#section-04"><span class="toc-index">04</span><span>socket, stream, buffer</span></a>
-        </li>
-        <li>
-          <a class="toc-main" href="#section-05"><span class="toc-index">05</span><span>최종 요약표</span></a>
-        </li>
-      </ul>
-    </nav>
-
-    <section class="post-section" id="section-01">
-      <h2 class="section-title">출발점: async와 await</h2>
-      <div class="post-card stack">
-        <h3>python의 async 탐구</h3>
-        <p>첫 발단은 <code>iterable</code> 객체와 <code>yield</code>, <code>for</code> 등에 대해서 알아본 후, 이전부터 이해하는 데 시간이 상대적으로 오래 걸리는 편이었던 <code>asynchronous</code>. 즉, 비동기 함수에 대한 탐구를 하려 하였습니다.</p>
-        <p><em>이전에도 공부를 하였지만 1, 2회차에는 만족스럽지 못하여 3번째 공부가 되었습니다.</em></p>
-      </div>
-
-      <div class="post-card stack">
-        <h3>async 기본</h3>
-        <p><code>C</code>, <code>Java</code>, <code>Python</code> 등의 프로그래밍 언어는 대부분 비동기를 지원합니다. 이때 <strong>동기</strong>와 <strong>비동기</strong>에 대한 개념이 존재하는데, <strong>동기</strong>는 작업중 스레드를 점유하여 다른 작업이 같이 실행되게 하지 못하는 작업을 말하며 <strong>비동기</strong>는 정 반대로 쉬어가도 되는 작업에서 다른 작업에 작업의 권한을 양보하는 방식의 작업을 말합니다.</p>
-        <p>파이썬에는 라이브러리 없이 기본적으로 <code>async</code>와 <code>await</code> 키워드를 지원합니다. <code>async</code>는 <code>async def func1()</code>과 같이 사용하며 <code>coro = func1()</code>을 사용하면 실행된 결과를 반환하는 것이 아닌 <strong>코루틴 함수</strong>에 대한 객체를 반환합니다. <strong>코루틴 함수</strong>란 실행을 중단하고 나중에 재개할 수 있는 함수를 말하며 <code>func1() == func1()</code> 의 결과가 <code>False</code>로 나오는 것을 통해 해당 <code>async</code> 함수는 코루틴 함수 객체를 반환한다는 것을 알 수 있습니다.</p>
-        <img src="https://mblogthumb-phinf.pstatic.net/MjAyMTA1MjBfMjQx/MDAxNjIxNTE4MjU1Mjg2.aEAwOCZiG9wgB8vTb7VIBW9gqVgYdnz8jNIHfxq8FxMg.7Md8l-hbiCEaLwsvQOXXjub0rz411VG7kbek6AObHB0g.PNG.aspasia_388/1_60iugGBHMF7PPSn-fdQrHQ.png?type=w800" alt="async 기본 참고 이미지">
-        <p>이렇게 만들어진 <code>coro</code>객체는 기본적으로 <code>await</code>를 통해 실행될 수 있습니다. <code>await</code>는 코루틴 함수 객체를 실행시켜주며 해당 작업을 실행하는 동안 다른 작업을 실행하라는 스레드 권한 양보와 작업중에 <code>I/O</code>작업에 의한 대기 시, 코드를 더이상 진행하지 말라는 의미를 가집니다.</p>
-      </div>
-    </section>
-
-    <hr class="post-divider">
-
-    <section class="post-section" id="section-02">
-      <h2 class="section-title">asyncio가 필요한 이유</h2>
-      <div class="post-card stack">
-        <h3>asyncio 라이브러리</h3>
-        <p><code>Python</code>이 기본적으로 지원하는 <code>async</code>와 <code>await</code>는 하나의 코드에서 동시에 2가지 이상의 코드를 돌리지 못하게 합니다. <code>await coro</code>를 하면 현재 코루틴은 <code>coro</code>의 결과가 나올 때까지 멈춥니다. 이때 다른 작업을 대신 실행해줄 <code>Event Loop</code>가 없다면 비동기의 이점을 살리기 어렵기 때문에, Python에서는 일반적으로 <code>asyncio</code>를 통해 여러 코루틴을 Task로 관리합니다.</p>
-        <p><code>asyncio</code>는 내부적으로 비동기 작업, <strong><code>Event Loop</code></strong>를 돌리며 그 위에서 <code>Coroutine</code> 객체를 감싸주는 <code>Task</code>를 만들어 관리합니다. 이 덕분에 하나의 <code>Coroutine</code>이 전체 스레드의 진행을 방해하는 일이 사라졌습니다.</p>
-      </div>
-
-      <div class="post-card stack">
-        <h3>Task, Event Loop, Future</h3>
-        <ul>
-          <li><code>Task</code>는 내부적으로 감싸는 <code>Coroutine</code>을 실행 및 관리해주고, 상태를 나타내주는 객체입니다.</li>
-          <li><code>Event Loop</code>는 이러한 <code>Task</code>들이 올라와 작업이 완료되어 값을 응답받을 수 있는지 확인을 해주는 비동기 작업입니다.</li>
-          <li><code>Future</code>는 요청한 값이 준비 되었는지를 나타내는 객체입니다.</li>
-        </ul>
-        <p>위 3가지 요소를 통해 스레드 자원 낭비 없는 비동기 작업들이 수행되게 됩니다.</p>
-        <img src="https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fa5wtm5ha679yjxu4wjca.jpg" alt="asyncio 참고 이미지">
-      </div>
-    </section>
-
-    <hr class="post-divider">
-
-    <section class="post-section" id="section-03">
-      <h2 class="section-title">OS I/O와 fd</h2>
-      <div class="post-card stack">
-        <h3>asyncio와 OS</h3>
-        <p>우리가 일반적으로 설치해서 사용하는 프로그램을 <strong>사용자 프로그램</strong>이라고 부릅니다. 이때, 사용자 프로그램은 신뢰하기도 위험하고 신뢰할 수 있어도 권한을 아무렇게나 주게되면 작업의 순서가 흐트러져 원활한 장치의 사용이 어려워지기 때문에 <strong>사용자 프로그램은 모두 운영체제 위에서 돌아가게 됩니다.</strong></p>
-        <p>운영체제는 프로그램들이 보내는 파일 권한 요청에 따라 작업을 수행해줍니다. 예를 들어서 <code>프로그램A</code>가 운영체제에 <code>a.txt</code> 읽어줘 라고 한다면 운영체제는 <code>a.txt</code>를 읽어서 <code>프로그램A</code>의 메모리 공간으로 전달해줍니다.</p>
-      </div>
-
-      <div class="post-card stack">
-        <h3>파일 디스크립터</h3>
-        <p>이때, 운영체제가 직접 관리를 해주어도 모든 요청을 수락할 순 없기 때문에 (보안 등의 이유로) 최초 요청 시 <code>fd</code>라는 파일 디스크립터 라는 권한을 받게 됩니다. 이는 보통 <code>[파일] [r(ead) | w(rite) | execute(x)]</code>의 형태로 구성이 되며 이는 기본 <code>fd</code>인 0(<code>stdin</code>), 1(<code>stdout</code>), 2(<code>error</code>) 이후, <code>fd3</code> 부터 발급받을 수 있게 됩니다. 이후 프로그램은 이 <code>fd</code>를 이용하여 커널에게 <code>읽기</code>/<code>쓰기</code>와 같은 작업을 요청하고, 커널은 <code>fd</code>가 가리키는 파일이나 소켓 같은 자원에 대해 작업을 수행합니다.</p>
-        <img src="https://mark-kim.blog/static/9953b7852494334a2750c89c97fc1ba0/954eb/socket_read_write.webp" alt="소켓통신 참고 이미지">
-        <p>위에서 이해했던 <code>asyncio</code>의 <code>Event Loop</code>의 동작 방식에는 설명하였듯, OS에게 비동기 작업을 요청한 뒤 응답을 기다리지 않고 비동기로 다른 작업을 수행한다 하였습니다. 이때, 운영체제에게서 발급받은 <code>fd</code>를 바탕으로 OS에게 해당 <code>fd</code>를 사용할 수 있을 때에 깨우라는 요청을 넣은 뒤 스레드 속 해당 작업들은 잠들게 됩니다. 이후에 OS가 알람을 소켓을 통해 보낸 뒤 CPU가 쉬게 된다면 <code>Event Loop</code>에서 잠들어있던 작업들이 깨어나 작업을 재개하게 됩니다.</p>
-      </div>
-    </section>
-
-    <hr class="post-divider">
-
-    <section class="post-section" id="section-04">
-      <h2 class="section-title">socket, stream, buffer</h2>
-      <div class="post-card stack">
-        <h3>소켓과 스트림</h3>
-        <p>소켓과 스트림은 데이터를 전달하는 여러 방식 중 하나로</p>
-        <ul>
-          <li>소켓: 네트워크를 통한 통신의 끝 점</li>
-          <li>스트림: 해당 데이터가 흐르는 통로</li>
-          <li>버퍼: 원활한 흐름 관리를 위한 임시 저장공간</li>
-        </ul>
-        <p>으로 이루어져</p>
-        <pre class="source-box"><code>[프로그램A] --- [소켓][IP:포트] --- [버퍼] --- [TCP연결] --- [버퍼] --- [IP:포트][소켓] --- [프로그램B]</code></pre>
-        <p>와 같이 통신이 됩니다.</p>
-        <p>이때, Python의 <code>Event Loop</code>는 OS에게 특정 <code>fd</code>가 읽기/쓰기 가능한 상태가 되면 알려달라고 등록해두고, OS가 준비 완료 이벤트를 알려주면 해당 이벤트를 바탕으로 잠들어 있던 Task를 다시 실행합니다.</p>
-        <p>이를 통해 비동기 작업이 진행되게 됩니다.</p>
-      </div>
-    </section>
-
-    <hr class="post-divider">
-
-    <section class="post-section" id="section-05">
-      <h2 class="section-title">최종 요약표</h2>
-      <div class="post-card stack">
-        <h3>흐름</h3>
-        <ol>
-          <li><code>async</code>에 대한 의문</li>
-          <li>해결 후 <code>socket</code>에 대한 탐구</li>
-        </ol>
-      </div>
-
-      <div class="post-card stack">
-        <h3>요약</h3>
-        <table class="read-table">
-          <thead>
-            <tr>
-              <th>개념</th>
-              <th>정리</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>async</code> 기본</td>
-              <td><code>async</code> 함수는 실행된 결과를 반환하는 것이 아닌 코루틴 함수에 대한 객체를 반환합니다.</td>
-            </tr>
-            <tr>
-              <td><code>asyncio</code></td>
-              <td><code>Event Loop</code> 위에서 <code>Coroutine</code> 객체를 감싸주는 <code>Task</code>를 만들어 관리합니다.</td>
-            </tr>
-            <tr>
-              <td><code>fd</code></td>
-              <td>프로그램은 이 <code>fd</code>를 이용하여 커널에게 <code>읽기</code>/<code>쓰기</code>와 같은 작업을 요청합니다.</td>
-            </tr>
-            <tr>
-              <td>소켓</td>
-              <td>네트워크를 통한 통신의 끝 점입니다.</td>
-            </tr>
-            <tr>
-              <td>스트림</td>
-              <td>해당 데이터가 흐르는 통로입니다.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </article>
 </div>
+<article class="tech-post">
+  <header class="post-hero">
+    <div class="post-hero-inner">
+      <p class="post-kicker">Python Basic</p>
+      <h1 class="post-title">조건문부터 반복문과 이터러블까지</h1>
+      <p class="post-subtitle">Python의 <code>if</code> 조건 처리, 단락 평가, <code>match-case</code>, 그리고 <code>for</code>문이 iterable을 순회하는 방식을 정리했습니다.</p>
+    </div>
+  </header>
 
+  <details class="source-toggle">
+    <summary>gpt가 디자인 하기 전 원본</summary>
+    <div class="notebook-source-wrap">
+      <div class="notebook-file">2026-05-26_2_about_if_and_various_pattern.ipynb</div>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 1</span></div>
+        <pre class="source-box notebook-source"><code># if문에 대한 연구와 사용법
+디자인 패턴, 가독성 향상, 성능 향상 등을 위한 코딩에 대한 이야기입니다.</code></pre>
+      </section>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 2</span></div>
+        <pre class="source-box notebook-source"><code># if문의 비용
+
+`if`문 자체는 `if` 다음의 연산을 수행하여 결과(`boolean`)에 따라 다음 코드 수행 위치를 이동시키는 것이 전부입니다.
+
+여기에서 `if`문 뒤에 수행하는 연산을 제외하면 `if`문 자체에 대한 오버헤드는 거의 없다고 볼 수 있습니다.</code></pre>
+      </section>
+      <section class="notebook-cell code-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Code</span><span class="cell-index">cell 3</span></div>
+        <pre class="source-box notebook-source"><code>import timeit
+
+# 반복 횟수 
+N = 10_000_000
+
+# 기준이 되는 pass에 드는 시간
+baseline = timeit.timeit(
+    "pass",
+    number=N
+)
+
+# x = True인 경우에 대한 1000만번 실행 시간
+if_true_time = timeit.timeit(
+    """
+if x:
+    pass
+""",
+    setup="x = True",
+    number=N
+)
+
+# x = False에 대한 1000만번 실행 시간
+if_false_time = timeit.timeit(
+    """
+if x:
+    pass
+""",
+    setup="x = False",
+    number=N
+)
+
+print("pass만 실행:", baseline)
+print("if True 실행:", if_true_time)
+print("if False 실행:", if_false_time)
+
+# 한 번 실행에 대한 시간 -&gt; (초 단위) -&gt; ns값으로 변환하기 위해 10억을 곱하기
+print("if True 추가 비용(ns):", (if_true_time - baseline) / N * 1_000_000_000)
+print("if False 추가 비용(ns):", (if_false_time - baseline) / N * 1_000_000_000)</code></pre>
+      </section>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 4</span></div>
+        <pre class="source-box notebook-source"><code># `if`문을 잘 쓰기 위한 방법들
+
+1. **조건식 비용 관리**: 비싼 조건은 필요할 때에만 실행되도록 뒤쪽에 배치해야 합니다.
+2. **단락 평가의 최적화**(`short-circuit`): `and`같이 모두 만족해야 하는 경우, 파이썬은 앞부분만 연산한 뒤 `False`인 경우에는 바로 탈락시키기 때문에 앞부분에 탈락 확률이 높은 변수를 두는 것이 좋습니다.
+3. **조건 순서 최적화**: 위와 비슷하게 빠르게 성공시키거나, 계산 비용이 적은 조건을 먼저 나오게 하면 좋습니다.
+4. **`if`/`elif`**: 배타적인 조건이면 불필요한 검사 방지를 위해 `elif`/`else`를 사용하면 좋습니다.
+5. **내부 연산의 최적화**: 내부 `if` 연산은 `O(1)`에 가까운 것을 사용하는 것이 일반적으로 좋습니다.
+6. **딕셔너리 분기처리**: 명령어에 따라 함수를 실행하는 경우에는 **dispatch table(전략 패턴)**을 이용하기 적합합니다.
+7. **분기 보호**: 가독성과 유지보수를 위해 `guard clause` 방식을 사용하면 좋습니다. (중첩 `if`문 자제)
+8. **`match-case`의 위치와 성능감각**: `match-case`는 성능보다는 구조분해와 패턴 매칭에 읽기 좋게 쓰입니다. 단순 값 비교 시에는 비슷한 성능을 보이고, 복잡한 매칭에서는 무거울 수 있습니다.</code></pre>
+      </section>
+      <section class="notebook-cell code-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Code</span><span class="cell-index">cell 5</span></div>
+        <pre class="source-box notebook-source"><code># 예를 들어 보겠습니다.
+import random
+
+def getBool(true_prob: int):
+  return random.random() &lt; true_prob / 100
+
+class User:
+  def __init__(self, is_login: bool, is_active: bool):
+    self.is_login = is_login
+    self.is_active = is_active
+
+# f1 = 70% 확률로 False인 객체
+f1 = getBool(30)
+
+# t1 = 80% 확률로 True 객체
+t1 = getBool(80)
+
+# 위와같은 변수의 경우
+
+# 배타적 조건
+# 높은 확률 먼저 계산
+def example_low_calc(t1: bool, f1: bool) -&gt; None:
+  if f1 and t1:
+    print("both True")
+  # 배타적 조건으로 elif, True일 확률이 높은 t1 먼저 (t1은 80%, f1은 30%)
+  elif t1:
+    print("t1 only True")
+  elif f1:
+    print("f1 only True")
+  else:
+    print("both not True")
+  
+  # 아래와 같이도 가능
+  match (t1, f1):
+    case True, True:
+      print("both True")
+    case True, _:
+      print("t1 only True")
+    case _, True:
+      print("f1 only True")
+    case _:
+      print("both not True")
+
+example_low_calc(t1, f1)
+
+# guard clause
+def example_guard_clause():  
+  # 70% 확률로 존재하는 사용자,
+  # 40%확률로 로그인
+  # login되어있으면 30%확률로 활성화
+  user = User(is_login := getBool(40), is_active=(getBool(30) and is_login)) if getBool(70) else None
+
+  # 잘못된 예시
+  if user is not None:
+    if user.is_login:
+      if user.is_active:
+        print("user_active")
+        # 너무 depth가 깊어짐
+
+
+  # 올바른 guard clause의 사용
+  if user is None:
+    print("no user")
+    return
+  print("user exist")
+
+  if not user.is_login:
+    print("user not login")
+    return
+  print("user logged in")
+  
+  if not user.is_active:
+    print("user not active")
+    return
+  print("user active")
+
+def example_faster_search():
+  a = [i for i in range(1, 101)]
+  
+  # 느린 연산 
+  if random.randint(1, 201) in a:
+    print("exist")
+  
+  # 반복 조회에서는 빠른 연산
+  s = set(a)
+  if random.randint(1, 201) in s:
+    print("exist")
+
+# match-case가 비효율적인 경우
+def example_inefficient_match():
+  # match-case가 오래 걸리는 경우는 단순 값 비교가 아닌 직접 뜯어서 찾아봐야 하는 경우입니다.
+  data = {
+    "type": "IT",
+    "name": "developer",
+    "salary": 3000
+  }
+
+  # 이전에는 if를 사용하였지만 아래와 같은 경우에는 비효율적입니다.
+  
+  # 1. dict 타입의 내부 값을 하나씩 확인해야 하는 경우
+  match data:
+    case {"type": "IT", "name": "frontend", "salary": _}:
+      print("IT frontend ?")
+    case {"type": "IT", "name": "developer", "salary": 3000}:
+      print("IT developer 3000")
+  
+  # 위와 같은 경우에는 이렇게 직접 조건을 확인해 속도를 더 향상할 수 있습니다.
+  if data.get("type") == "IT" and data.get("name") == "frontend" and "salary" in data:
+    print("IT frontend ?")
+  elif data.get("type") == "IT" and data.get("name") == "developer" and data.get("salary") == 3000:
+    print("IT developer 3000")</code></pre>
+      </section>
+      <hr class="post-divider">
+      <div class="notebook-file">2026-05-26_3_about_container.ipynb</div>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 1</span></div>
+        <pre class="source-box notebook-source"><code># Iterable
+이터러블은 반복 가능한 객체를 말합니다.
+`for`문에 넣어서 하나씩 꺼낼 수 있는 객체입니다.
+
+&gt; `list`, `tuple`, `str`, `dict`, `set`, `range`, `generator` 등이 모두 `iterable`입니다. 시퀀스는 항상 `__iter__()` 메서드를 지원합니다.
+
+이는 `__iter__()` 같은 메서드로 지원됩니다.
+
+
+# Iterator
+이터레이터는 실제로 `next()`로 값을 하나씩 꺼내는 객체입니다.
+[파이썬 공식 문서](https://docs.python.org/3.10/library/stdtypes.html)에서 `Ctrl + F` 후 `StopIteration`를 찾아보면 이는 `__next__()`로 작동하며 마지막 값에서 `StopIteration` 예외를 발생시킨다고 나와 있습니다.
+
+# Generator
+값을 미리 다 만들지 않고 필요할 때 생성하는 `iterator`입니다.
+
+동일하게 [파이썬 공식 문서](https://docs.python.org/3.10/library/stdtypes.html)에서 `Ctrl + F` 후 `Generator`를 써보면 설명에 자동으로 다음 값을 만들어 반환한다고 나와 있습니다.
+
+예시로는 `(x * 2 for x in range(5))`와 같은 generator expression 등이 있으며 값은 `__next__()`가 호출될 때 지연 평가된다고 합니다.
+
+&gt; 이 때문에 제너레이터는 `match-case`의 시퀀스 패턴에서 일반 시퀀스처럼 매칭되지 않을 수 있습니다.
+
+# Sequence
+순서와 위치가 있는 `iterable`입니다.
+
+`set`, `dict` 같은 자료구조도 `iterable` 객체이지만, `sequence`는 확실하게 인덱스와 순서가 존재하는 값입니다.
+
+
+```
+Iterable
+├─ Sequence
+│  ├─ list
+│  ├─ tuple
+│  ├─ range
+│  └─ str
+│
+├─ Mapping
+│  └─ dict
+│
+├─ Set
+│  └─ set
+│
+└─ Iterator
+   └─ Generator
+```</code></pre>
+      </section>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 2</span></div>
+        <pre class="source-box notebook-source"><code># for문과 while문
+`for`문과 `while`문은 모두 반복문이지만 (지금보니) 동작하는 구조가 꽤 다르다는 것을 알 수 있습니다.
+
+## `while 조건:`
+`while`문은 조건식이 `True`인 동안 반복하게 됩니다.
+
+이때, 실행 구문 과정에서 조건에 대한 결과가 바뀌더라도 끝까지 실행 중인 구문을 완료한 뒤 조건문 체크에서 다시 체크를 하게 됩니다.
+
+예를 들어 아래와 같은 코드는 10번 반복되게 됩니다.
+```python
+a = 0
+i = 0
+while a == 0 and i &lt; 10:
+  # True면 여기서부터 실행
+  a += 1
+  print(a)
+  a -= 1
+  i += 1
+  # 여기까지 실행 후 다시 올라가기
+# False면 여기로 이동
+```</code></pre>
+      </section>
+      <section class="notebook-cell code-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Code</span><span class="cell-index">cell 3</span></div>
+        <pre class="source-box notebook-source"><code>a = 0
+i = 0
+while a == 0 and i &lt; 10:
+  a += 1
+  print(a)
+  a -= 1
+  i += 1</code></pre>
+      </section>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 4</span></div>
+        <pre class="source-box notebook-source"><code># `for var in [iterable]`
+`for`문은 내부적으로 `iterable`에서 값을 하나씩 꺼내는 반복문입니다.
+
+흐름을 보면 아래와 같습니다.</code></pre>
+      </section>
+      <section class="notebook-cell code-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Code</span><span class="cell-index">cell 5</span></div>
+        <pre class="source-box notebook-source"><code>it = iter([10, 20, 30, 40, 50])
+
+while True:
+  try:
+    x = next(it)
+    print(x)
+  except StopIteration:
+    break</code></pre>
+      </section>
+      <section class="notebook-cell markdown-cell">
+        <div class="cell-toolbar"><span class="cell-badge">Markdown</span><span class="cell-index">cell 6</span></div>
+        <pre class="source-box notebook-source"><code>이 때문에 일반적으로 `for (int i = 0; i &lt; 10; i++) {...}`와 같은 구조를 사용하는 전통적인 `for`문과 다르게 값을 하나씩 꺼내는 방식이기 때문에 `초깃값 설정 &gt; 조건검사 &gt; 증가 &gt; 반복`과는 결이 미세하게 다릅니다.</code></pre>
+      </section>
+    </div>
+  </details>
+
+  <nav class="post-toc" aria-label="목차">
+    <h2 class="toc-title">목차</h2>
+    <ul class="toc-list">
+      <li><a class="toc-main" href="#section-01"><span class="toc-index">01</span><span>if문의 비용</span></a></li>
+      <li><a class="toc-main" href="#section-02"><span class="toc-index">02</span><span>조건식을 잘 배치하는 방법</span></a></li>
+      <li><a class="toc-main" href="#section-03"><span class="toc-index">03</span><span>분기 처리 예시</span></a></li>
+      <li><a class="toc-main" href="#section-04"><span class="toc-index">04</span><span>Iterable, Iterator, Generator</span></a></li>
+      <li><a class="toc-main" href="#section-05"><span class="toc-index">05</span><span>for문과 while문</span></a></li>
+    </ul>
+  </nav>
+
+  <section class="post-section" id="section-01">
+    <h2 class="section-title">if문의 비용</h2>
+    <div class="post-card stack">
+      <p><code>if</code>문 자체는 <code>if</code> 다음의 연산을 수행하여 결과(<code>boolean</code>)에 따라 다음 코드 수행 위치를 이동시키는 것이 전부입니다.</p>
+      <p>여기에서 <code>if</code>문 뒤에 수행하는 연산을 제외하면 <code>if</code>문 자체에 대한 오버헤드는 거의 없다고 볼 수 있습니다.</p>
+    </div>
+    <div class="post-note">
+      <p>따라서 실제로 신경 써야 하는 부분은 <code>if</code>문이라는 문법 자체보다 조건식 안에서 어떤 연산을 수행하는지입니다.</p>
+    </div>
+    <pre class="source-box"><code>import timeit
+
+# 반복 횟수 
+N = 10_000_000
+
+# 기준이 되는 pass에 드는 시간
+baseline = timeit.timeit(
+    "pass",
+    number=N
+)
+
+# x = True인 경우에 대한 1000만번 실행 시간
+if_true_time = timeit.timeit(
+    """
+if x:
+    pass
+""",
+    setup="x = True",
+    number=N
+)
+
+# x = False에 대한 1000만번 실행 시간
+if_false_time = timeit.timeit(
+    """
+if x:
+    pass
+""",
+    setup="x = False",
+    number=N
+)
+
+print("pass만 실행:", baseline)
+print("if True 실행:", if_true_time)
+print("if False 실행:", if_false_time)
+
+# 한 번 실행에 대한 시간 -&gt; (초 단위) -&gt; ns값으로 변환하기 위해 10억을 곱하기
+print("if True 추가 비용(ns):", (if_true_time - baseline) / N * 1_000_000_000)
+print("if False 추가 비용(ns):", (if_false_time - baseline) / N * 1_000_000_000)</code></pre>
+  </section>
+
+  <hr class="post-divider">
+
+  <section class="post-section" id="section-02">
+    <h2 class="section-title">조건식을 잘 배치하는 방법</h2>
+    <div class="post-card stack">
+      <h3>조건식 비용 관리</h3>
+      <p>비싼 조건은 필요할 때에만 실행되도록 뒤쪽에 배치해야 합니다.</p>
+      <p><code>and</code>같이 모두 만족해야 하는 경우, 파이썬은 앞부분만 연산한 뒤 <code>False</code>인 경우에는 바로 탈락시키기 때문에 앞부분에 탈락 확률이 높은 변수를 두는 것이 좋습니다.</p>
+    </div>
+    <div class="post-card stack">
+      <h3>조건 순서와 배타 조건</h3>
+      <p>빠르게 성공시키거나, 계산 비용이 적은 조건을 먼저 나오게 하면 좋습니다.</p>
+      <p>배타적인 조건이면 불필요한 검사 방지를 위해 <code>elif</code>/<code>else</code>를 사용하면 좋습니다.</p>
+    </div>
+    <div class="post-card stack">
+      <h3>분기 보호와 딕셔너리 분기처리</h3>
+      <p>가독성과 유지보수를 위해 <code>guard clause</code> 방식을 사용하면 좋습니다.</p>
+      <p>명령어에 따라 함수를 실행하는 경우에는 <strong>dispatch table(전략 패턴)</strong>을 이용하기 적합합니다.</p>
+    </div>
+    <div class="post-card stack">
+      <h3><code>match-case</code>의 위치</h3>
+      <p><code>match-case</code>는 성능보다는 구조분해와 패턴 매칭에 읽기 좋게 쓰입니다.</p>
+      <p>단순 값 비교 시에는 비슷한 성능을 보이고, 복잡한 매칭에서는 무거울 수 있습니다.</p>
+    </div>
+  </section>
+
+  <hr class="post-divider">
+
+  <section class="post-section" id="section-03">
+    <h2 class="section-title">분기 처리 예시</h2>
+    <div class="post-card stack">
+      <h3><code>and</code> 단락 평가 예시</h3>
+      <p><code>getBool(true_prob)</code>은 예시 데이터를 만들기 위한 함수입니다.</p>
+      <p>핵심은 <code>and</code> 연산에서 앞 조건이 <code>False</code>이면 뒤 조건을 평가하지 않는다는 점입니다. 그래서 실패할 확률이 높은 조건을 앞에 두면 불필요한 연산을 줄일 수 있습니다.</p>
+      <p><code>t1 == True</code>처럼 비교하지 않아도, <code>t1</code> 자체가 boolean 값이기 때문에 <code>elif t1:</code>처럼 사용할 수 있습니다.</p>
+    </div>
+    <pre class="source-box"><code># 예를 들어 보겠습니다.
+import random
+
+def getBool(true_prob: int):
+  return random.random() &lt; true_prob / 100
+
+# f1 = 70% 확률로 False인 객체
+f1 = getBool(30)
+
+# t1 = 80% 확률로 True 객체
+t1 = getBool(80)
+
+# 위와같은 변수의 경우
+
+# 배타적 조건
+# 높은 확률 먼저 계산
+def example_low_calc(t1: bool, f1: bool) -&gt; None:
+  # f1은 True 확률이 30%이므로, and 연산에서 먼저 검사하면 t1 평가를 줄일 수 있습니다.
+  if f1 and t1:
+    print("both True")
+  # 배타적 조건으로 elif, True일 확률이 높은 t1 먼저 (t1은 80%, f1은 30%)
+  elif t1:
+    print("t1 only True")
+  elif f1:
+    print("f1 only True")
+  else:
+    print("both not True")</code></pre>
+    <div class="post-card stack">
+      <h3>guard clause</h3>
+      <p><code>guard clause</code>는 먼저 예외적인 조건을 반환시켜 중첩 <code>if</code>문을 줄이는 방식입니다.</p>
+    </div>
+    <pre class="source-box"><code># guard clause
+def example_guard_clause():  
+  # 70% 확률로 존재하는 사용자,
+  # 40%확률로 로그인
+  # login되어있으면 30%확률로 활성화
+  user = User(is_login := getBool(40), is_active=(getBool(30) and is_login)) if getBool(70) else None
+
+  # 잘못된 예시
+  if user is not None:
+    if user.is_login:
+      if user.is_active:
+        print("user_active")
+        # 너무 depth가 깊어짐
+
+  # 올바른 guard clause의 사용
+  if user is None:
+    print("no user")
+    return
+  print("user exist")
+
+  if not user.is_login:
+    print("user not login")
+    return
+  print("user logged in")
+  
+  if not user.is_active:
+    print("user not active")
+    return
+  print("user active")</code></pre>
+  </section>
+
+  <hr class="post-divider">
+
+  <section class="post-section" id="section-04">
+    <h2 class="section-title">Iterable, Iterator, Generator</h2>
+    <div class="post-card stack">
+      <h3>Iterable</h3>
+      <p>이터러블은 반복 가능한 객체를 말합니다. <code>for</code>문에 넣어서 하나씩 꺼낼 수 있는 객체입니다.</p>
+      <p><code>list</code>, <code>tuple</code>, <code>str</code>, <code>dict</code>, <code>set</code>, <code>range</code>, <code>generator</code> 등이 모두 <code>iterable</code>입니다.</p>
+    </div>
+    <div class="post-card stack">
+      <h3>Iterator</h3>
+      <p>이터레이터는 실제로 <code>next()</code>로 값을 하나씩 꺼내는 객체입니다.</p>
+      <p>마지막 값 이후에는 <code>StopIteration</code> 예외를 발생시킵니다.</p>
+    </div>
+    <div class="post-card stack">
+      <h3>Generator</h3>
+      <p>제너레이터는 값을 미리 다 만들지 않고 필요할 때 생성하는 <code>iterator</code>입니다.</p>
+      <p>예시로는 <code>(x * 2 for x in range(5))</code>와 같은 generator expression 등이 있으며 값은 <code>__next__()</code>가 호출될 때 지연 평가된다고 합니다.</p>
+    </div>
+    <div class="post-note">
+      <p>제너레이터는 <code>match-case</code>의 시퀀스 패턴에서 일반 시퀀스처럼 매칭되지 않을 수 있습니다.</p>
+    </div>
+    <pre class="source-box"><code>Iterable
+├─ Sequence
+│  ├─ list
+│  ├─ tuple
+│  ├─ range
+│  └─ str
+│
+├─ Mapping
+│  └─ dict
+│
+├─ Set
+│  └─ set
+│
+└─ Iterator
+   └─ Generator</code></pre>
+  </section>
+
+  <hr class="post-divider">
+
+  <section class="post-section" id="section-05">
+    <h2 class="section-title">for문과 while문</h2>
+    <div class="post-card stack">
+      <h3><code>while</code>문</h3>
+      <p><code>while</code>문은 조건식이 <code>True</code>인 동안 반복하게 됩니다.</p>
+      <p>실행 구문 과정에서 조건에 대한 결과가 바뀌더라도 끝까지 실행 중인 구문을 완료한 뒤 조건문 체크에서 다시 체크를 하게 됩니다.</p>
+    </div>
+    <pre class="source-box"><code>a = 0
+i = 0
+while a == 0 and i &lt; 10:
+  # True면 여기서부터 실행
+  a += 1
+  print(a)
+  a -= 1
+  i += 1
+  # 여기까지 실행 후 다시 올라가기
+# False면 여기로 이동</code></pre>
+    <div class="post-card stack">
+      <h3><code>for</code>문</h3>
+      <p><code>for</code>문은 내부적으로 <code>iterable</code>에서 값을 하나씩 꺼내는 반복문입니다.</p>
+      <p>전통적인 <code>for (int i = 0; i &lt; 10; i++) {...}</code> 형태와 다르게, 파이썬의 <code>for</code>문은 값을 하나씩 꺼내는 방식입니다.</p>
+    </div>
+    <pre class="source-box"><code>it = iter([10, 20, 30, 40, 50])
+
+while True:
+  try:
+    x = next(it)
+    print(x)
+  except StopIteration:
+    break</code></pre>
+  </section>
+</article>
