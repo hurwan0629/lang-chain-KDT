@@ -530,6 +530,8 @@
   .math-block { overflow-x: auto; margin: 16px 0; padding: 14px 16px; border: 1px solid rgba(25, 185, 124, 0.14); border-radius: 14px; background: #f8fafc; }
   .math-block mjx-container { margin: 0 !important; }
   .post-card .math-block:last-child { margin-bottom: 0; }
+  .post-image { margin: 18px 0; }
+  .post-image img { display: block; width: 100%; height: auto; border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 14px; }
   .post-card h4 { margin: 18px 0 8px; color: #111827; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
   </style>
 
@@ -839,6 +841,7 @@ df[&quot;score&quot;].value_counts(normalize=True).sort_index().cumsum()
 <div class="math-block">\[
 X \sim \operatorname{Bernoulli}(0.7)
 \]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-1.png" alt="베르누이 분포 예시 이미지"></figure>
 <p>이는 \(X\)가 0.7의 확률로 <code>1</code>이 된다는 뜻입니다.</p>
 <p>일반적으로 성공 확률을 \(p\)라고 하면 베르누이 분포는 다음과 같습니다.</p>
 <div class="math-block">\[
@@ -873,6 +876,7 @@ E(X) = 0.7
 <div class="math-block">\[
 X \sim \operatorname{Binomial}(n, 0.7)
 \]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image.png" alt="이항 분포 예시 이미지"></figure>
 <p>베르누이 분포와 이항 분포의 관계는 다음과 같습니다.</p>
 <table class="read-table"><thead><tr><th>분포</th><th>시행 대상</th><th>시행 횟수</th><th>결과</th></tr></thead><tbody><tr><td>베르누이 분포</td><td>한 명</td><td>한 번</td><td>0 또는 1</td></tr><tr><td>이항 분포</td><td>여러 명</td><td>여러 번</td><td>성공 횟수</td></tr></tbody></table>
 <p>예를 들어 베르누이 시행 결과가 다음과 같다고 하겠습니다.</p>
@@ -925,6 +929,7 @@ E(X) = np
 <div class="math-block">\[
 X \sim \operatorname{Geometric}(p)
 \]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-2.png" alt="기하 분포 예시 이미지"></figure>
 <h3 class="card-title">확률 계산</h3>
 <p>시험 통과 확률이 \(p = 0.7\)이라고 하겠습니다.</p>
 <p>첫 번째 시도에서 통과할 확률은 다음과 같습니다.</p>
@@ -978,6 +983,7 @@ P(X = n) = (1-p)^n p
 <div class="math-block">\[
 X \sim \operatorname{NegativeBinomial}(r, p)
 \]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-3.png" alt="음이항 분포 예시 이미지"></figure>
 <h3 class="card-title">확률 계산</h3>
 <p>\(k\)번째 시행에서 \(r\)번째 성공이 나온다고 하겠습니다. 그러려면 앞선 \(k-1\)번 시행 안에 성공이 \(r-1\)번 있어야 하고, 마지막 \(k\)번째 시행은 성공이어야 합니다.</p>
 <p>확률은 다음과 같습니다.</p>
@@ -1026,6 +1032,7 @@ E(X) = \frac{r(1-p)}{p}
 <div class="math-block">\[
 (X_1, X_2, X_3) \sim \operatorname{Multinomial}(n, p_1, p_2, p_3)
 \]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-4.png" alt="다항 분포 예시 이미지"></figure>
 <p>여기에서 각 기호의 의미는 다음과 같습니다.</p>
 <ul class="post-list">
 <li>\(n\): 전체 시행 횟수</li>
