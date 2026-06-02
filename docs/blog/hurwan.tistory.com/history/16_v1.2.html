@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>이중 연결 리스트</title>
+  <title>이산형 기본 분포 정리</title>
   <style>
 /* Blog design version: v1.2 */
 .tech-post {
@@ -161,6 +161,43 @@
   vertical-align: baseline;
 }
 
+.post-list,
+.post-card ul {
+  margin: 12px 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.post-list li,
+.post-card li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-list li::before,
+.post-card li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.post-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+}
+
 .post-note {
   margin: 18px 0;
   padding: 18px 20px;
@@ -168,6 +205,23 @@
   border-radius: 16px;
   background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
   color: #334155;
+}
+
+.source-toggle {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+}
+
+.source-toggle summary {
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .source-box {
@@ -203,6 +257,7 @@
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
 }
 
+.toc-title,
 .post-toc strong {
   display: block;
   margin: 0 0 12px;
@@ -212,6 +267,7 @@
   letter-spacing: -0.03em;
 }
 
+.toc-list,
 .post-toc ol {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -221,6 +277,7 @@
   list-style: none;
 }
 
+.toc-list li,
 .post-toc ol li {
   display: flex;
   gap: 8px;
@@ -228,6 +285,7 @@
   min-width: 0;
 }
 
+.toc-list a,
 .post-toc ol a {
   display: flex;
   align-items: center;
@@ -242,6 +300,25 @@
   font-size: 14px;
   font-weight: 800;
   text-decoration: none;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.toc-list a:hover,
+.post-toc ol a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(25, 185, 124, 0.36);
+  background: rgba(240, 253, 247, 0.92);
+  color: #1d4ed8;
+}
+
+.toc-main {
+  flex: 1 1 auto;
+}
+
+.toc-commit {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  white-space: nowrap;
 }
 
 .toc-index {
@@ -256,6 +333,141 @@
   font-size: 12px;
   font-weight: 900;
   flex-shrink: 0;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+
+.study-timeline {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  margin: 18px 0 0;
+  padding-left: 36px;
+}
+
+.study-timeline::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.18);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 18px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green-soft), transparent 34%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: -35px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(25, 185, 124, 0.24), 0 0 16px rgba(25, 185, 124, 0.2);
+}
+
+.timeline-meta {
+  margin: 0 0 6px;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.timeline-title {
+  margin: 10px 0 0;
+  color: #111827;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+}
+
+.timeline-title a {
+  color: #111827;
+  text-decoration: none;
+}
+
+.timeline-title a:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+.timeline-item p {
+  margin: 0;
+}
+
+.commit-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 12px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.commit-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.commit-link::after {
+  content: ">";
+  margin-left: 6px;
+  font-size: 13px;
+}
+
+.read-table {
+  width: 100%;
+  margin: 12px 0 18px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.read-table th,
+.read-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  color: #334155;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: top;
+}
+
+.read-table th {
+  background: rgba(25, 185, 124, 0.08);
+  color: #111827;
+  font-weight: 800;
+}
+
+.read-table tr:last-child td {
+  border-bottom: 0;
 }
 
 @media (min-width: 1024px) {
@@ -286,257 +498,594 @@
     font-size: 28px;
   }
 
+  .toc-list,
   .post-toc ol {
     grid-template-columns: 1fr;
   }
+
+  .toc-list li,
+  .post-toc ol li {
+    flex-direction: column;
+  }
+
+  .toc-commit {
+    width: fit-content;
+  }
+
+  .study-timeline {
+    padding-left: 32px;
+  }
+
+  .timeline-item::before {
+    left: -31px;
+  }
+
+  .read-table th,
+  .read-table td {
+    display: block;
+    width: 100%;
+  }
 }
+
+  .math-block { overflow-x: auto; margin: 16px 0; padding: 14px 16px; border: 1px solid rgba(25, 185, 124, 0.14); border-radius: 14px; background: #f8fafc; }
+  .math-block mjx-container { margin: 0 !important; }
+  .post-card .math-block:last-child { margin-bottom: 0; }
+  .post-image { margin: 18px 0; }
+  .post-image img { display: block; width: 100%; height: auto; border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 14px; }
+  .post-card h4 { margin: 18px 0 8px; color: #111827; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
   </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
   <article class="tech-post">
     <header class="post-hero">
       <div class="post-hero-inner">
-        <p class="post-kicker">C Programming</p>
-        <p class="post-kicker">Double Linked List</p>
-        <h1 class="post-title">이중 연결 리스트</h1>
-        <p class="post-subtitle">과제...! 해야한다!</p>
+        <p class="post-kicker">Practical Statistics for Data Scientists</p>
+        <h1 class="post-title">이산형 기본 분포 정리</h1>
+        <p class="post-subtitle">데이터 탐색 및 처리 과정의 요소중 하나인 분포에 대해 공부해보았습니다.</p>
       </div>
     </header>
 
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 1번 md (01_empirical_distribution.md)</summary><pre class="source-box"><code># 경험적 분포
+&gt; 경험적 분포란 실제 데이터에서 관측된 값들이 어떻게 퍼져 있는지 나타낸 것
+
+이는 이론적 분포가 아닌 실제 데이터를 통해 나타낸 분포를 말합니다.
+
+예를 들어 점수가 `[1, 1, 5, 4, 7, 8, 98, 2]`가 나온다면 `{1: 2, 2: 1, 4: 1, 5: 1, 7: 1, 8: 1, 98: 1}` 형태로 나타낼 수 있습니다.
+
+이를 점수의 경험적 분포라고 부릅니다.
+
+경험적 분포에서는 실제 데이터에서 나온 비율을 확률처럼 보게 됩니다.
+
+예를 들면 위 경험적 분포에서는 `1`의 비율이 `2/8 = 0.25 (25%)`가 됩니다.
+
+## 분포
+가장 간단한 예시가 파이썬의
+```python
+df[&quot;score&quot;].value_counts()
+```
+입니다. (빈도분포)
+
+또한 상대 빈도 분포는
+```Python
+df[&quot;score&quot;].value_counts(normalize=True)
+```
+입니다. (각각 `[값: 0.xx]` 형태로 나옴)
+
+### 누적 분포
+어떤 값 이하가 전체의 몇 `%`인지 보는 것입니다.
+
+예를 들면 위 데이터에서 `90`점 이하가 전체의 `(7/8 * 100)%` 형태가 됩니다.
+
+이를 순서대로 50점 이하, 60점 이하, 70점 이하, ... 식으로 누적하며 확인이 가능합니다.
+
+이는 pandas에서
+```python
+df[&quot;score&quot;].value_counts(normalize=True).sort_index().cumsum()
+```
+를 통해 확인이 가능합니다.
+
+### 수치형 데이터의 경험적 분포
+수치형 데이터는 값이 너무 다양해서 `value_counts()`로만 보면 지저분해질 수 있습니다. (대부분의 값이 다르기 때문입니다.)
+
+따라서 이런 수치형 데이터는 일반적으로 구간으로 나누어서 설정하게 됩니다.
+
+예를 들어 사람의 키 같은 경우에는 `10cm` 단위로 나누어 셀 수 있습니다.
+
+## 경험적 분포를 볼 때 확인할 것
+위와 같은 데이터들을 히스토그램으로 나타낼 경우, 아래와 같은 특징들을 확인하며 데이터를 확인할 수 있습니다.
+- 중심이 어느쪽으로 가있는지 (평균, 중앙값, 특정 값, 왼쪽/오른쪽)
+- 얼마나 퍼져있는지 (IQR, 표준편차, 최소~최대)
+- 어느쪽 꼬리가 긴지 (오른쪽 꼬리 = 대부분 작고 일부만 매우 큼 등과 같은 해석)
+- 유난이 튀는 값이 나오는지
+- 봉우리 개수가 많은지 (예를 들면 다른 IQ평균을 가진 집단끼리 합쳐지면 봉우리가 2개 나올 수 있습니다.)
+
+## 경험적 분포를 확인한 후
+경험적 분포를 확인한 다음, 해야할 일은 해당 분포를 어떤 이론의 분포와 닮았는지, 대조할 수 있으며 일반화 시킬 수 있는지를 판단하는 일입니다.
+
+예를 들어 데이터가 위와 같이 점수에 대한 데이터라면 **비대칭 분포**, **쌍봉분포** 등과 같은 결과가 나올 수 있고, 성공/실패 비율에 따라 **베르누이 분포**의 이론분포를 생각해볼 수 있습니다.
+
+</code></pre></details>
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 2번 md (02_bernoulli_distribution.md)</summary><pre class="source-box"><code># 베르누이 분포
+베르누이 분포는 결과가 딱 2개뿐인 사건을 한 번 실행했을 때의 분포입니다.
+
+예를 들어 `학생이 내 수업을 들어 시험을 통과했다`를 `1`로 둘 시, `70%` 확률로 시험을 통과하게 된다면, `X ~ Bernoulli(0.7)`이 됩니다. 이는 `0.7의 확률로 X=1이 된다` 라는 의미와 같습니다.
+
+![alt text](image-1.png)
+
+베르누이 분포의 평균은 `p`이며 분산은 `p*(1-p)` 입니다.
+
+예를 들어 시험 통과율이 `p = 0.7`이라면 평균은 `0.7`이며 분산은 `0.7 * 0.3 = 0.21`이 됩니다.
+
+여기에서 평균은 한 학생의 결과는 무조건 `1` 또는 `0`이지만 많은 학생의 결과를 평균내면 `0.7`이 된다는 의미입니다.
+
+## 베르누이 분포의 중요성
+데이터 분석이나 머신러닝에서는 베르누이 분포가 **이진 분류의 기본**이 됩니다.
+
+이는 다음 개념인 **이항 분포**를 이루게 하며 **베르누이 시행**을 여러 번 반복했을 때의 성공 횟수를 나타낼 수 있게 됩니다.
+</code></pre></details>
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 3번 md (03_binomial_distribution.md)</summary><pre class="source-box"><code># 이항 분포
+이항 분포는 **베르누이 시행**을 여러 번 반복했을 때 성공 횟수를 말합니다.
+
+예를 들어 학생 `n`명 중 몇 명이 시험에 통과했는가? 라는 질문에는 시험의 **베르누이 분포**의 평균이 `0.7`인 경우, 아래와 같이 정리가 가능합니다.
+
+`X ~ Binomial(n, 0.7)`
+
+![alt text](image.png)
+
+#### 베르누이 분포와의 관계
+- 베르누이 분포: `한 명` | `한 번` | `0 or 1`
+- 이항 분포: `여러 명` | `여러 번` | `성공 횟수`
+
+베르누이 분포의 모습은 다음과 같이 하나하나로 생성됩니다. `[0] [1] [1] [1] [0] [1] [0] [1] [1]`
+
+이때 이항 분포는 이 값들을 모두 더한, `[6]`이 됩니다.
+
+## 수치를 계산하는 법
+### 성공 확률
+이항 분포는 정확히 `k`번 성공할 확률을 계산할 수 있습니다.
+`P(X = k) = (n)C(k) * p^k * (1-p)^(n-k)` 입니다.
+
+이는 `n중 k개가 나오는 경우의 수`, `성공한 k의 개수`, `성공하지 않은 (n-k)의 개수`를 뜻합니다.
+
+### 평균과 분산
+이항 분포의 평균은 `n*p`입니다. 
+
+분산은 `n*p*(1-p)`이며 표준편차는 분산에 루트를 씌운 값입니다.
+
+
+## 이항분포의 성립 조건
+1. 시행 횟수 `n`이 정해져 있어야함
+2. 각 시행 결과가 2가지로 나뉠 수 있어야함
+3. 각 시행의 성공 확률 `p`가 같아야함
+4. 각 시행이 서로 독립적이어야 함
+
+이라는 조건이 필요합니다. 예를 들어 동전던지기는 위 조건을 모두 만족합니다.
+
+하지만 카드뽑기와 같은 뽑고, 다시 넣지 않는 경우에는 앞의 결과가 뒤에 영향을 줍니다. 이는 **초기하분포**에 더 가까운 모습이 됩니다.
+
+
+</code></pre></details>
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 4번 md (04_geometric_distribution.md)</summary><pre class="source-box"><code># 기하분포
+기하분포는 성공이 처음 나올 때까지 몇 번 시도할지에 대한 분포입니다.
+
+이전에 다루었던 이항 분포의 경우에는 성공의 개수를 말했지만 기하 분포는 거기에서 1개의 값만이라도 성공으로 나올 확률(걸리는 횟수)를 보여줍니다.
+
+`X ~ Geometric(p)`와 같이 나옵니다. (어차피 실행 횟수는 전부 넣어보며 결정하기 때문에 성공 확률만 알면 됩니다.)
+
+### 확률 계산
+이전처럼 교육시킨 학생의 시험 통과율이 `0.7`이라고 한다면 
+
+1. 첫 시도는 `0.7의 확률로 통과`
+2. 둘째 시도는 `0.3*0.7의 확률로 통과`
+3. ...
+4. `n`번째 시도는 `0.3^(n-1)*0.7의 확률로 통과` 
+
+따라서 `(1-p)^(n-1)*p`에 따라 그래프가 그려집니다.
+
+![alt text](image-2.png)
+
+### 평균과 분산
+평균은 `p^-1`이며 
+
+분산은 `(1-p)*p^-2`입니다.
+
+예를 들면 `0.7`의 확률은 `10/7` 으로 대부분 첫 번째, 그리고 두 번째에서 성공한다고 볼 수 있습니다.
+
+## 주의할 점
+기하분포는 책이나 라이브러리에 따라 정의가 다를 수 있습니다.
+
+기하분포는 정의가 2가지가 존재합니다.
+
+### 정의 1. 첫 성공까지의 전체 시행 횟수
+지금까지 이야기 한 방식입니다.
+### 정의 2. 첫 성공 전까지의 실패 횟수
+이전에는 `(1-p)^(n-1)*p`라고 하였지만 정의에 따라 실패 횟수로 생각하여 `(1-p)^n * p`으로 설정할 수 있습니다.
+</code></pre></details>
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 5번 md (05_negative_binomial_distribution.md)</summary><pre class="source-box"><code># 음이항 분포
+해당 분포는 베르누이 분포에서 이항 분포로 넘어가는 것과 비슷하게, 기하 분포의 확장과 비슷합니다.
+
+**r번 성공할 때까지 몇 번 걸리나**를 나타내는 분포입니다.
+
+`X ~ NegativeBinomial(r, p)`로 나타내며
+
+`Geometric(p) = NegativeBinomial(1, p)`가 성립합니다.
+
+![alt text](image-3.png)
+
+## 수식 계산법
+### 확률
+확률의 경우에는 `k`번째 시행에서 `r`번째 성공이 나올 확률을 말합니다.
+
+따라서 `앞선 k-1번 안에 성공이 r-1번 있어야 함`이라는 조건이 생기게 됩니다.
+
+수식은 다음과 같습니다. `(k-1)C(r-1) * p^(r) * (1-p)^(k-r)`
+
+위는 `k-1`번의 시행에서 `r-1`번 성공할 `(k-1)C(r-1) * p^(r-1) * (1-p)^{(k-1)-(r-1)}`에 마지막 성공인 `p`를 곱한 값입니다.
+
+### 평균과 분산
+평균은 `r * p^-1`로 나타내며
+
+분산은 `r * (1-p) * p^-2`가 됩니다.
+
+## 주의할 점
+앞에서 기하분포에서 정의가 2가지가 있을 수 있다고 하였던 것과 같은 원리로 음이항분포 또한 정의가 2가지로 나뉠 수 있습니다.
+
+### 정의 1. r번째 성공까지의 전체 시행 횟수
+첫 번째는 앞에서 말한 것과 같은 평균이 `r * p^-1`인 경우입니다.
+
+### 정의 2. r번째 성공 전까지의 실패 횟수
+동일하게 실패 횟수를 기준으로 설명을 하여 평균이 `r * (1-p) * p^-1`이 됩니다.
+</code></pre></details>
+    <details class="source-toggle"><summary>gpt가 디자인 하기 전 원본 - 6번 md (06_multinomial_distribution.md)</summary><pre class="source-box"><code># 다항 분포
+이항 분포가 2가지의 결과가 존재한다면, 다항분포는 결과가 3가지 이상인 사건의 발생 횟수를 말합니다.
+
+다항분포는 다음과 같이 표현합니다.
+
+`(X1, X2, X3) ~ Multinomial(n, p1, p2, p3)`
+
+여기에서 
+- `n`은 시행 횟수
+- `Xk`은 각 카테고리가 나온 횟수
+- `pk`은 카테고리가 나올 확률
+
+을 말합니다.
+
+![alt text](image-4.png)
+
+&gt; 해당 분포는 예시로 n번 실행하였을 때 클래스들이 얼마나 나타나는가에 대한 바이올린 분포입니다. 해석을 해보면 4~5가 가장 높은 빈도수로 등장하며 3이 미세하게 0, 1, 2클래스보다 많이 등장한다고 이해할 수 있습니다.
+
+## 계산
+다항 분포에서 `(X1, X2, X3, ..., xk) = (x1, x2, x3, ..., xk)`일 확률은 `P(X1=x1, ... Xk = xk) = n! * (1~k 곱)(pi^xi * (xi!)^-1)` 입니다.
+
+- `n! / (x1! * x2! * ... * xk!)`: 해당 카테고리 형태의 순서가 나오는 경우의 수
+- `p1^x1 * p2^x2 * ... * pk^xk`: 각 결과가 그 횟수만큼 나올 확률
+
+평균은 카테고리별로 `E(Xi) = npi`이고 
+
+분산은 `Var(Xi) = npi(1-pi)`입니다.
+
+&gt; 사실 이건 정확하게 검증까지는 하지 않았고, 앞으로 대략적인 의미만 파악한 뒤, 조심할 점 등만 알아가며 빠르게 훑어보려 합니다. (유명한 공식이니 문제 없어보입니다.)
+
+### 중요한 조건
+다항분포에서는 각 시행마다 결과가 하나만 나와야 하며, `(1~카테고리 개수의 시그마)pi = 1`이어야 하며, `(1~카테고리 개수의 시그마)Xi = n`을 만족해야 합니다.
+
+### 중요
+&gt; 다항 문포의 각 카테고리는 서로 독립이 아니기 때문에 공분산이 성립하며 공분산의 비대각선 (좌상단~우하단 대각선 이외의 셀)은 모두 음수입니다.
+</code></pre></details>
+
     <nav class="post-toc">
-      <strong>목차</strong>
-      <ol>
-        <li><a href="#section-01"><span class="toc-index">01</span><span>개념</span></a></li>
-        <li><a href="#section-02"><span class="toc-index">02</span><span>코드</span></a></li>
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span><span class="toc-main">경험적 분포</span></a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span><span class="toc-main">베르누이 분포</span></a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span><span class="toc-main">이항 분포</span></a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span><span class="toc-main">기하 분포</span></a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span><span class="toc-main">음이항 분포</span></a></li>
+        <li><a href="#section-06"><span class="toc-index">06</span><span class="toc-main">다항 분포</span></a></li>
       </ol>
     </nav>
 
-    <section class="post-section" id="section-01">
-      <h2 class="section-title">개념</h2>
-      <div class="post-card stack">
-        <p>이번에는 연결 리스트라는 자료구조를 공부 및 구현하는 과제를 받았습니다.</p>
-        <p>하지만 이미 연결/이중 연결리스트에 대해서 알고있었기 때문에 개인적으로 하고있는 로우레벨 언어를 통한 세세한 구현을 해보았습니다.</p>
-        <p>일단 (이중)연결 리스트를 설명하고 가자면, 노드간의 연결을 통해 만들어지는 리스트를 말합니다. 이는 이전에 다뤘던 배열(<code>Array</code>)와 다르게 연속되지 않은 메모리를 가지게 됩니다. 이 때문에 인덱스를 알아도 접근에 걸리는 시간은 <code>O(n)</code>만큼 걸리며, 일반적으로 공간을 더 많이 차지합니다. <strong>하지만</strong> 이중 연결리스트(연결리스트)는 삽입/삭제에 대해 위치(노드 주소)를 알면 <code>O(1)</code>이라는 속도로 삽입/삭제가 가능하기 때문에 삽입/삭제가 많은 환경에서는 해당 자료구조를 사용하는 것이 좋습니다.</p>
-      </div>
-    </section>
-
-    <section class="post-section" id="section-02">
-      <h2 class="section-title">코드</h2>
-      <pre class="source-box"><code>// 이중 연결 리스트 만들기
-#include &lt;stdio.h&gt;
-
-// malloc/free를 위한 함수 가져오기
-#include &lt;stdlib.h&gt;
-
-// 기본 노드
-// 20byte (+4)
-typedef struct Node{
-  // 앞의 노드 주소
-  struct  Node *prev;  // 8byte
-  // 내용물 (일단 편하게 int)
-  int value;   // 4byte
-  // 뒤의 노드 주소
-  struct  Node *next;    // 8byte 
-}Node;
-
-// 노드 결합 구조체
-// 20byte (+4)
-typedef struct LinkedList{
-  int length; // 4byte
-  Node *first; // 8byte
-  Node *last; // 8byte
-} LinkedList;
-
-// 자동으로 하나 만들어주는 함수
-LinkedList createList() {
-  return (LinkedList){0, NULL, NULL};
-}
-
-LinkedList initList(int value) {
-  Node *n = malloc(sizeof(Node));
-
-  *n = (Node){NULL, value, NULL};
-
-  return (LinkedList){1, n, n};
-}
-
-int getLength(LinkedList ll) {
-  return ll.length;
-}
-
-// 맨 앞에 노드를 붙여주는 함수 길이는 적당히 까지만 받아주기
-int addFirst(LinkedList *ll, int value) {
-  if((*ll).length &gt; 999) {
-    return 1;
-  }
-  Node *n = malloc(sizeof(Node));
-
-  *n = (Node){NULL, value, NULL};
-  if((*ll).length == 0) {
-    (*ll).first = n;
-    (*ll).last = n;
-    (*ll).length += 1;
-    return 0;
-  }
-
-  (*n).next = (*ll).first;
-  (*(*ll).first).prev = n;
-  (*ll).first = n;
-  (*ll).length += 1;
-  return 0;
-}
-
-// int insertNode(LinkedList ll, int value, int index) {
-
-// }
-
-int addLast(LinkedList *ll, int value) {
-  if((*ll).length &gt; 999) {
-    return 1;
-  }
-  
-  Node *n = malloc(sizeof(Node));
-
-  *n = (Node){NULL, value, NULL};
-
-  if((*ll).length == 0) {
-    (*ll).first = n;
-    (*ll).last = n;
-    (*ll).length += 1;
-    return 0;
-  }
-
-  (*n).prev = (*ll).last;
-  (*(*ll).last).next = n;
-  (*ll).last = n;
-  (*ll).length += 1;
-  return 0;
-}
-
-int removeFirst(LinkedList *ll) {
-  // 0개일 때
-  if((*ll).length &lt;= 0) {
-    return -1;
-  }
-  // 1개일 때
-  else if((*ll).first == (*ll).last) {
-    Node *old = (*ll).first;
-    (*ll).first = NULL;
-    (*ll).last = NULL;
-
-    free(old);
-
-    (*ll).length -= 1;
-    return 0;
-  }
-
-  Node *old = (*ll).first;
-  Node *tmp = (*(*ll).first).next;
-
-  free(old);
-  
-  (*tmp).prev = NULL;
-  (*ll).first = NULL;
-  (*ll).first = tmp;
-  (*ll).length -= 1;
-  return 0;
-}
-
-int removeIndex(LinkedList *ll, int index) {
-
-  // 유효성 검사
-  if((*ll).length &lt; 0) {
-    return -1;
-  }
-  // 인덱스는 0~length-1이여야함
-  else if(index &lt; 0 || (*ll).length &lt;= index) {
-    return -1;
-  }
-
-  Node *n = (*ll).first;
-  for(int i=0;i&lt;index;i++){ 
-    // 삭제할 인덱스로 이동하기
-    n = (*n).next;
-  }
-  Node *front = (*n).prev;
-  Node *back = (*n).next;
-
-  
-  // 길이가 1이라면
-  if((*ll).length == 1) {
-    (*ll).first = NULL;
-    (*ll).last = NULL;
-    free(n);
-    (*ll).length -= 1;
-    return 0;
-  }
-  // 지울 노드가 맨 앞 또는 뒤라면 first 또는 last 변환해주기
-  else if((*ll).first == n) {
-    (*ll).first = (*(*ll).first).next;
-  }
-  else if((*ll).last == n) {
-    (*ll).last = (*(*ll).last).prev;
-  }
-
-  // 맨 앞 또는 맨 뒤인 경우
-  // NPE 방지를 통해 구조체가 NULL이 아닐 경우에만 접근
-  if(front != NULL) {
-    (*front).next = back; 
-  }
-  if(back != NULL) {
-    (*back).prev = front;
-  }
-
-  free(n);
-  (*ll).length -= 1;
-  return 0;
-}
-
-void printLinkedList(LinkedList ll) {
-  Node *n = ll.first;
-  for(int i=0;i&lt;ll.length;i++) {
-    printf("%d ", (*n).value);
-    n = (*n).next;
-  }
-
-  printf("\n");
-}
-
-int main() {
-
-  LinkedList ll = createList();
-
-  addFirst(&amp;ll, 10);
-  addFirst(&amp;ll, 20);
-  addFirst(&amp;ll, 30);
-  printf("10, 20, 30 insert\n");
-  printLinkedList(ll);
-
-  printf("delete first index\n");
-  removeFirst(&amp;ll);
-  printLinkedList(ll);
-  printf("List Length '%d'\n", ll.length);
-  printf("delete index '1'\n");
-  removeIndex(&amp;ll, 1);
-
-  printf("[10] + ll + [2000, 3000]\n");
-  addFirst(&amp;ll, 10);
-  addLast(&amp;ll, 2000);
-  addLast(&amp;ll, 3000);
-
-  printf("delete index '0'\n");
-  removeIndex(&amp;ll, 1);
-
-  printLinkedList(ll);
-
-  printf("delete index '2'\n");
-  removeIndex(&amp;ll, 2);
-
-  printLinkedList(ll);
-
-  return 0;
-}</code></pre>
-    </section>
+<p>데이터 탐색 및 처리 과정의 요소중 하나인 분포에 대해 공부해보았습니다.</p>
+<section class="post-section" id="section-01">
+<h2 class="section-title">경험적 분포</h2>
+<div class="post-card stack">
+<p><strong>경험적 분포</strong>는 실제 데이터에서 관측된 값들이 어떻게 퍼져 있는지를 나타낸 것입니다. 이론적으로 정해진 분포가 아니라, 실제 관측값을 바탕으로 만든 분포입니다.</p>
+<p>예를 들어 점수가 다음과 같이 관측되었다고 하겠습니다.</p>
+<pre class="code-box"><code>scores = [1, 1, 5, 4, 7, 8, 98, 2]</code></pre>
+<p>이 데이터를 빈도로 나타내면 다음과 같습니다.</p>
+<pre class="code-box"><code>{1: 2, 2: 1, 4: 1, 5: 1, 7: 1, 8: 1, 98: 1}</code></pre>
+<p>이때 값 <code>1</code>의 상대 빈도는 다음과 같습니다.</p>
+<div class="math-block">\[
+\frac{2}{8} = 0.25
+\]</div>
+<p>즉, 실제 데이터 안에서 <code>1</code>이 나타난 비율은 25%입니다. 경험적 분포에서는 이렇게 실제 데이터에서 나온 비율을 확률처럼 해석할 수 있습니다.</p>
+<h3 class="card-title">pandas에서 확인하기</h3>
+<p>가장 간단한 빈도분포는 <code>value_counts()</code>로 확인할 수 있습니다.</p>
+<pre class="code-box"><code>df[&quot;score&quot;].value_counts()</code></pre>
+<p>상대 빈도분포는 <code>normalize=True</code>를 사용합니다.</p>
+<pre class="code-box"><code>df[&quot;score&quot;].value_counts(normalize=True)</code></pre>
+<p>누적 분포는 값 이하의 비율을 누적해서 보는 방식입니다.</p>
+<pre class="code-box"><code>df[&quot;score&quot;].value_counts(normalize=True).sort_index().cumsum()</code></pre>
+<p>예를 들어 위 데이터에서 <code>90</code>점 이하인 값은 7개이므로 비율은 다음과 같습니다.</p>
+<div class="math-block">\[
+\frac{7}{8} \times 100 = 87.5\%
+\]</div>
+<h3 class="card-title">경험적 분포에서 확인할 것</h3>
+<p>히스토그램이나 빈도표로 경험적 분포를 볼 때는 다음을 확인합니다.</p>
+<ul class="post-list">
+<li>중심이 어디에 있는지: 평균, 중앙값, 특정 값</li>
+<li>값이 얼마나 퍼져 있는지: IQR, 표준편차, 최소값, 최대값</li>
+<li>어느 쪽 꼬리가 긴지</li>
+<li>유난히 튀는 값이 있는지</li>
+<li>봉우리가 하나인지, 여러 개인지</li>
+</ul>
+<p>경험적 분포를 확인한 뒤에는 이 데이터가 어떤 이론적 분포와 닮았는지 생각해볼 수 있습니다. 예를 들어 성공과 실패로 나뉘는 데이터라면 베르누이 분포를 떠올릴 수 있고, 여러 번의 성공 횟수를 다루는 데이터라면 이항 분포를 생각할 수 있습니다.</p>
+</div></section>
+<hr class="post-divider">
+<section class="post-section" id="section-02">
+<h2 class="section-title">베르누이 분포</h2>
+<div class="post-card stack">
+<p><strong>베르누이 분포</strong>는 결과가 딱 두 개뿐인 사건을 한 번 실행했을 때의 분포입니다.</p>
+<p>예를 들어 한 학생이 시험에 통과하면 <code>1</code>, 통과하지 못하면 <code>0</code>이라고 하겠습니다. 시험 통과 확률이 70%라면 확률변수 \(X\)는 다음과 같이 나타낼 수 있습니다.</p>
+<div class="math-block">\[
+X \sim \operatorname{Bernoulli}(0.7)
+\]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-1.png" alt="베르누이 분포 예시 이미지"></figure>
+<p>이는 \(X\)가 0.7의 확률로 <code>1</code>이 된다는 뜻입니다.</p>
+<p>일반적으로 성공 확률을 \(p\)라고 하면 베르누이 분포는 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X = 1) = p
+\]</div>
+<div class="math-block">\[
+P(X = 0) = 1 - p
+\]</div>
+<p>베르누이 분포의 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = p
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X) = p(1-p)
+\]</div>
+<p>예를 들어 \(p = 0.7\)이라면 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = 0.7
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X) = 0.7 \times 0.3 = 0.21
+\]</div>
+<p>한 학생의 결과는 반드시 <code>0</code> 또는 <code>1</code>이지만, 많은 학생의 결과를 평균내면 통과 비율에 가까워집니다. 그래서 평균이 \(0.7\)이라는 말은 장기적으로 성공 비율이 70%에 가까워진다는 의미입니다.</p>
+<p>베르누이 분포는 데이터 분석과 머신러닝에서 이진 분류의 기본이 됩니다. 그리고 베르누이 시행을 여러 번 반복했을 때의 성공 횟수는 이항 분포로 이어집니다.</p>
+</div></section>
+<hr class="post-divider">
+<section class="post-section" id="section-03">
+<h2 class="section-title">이항 분포</h2>
+<div class="post-card stack">
+<p><strong>이항 분포</strong>는 베르누이 시행을 여러 번 반복했을 때의 성공 횟수를 나타내는 분포입니다.</p>
+<p>예를 들어 학생 \(n\)명 중 몇 명이 시험에 통과했는지 알고 싶다고 하겠습니다. 한 학생의 시험 통과 확률이 0.7이라면, 통과한 학생 수 \(X\)는 다음과 같이 나타낼 수 있습니다.</p>
+<div class="math-block">\[
+X \sim \operatorname{Binomial}(n, 0.7)
+\]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image.png" alt="이항 분포 예시 이미지"></figure>
+<p>베르누이 분포와 이항 분포의 관계는 다음과 같습니다.</p>
+<table class="read-table"><thead><tr><th>분포</th><th>시행 대상</th><th>시행 횟수</th><th>결과</th></tr></thead><tbody><tr><td>베르누이 분포</td><td>한 명</td><td>한 번</td><td>0 또는 1</td></tr><tr><td>이항 분포</td><td>여러 명</td><td>여러 번</td><td>성공 횟수</td></tr></tbody></table>
+<p>예를 들어 베르누이 시행 결과가 다음과 같다고 하겠습니다.</p>
+<pre class="code-box"><code>[0, 1, 1, 1, 0, 1, 0, 1, 1]</code></pre>
+<p>이때 성공 횟수는 다음과 같습니다.</p>
+<div class="math-block">\[
+0 + 1 + 1 + 1 + 0 + 1 + 0 + 1 + 1 = 6
+\]</div>
+<p>즉, 이항 분포는 여러 개의 베르누이 시행 결과를 더한 값으로 볼 수 있습니다.</p>
+<h3 class="card-title">확률 계산</h3>
+<p>이항 분포에서 정확히 \(k\)번 성공할 확률은 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X = k) = \binom{n}{k}p^k(1-p)^{n-k}
+\]</div>
+<p>여기에서 각 항의 의미는 다음과 같습니다.</p>
+<ul class="post-list">
+<li>\(\binom{n}{k}\): \(n\)번의 시행 중 \(k\)번 성공하는 경우의 수</li>
+<li>\(p^k\): 성공이 \(k\)번 나올 확률</li>
+<li>\((1-p)^{n-k}\): 실패가 \(n-k\)번 나올 확률</li>
+</ul>
+<h3 class="card-title">평균과 분산</h3>
+<p>이항 분포의 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = np
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X) = np(1-p)
+\]</div>
+<p>표준편차는 분산에 루트를 씌운 값입니다.</p>
+<div class="math-block">\[
+\sigma = \sqrt{np(1-p)}
+\]</div>
+<h3 class="card-title">성립 조건</h3>
+<p>이항 분포가 성립하려면 다음 조건이 필요합니다.</p>
+<ol class="post-list">
+<li>시행 횟수 \(n\)이 정해져 있어야 합니다.</li>
+<li>각 시행 결과가 성공/실패처럼 두 가지로 나뉘어야 합니다.</li>
+<li>각 시행의 성공 확률 \(p\)가 같아야 합니다.</li>
+<li>각 시행이 서로 독립적이어야 합니다.</li>
+</ol>
+<p>동전 던지기는 위 조건을 모두 만족합니다. 반대로 카드를 뽑고 다시 넣지 않는 경우에는 앞의 결과가 뒤의 결과에 영향을 주므로 이항 분포보다 초기하분포에 더 가깝습니다.</p>
+</div></section>
+<hr class="post-divider">
+<section class="post-section" id="section-04">
+<h2 class="section-title">기하 분포</h2>
+<div class="post-card stack">
+<p><strong>기하 분포</strong>는 첫 성공이 나올 때까지 몇 번 시행하는지를 나타내는 분포입니다.</p>
+<p>이항 분포가 정해진 시행 횟수 안에서 성공 횟수를 다룬다면, 기하 분포는 첫 번째 성공이 나오기까지 걸리는 시행 횟수를 다룹니다.</p>
+<p>성공 확률이 \(p\)일 때 기하 분포는 다음과 같이 나타냅니다.</p>
+<div class="math-block">\[
+X \sim \operatorname{Geometric}(p)
+\]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-2.png" alt="기하 분포 예시 이미지"></figure>
+<h3 class="card-title">확률 계산</h3>
+<p>시험 통과 확률이 \(p = 0.7\)이라고 하겠습니다.</p>
+<p>첫 번째 시도에서 통과할 확률은 다음과 같습니다.</p>
+<div class="math-block">\[
+0.7
+\]</div>
+<p>두 번째 시도에서 처음 통과하려면 첫 번째 시도는 실패하고 두 번째 시도는 성공해야 합니다.</p>
+<div class="math-block">\[
+0.3 \times 0.7
+\]</div>
+<p>\(n\)번째 시도에서 처음 성공할 확률은 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X = n) = (1-p)^{n-1}p
+\]</div>
+<p>여기에서 \((1-p)^{n-1}\)은 앞의 \(n-1\)번 시행이 모두 실패할 확률이고, 마지막 \(p\)는 \(n\)번째 시행에서 성공할 확률입니다.</p>
+<h3 class="card-title">평균과 분산</h3>
+<p>기하 분포의 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = \frac{1}{p}
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X) = \frac{1-p}{p^2}
+\]</div>
+<p>예를 들어 \(p = 0.7\)이라면 평균 시행 횟수는 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = \frac{1}{0.7} = \frac{10}{7}
+\]</div>
+<p>즉, 대부분 첫 번째나 두 번째 시행에서 성공한다고 볼 수 있습니다.</p>
+<h3 class="card-title">주의할 점</h3>
+<p>기하 분포는 책이나 라이브러리에 따라 정의가 두 가지로 나뉠 수 있습니다.</p>
+<p>첫 번째 정의는 지금까지 설명한 방식처럼 <strong>첫 성공까지의 전체 시행 횟수</strong>를 \(X\)로 두는 방식입니다.</p>
+<div class="math-block">\[
+P(X = n) = (1-p)^{n-1}p
+\]</div>
+<p>두 번째 정의는 <strong>첫 성공 전까지의 실패 횟수</strong>를 \(X\)로 두는 방식입니다.</p>
+<div class="math-block">\[
+P(X = n) = (1-p)^n p
+\]</div>
+<p>따라서 기하 분포를 사용할 때는 \(X\)가 전체 시행 횟수인지, 실패 횟수인지 먼저 확인해야 합니다.</p>
+</div></section>
+<hr class="post-divider">
+<section class="post-section" id="section-05">
+<h2 class="section-title">음이항 분포</h2>
+<div class="post-card stack">
+<p><strong>음이항 분포</strong>는 \(r\)번째 성공이 나올 때까지 몇 번 시행하는지를 나타내는 분포입니다.</p>
+<p>기하 분포가 첫 번째 성공까지의 시행 횟수를 다룬다면, 음이항 분포는 \(r\)번째 성공까지의 시행 횟수를 다룹니다. 따라서 기하 분포는 음이항 분포의 특수한 경우로 볼 수 있습니다.</p>
+<div class="math-block">\[
+\operatorname{Geometric}(p) = \operatorname{NegativeBinomial}(1, p)
+\]</div>
+<p>음이항 분포는 다음과 같이 나타냅니다.</p>
+<div class="math-block">\[
+X \sim \operatorname{NegativeBinomial}(r, p)
+\]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-3.png" alt="음이항 분포 예시 이미지"></figure>
+<h3 class="card-title">확률 계산</h3>
+<p>\(k\)번째 시행에서 \(r\)번째 성공이 나온다고 하겠습니다. 그러려면 앞선 \(k-1\)번 시행 안에 성공이 \(r-1\)번 있어야 하고, 마지막 \(k\)번째 시행은 성공이어야 합니다.</p>
+<p>확률은 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X = k) = \binom{k-1}{r-1}p^r(1-p)^{k-r}
+\]</div>
+<p>이를 나누어 보면 다음과 같습니다.</p>
+<div class="math-block">\[
+\binom{k-1}{r-1}p^{r-1}(1-p)^{(k-1)-(r-1)}
+\]</div>
+<p>위 식은 앞선 \(k-1\)번 시행에서 \(r-1\)번 성공할 확률입니다. 여기에 마지막 성공 확률 \(p\)를 곱하면 다음 식이 됩니다.</p>
+<div class="math-block">\[
+\binom{k-1}{r-1}p^{r-1}(1-p)^{(k-1)-(r-1)} \times p
+\]</div>
+<p>정리하면 다음과 같습니다.</p>
+<div class="math-block">\[
+\binom{k-1}{r-1}p^r(1-p)^{k-r}
+\]</div>
+<h3 class="card-title">평균과 분산</h3>
+<p>\(X\)를 \(r\)번째 성공까지의 전체 시행 횟수로 정의하면 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X) = \frac{r}{p}
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X) = \frac{r(1-p)}{p^2}
+\]</div>
+<h3 class="card-title">주의할 점</h3>
+<p>음이항 분포도 기하 분포처럼 정의가 두 가지로 나뉠 수 있습니다.</p>
+<p>첫 번째 정의는 <strong>\(r\)번째 성공까지의 전체 시행 횟수</strong>를 \(X\)로 두는 방식입니다.</p>
+<div class="math-block">\[
+E(X) = \frac{r}{p}
+\]</div>
+<p>두 번째 정의는 <strong>\(r\)번째 성공 전까지의 실패 횟수</strong>를 \(X\)로 두는 방식입니다.</p>
+<div class="math-block">\[
+E(X) = \frac{r(1-p)}{p}
+\]</div>
+<p>따라서 음이항 분포를 사용할 때도 \(X\)가 전체 시행 횟수인지, 실패 횟수인지 확인해야 합니다.</p>
+</div></section>
+<hr class="post-divider">
+<section class="post-section" id="section-06">
+<h2 class="section-title">다항 분포</h2>
+<div class="post-card stack">
+<p><strong>다항 분포</strong>는 결과가 세 가지 이상인 사건을 여러 번 시행했을 때, 각 범주가 몇 번 나오는지를 나타내는 분포입니다.</p>
+<p>이항 분포가 성공/실패처럼 두 가지 결과를 다룬다면, 다항 분포는 세 가지 이상의 결과를 다룹니다.</p>
+<p>예를 들어 결과가 세 가지 범주로 나뉘고 시행 횟수가 \(n\)번이라면 다음과 같이 나타낼 수 있습니다.</p>
+<div class="math-block">\[
+(X_1, X_2, X_3) \sim \operatorname{Multinomial}(n, p_1, p_2, p_3)
+\]</div>
+<figure class="post-image"><img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/1500ae77c6bc37e001782eba77a0968212927793/workspace/personal/Practical_Statistics_for_Data_Scientists/alone/distribution_table/image-4.png" alt="다항 분포 예시 이미지"></figure>
+<p>여기에서 각 기호의 의미는 다음과 같습니다.</p>
+<ul class="post-list">
+<li>\(n\): 전체 시행 횟수</li>
+<li>\(X_i\): \(i\)번째 카테고리가 나온 횟수</li>
+<li>\(p_i\): \(i\)번째 카테고리가 나올 확률</li>
+</ul>
+<h3 class="card-title">확률 계산</h3>
+<p>다항 분포에서 각 범주가 다음과 같이 나올 확률을 구한다고 하겠습니다.</p>
+<div class="math-block">\[
+(X_1, X_2, \ldots, X_k) = (x_1, x_2, \ldots, x_k)
+\]</div>
+<p>이때 확률은 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X_1=x_1, X_2=x_2, \ldots, X_k=x_k)
+=
+\frac{n!}{x_1!x_2!\cdots x_k!}
+p_1^{x_1}p_2^{x_2}\cdots p_k^{x_k}
+\]</div>
+<p>곱 형태로 쓰면 다음과 같습니다.</p>
+<div class="math-block">\[
+P(X_1=x_1, \ldots, X_k=x_k)
+=
+n! \prod_{i=1}^{k} \frac{p_i^{x_i}}{x_i!}
+\]</div>
+<p>여기에서 각 부분의 의미는 다음과 같습니다.</p>
+<ul class="post-list">
+<li>\(\frac{n!}{x_1!x_2!\cdots x_k!}\): 해당 카테고리 조합이 나오는 경우의 수</li>
+<li>\(p_1^{x_1}p_2^{x_2}\cdots p_k^{x_k}\): 각 결과가 해당 횟수만큼 나올 확률</li>
+</ul>
+<h3 class="card-title">평균과 분산</h3>
+<p>다항 분포에서 각 카테고리 \(X_i\)의 평균과 분산은 다음과 같습니다.</p>
+<div class="math-block">\[
+E(X_i) = np_i
+\]</div>
+<div class="math-block">\[
+\operatorname{Var}(X_i) = np_i(1-p_i)
+\]</div>
+<h3 class="card-title">중요한 조건</h3>
+<p>다항 분포에서는 각 시행마다 결과가 하나만 나와야 합니다. 또한 모든 카테고리의 확률 합은 1이어야 합니다.</p>
+<div class="math-block">\[
+\sum_{i=1}^{k} p_i = 1
+\]</div>
+<p>그리고 각 카테고리에서 나온 횟수의 합은 전체 시행 횟수 \(n\)과 같아야 합니다.</p>
+<div class="math-block">\[
+\sum_{i=1}^{k} X_i = n
+\]</div>
+<p>즉, 다항 분포는 여러 범주 중 하나의 결과만 나오는 시행을 \(n\)번 반복했을 때, 각 범주의 발생 횟수를 다루는 분포입니다.</p>
+<h3 class="card-title">중요</h3>
+<p>다항 문포의 각 카테고리는 서로 독립이 아니기 때문에 공분산이 성립하며 공분산의 비대각선, 즉 좌상단부터 우하단까지의 대각선 이외의 셀은 모두 음수입니다.</p>
+<div class="math-block">\[
+\operatorname{Cov}(X_i, X_j) = -np_i p_j \quad (i \ne j)
+\]</div>
+</div></section>
   </article>
 </body>
 </html>

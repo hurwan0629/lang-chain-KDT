@@ -1,0 +1,782 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>이진 탐색 트리</title>
+  <style>
+/* Blog design version: v1.2 */
+.tech-post {
+  --bg: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --card: rgba(255, 255, 255, 0.94);
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * {
+  box-sizing: border-box;
+}
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-title,
+.post-card h3 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post ul {
+  margin: 12px 0;
+  padding-left: 22px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post li {
+  margin: 4px 0;
+}
+
+.tech-post p code,
+.tech-post li code,
+.post-note code,
+.read-table code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+  line-height: 1.55;
+  vertical-align: baseline;
+}
+
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+}
+
+.source-box {
+  overflow-x: auto;
+  margin: 14px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.source-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.post-toc strong {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.post-toc ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-toc ol li {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.post-toc ol a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 26px 14px 60px;
+  }
+
+  .post-hero {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+
+  .post-toc ol {
+    grid-template-columns: 1fr;
+  }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">C Programming</p>
+        <p class="post-kicker">Binary Search Tree</p>
+        <h1 class="post-title">이진 탐색 트리</h1>
+        <p class="post-subtitle">이번 포스팅은 개념적인 설명보다는 C언어를 통해 구현한 이진 탐색 트리를 기록하기 위한 공간입니다. 개념적인 설명이 충분하지 않을 수 있습니다.</p>
+      </div>
+    </header>
+
+    <nav class="post-toc">
+      <strong>목차</strong>
+      <ol>
+        <li><a href="#section-01"><span class="toc-index">01</span><span>개념</span></a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span><span>코드</span></a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">개념</h2>
+      <div class="post-card stack">
+        <p>트리에는 여러 종류와 개념이 존재합니다.</p>
+        <p>종류만 하더라도</p>
+        <ul>
+          <li>이진트리</li>
+          <li>완전 이진트리</li>
+          <li>레드블랙 이진트리</li>
+          <li>힙 이진트리</li>
+          <li>이진 탐색 트리</li>
+          <li>N진 트리</li>
+          <li>B(+) 트리</li>
+        </ul>
+        <p>등이 존재합니다.</p>
+        <p>또한 트리의 기울어짐에 따라 이를 <code>완전 이진트리</code>, <code>편향 이진트리</code> 라고 부릅니다.</p>
+        <p>용어에도</p>
+        <ul>
+          <li>부모노드</li>
+          <li>자식노드</li>
+          <li>간선</li>
+          <li>레벨</li>
+          <li>차수</li>
+          <li>루트</li>
+          <li>리프</li>
+          <li>회전 정렬</li>
+        </ul>
+        <p>순회 방식으로는</p>
+        <ul>
+          <li>전위순회</li>
+          <li>중위순회</li>
+          <li>후위순회</li>
+          <li>레벨순회</li>
+        </ul>
+        <p>가 존재합니다.</p>
+      </div>
+      <div class="post-card stack">
+        <p>제가 만든 코드에는 2가지의 구조체와 5가지의 함수로 이루어져 있습니다.</p>
+        <p>클래스는 이진 노드를 뜻하는 <code>Node</code>와 트리의 메타데이터인 루트와 총 개수를 가진 <code>BinarySearchTree</code>이 존재 합니다.</p>
+        <p>이를 기반으로 <strong>자동 정렬 삽입</strong>, 트리의 정렬이 깨지지 않는 형태로 삭제하는 <strong>노드 삭제</strong> (<code>delete()</code>)를 만들었습니다.</p>
+        <p>또한 로깅을 위한 전위/중위/후위 탐색 출력 함수를 제작해두었습니다.</p>
+        <p><strong>삭제</strong>와 <strong>삽입</strong>의 경우에는 존재하는 몇가지 예외사항들에 대해서 따로 처리를 했습니다.</p>
+        <p>전체 코드는 아래와 같습니다.</p>
+      </div>
+    </section>
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">코드</h2>
+      <pre class="source-box"><code>// 이진 탐색 트리 만들어보기
+//////////// [조건] ////////////
+// 이진트리
+// 크기가 [왼쪽자식] &lt; [부모] &lt; [오른쪽 자식] 고정
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+// 노드 만들기
+// [내 주소(기본)] [내 값] [왼쪽 자식 주소] [오른쪽 자식 주소]
+struct Node{
+    int value;
+    struct Node *left;
+    struct Node *right;
+    int count; // 중복된 데이터 개수
+};
+
+typedef struct BinarySearchTree{
+    int count;
+    struct Node *root;
+}BinarySearchTree;
+
+// 자동정렬 하기 때문에 insertByIndex는 필요 없음
+
+// insert(value) 만들기
+int insert(BinarySearchTree *bst, int newVal) {
+    // 비거나 이상한 트리의 경우 초기화해주기
+    if((*bst).count &lt;= 0) {
+        (*bst).root = malloc(sizeof(struct Node));
+        *(*bst).root = (struct Node){newVal, NULL, NULL, 1};
+        (*bst).count = 1;
+        return 0;
+    }
+
+    // 탐색 후 추가해주기
+    struct Node *root = (*bst).root;
+    struct Node *nextNode = NULL;
+    if((*root).value &lt; newVal) {
+        if((*root).right == NULL) {
+            (*root).right = malloc(sizeof(struct Node));
+            *(*root).right = (struct Node){newVal, NULL, NULL, 1};
+            (*bst).count += 1;
+            return 0;
+        }
+        nextNode = (*root).right;
+    }
+    else if((*root).value &gt; newVal) {
+        if((*root).left == NULL) {
+            (*root).left = malloc(sizeof(struct Node));
+            *(*root).left = (struct Node){newVal, NULL, NULL, 1};
+            (*bst).count += 1;
+            return 0;
+        }
+        nextNode = (*root).left;
+    }
+    else if((*root).value == newVal) {
+        (*root).count += 1;
+        (*bst).count += 1;
+        return 0;
+    }
+    while(1) {
+        if((*nextNode).value &lt; newVal) {
+            if((*nextNode).right == NULL) {
+                (*nextNode).right = malloc(sizeof(struct Node));
+                *(*nextNode).right = (struct Node){newVal, NULL, NULL, 1};
+                (*bst).count += 1;
+                return 0;
+            }
+            nextNode = (*nextNode).right;
+        }
+        else if((*nextNode).value &gt; newVal) {
+            if((*nextNode).left == NULL) {
+                (*nextNode).left = malloc(sizeof(struct Node));
+                *(*nextNode).left = (struct Node){newVal, NULL, NULL, 1};
+                (*bst).count += 1;
+                return 0;
+            }
+            nextNode = (*nextNode).left;
+        }
+        else if((*nextNode).value == newVal) {
+            (*nextNode).count += 1;
+            (*bst).count += 1;
+            return 0;
+        }
+    }
+}
+
+// delete(value) 만들기
+int delete(BinarySearchTree *bst, int delVal) {
+    struct Node *node = (*bst).root;
+    // 값이 없으면 그냥 -1 출력
+    if(node == NULL) {
+        return -1;
+    }
+
+
+    // 루트인 경우
+    if((*node).value == delVal) {
+        // 중복이 남아있으면 줄여주기
+        if((*node).count &gt; 1) {
+            (*bst).count -= 1;
+            (*node).count -= 1;
+            return 0;
+        }
+        // 자식이 없으면 제거
+        if((*node).left == NULL &amp;&amp; (*node).right==NULL) {
+            (*bst).root = NULL;
+            (*bst).count = 0;
+            free(node);
+            return 0;  
+        }
+        // 1. 오른쪽 자식이 없는경우 
+        // 왼쪽 트리 그냥 올려버리기
+        else if((*node).right == NULL) {
+            (*bst).root = (*node).left;
+            (*bst).count -= 1;
+            free(node);
+            return 0;
+        }
+        // 2. 왼쪽 자식이 없는 경우
+        else if((*node).left == NULL) {
+            (*bst).root = (*node).right;
+            (*bst).count -= 1;
+            free(node);
+            return 0;
+        }
+        // 3. 양쪽 자식이 있는 경우
+        else {
+            struct Node *subNode = (*node).right;
+            
+            // 바로 오른쪽 자식이 가장 작은값일 때
+            if((*subNode).left == NULL) {
+                (*bst).root=subNode;
+                
+                (*subNode).left = (*node).left;
+                (*bst).count -= 1;
+                free(node);
+                return 0;
+            }
+            // 바로 오른쪽 자식이 가장 작은값이 아닐 때
+            struct Node *prevSubNode = NULL;
+            while((*subNode).left != NULL) {
+                prevSubNode = subNode;
+                subNode = (*subNode).left;
+            }
+
+            // subNode의 오른쪽에 값이 있을 수 있으므로 subNode &gt; delNode를 할 때 
+            // subNode의 오른쪽 자식을 이식해줘야함
+
+            (*prevSubNode).left = (*subNode).right;
+            (*bst).root = subNode;
+            (*subNode).left = (*node).left;
+            (*subNode).right = (*node).right;
+            (*bst).count -= 1;
+            free(node);
+            return 0;
+        }
+         
+    }
+
+    // 삭제할 노드의 부모 저장용
+    struct Node *prevNode = NULL;
+    // 좌/우 중에 저장 (prevNode-&gt;n 을 하기 위해)
+    // 0은 좌, 1은 우
+    int lastMove = 0;
+    // 삭제할 노드 저장용
+    struct Node *delNode = NULL;
+
+    // 위치를 찾을 때까지 탐색
+    while(1) {
+        if((*node).value == delVal) {
+            delNode = node;
+            break;
+        }
+        // 삭제할 노드 탐색 중 삭제할 값이 노드보다 작으면
+        // 외쪽 노드로 내려가기
+        else if((*node).value &gt; delVal) {
+            if((*node).left != NULL) {
+                // 부모 저장
+                prevNode = node;
+                lastMove = 0;
+                // 자식으로 이동
+                node = (*node).left;
+            }
+            else {
+                return -1;
+            }
+        }
+        // 삭제할 노드 탐색 중 삭제할 값이 노드보다 작으면
+        // 오른쪽 노드로 내려가기
+        else {
+            if((*node).right != NULL) {
+                // 부모 저장
+                prevNode = node;
+                lastMove = 1;
+                // 자식으로 이동
+                node = (*node).right;
+            }
+            else {
+                return -1;
+            }
+        }
+    }
+
+    // 노드의 중복수가 2 이상이면 줄이고 끝내기
+    if((*delNode).count &gt; 1) {
+        (*delNode).count -= 1;
+        (*bst).count -= 1;
+        return 0;
+    }
+
+    // 0. 양쪽 자식이 없는경우
+    else if((*delNode).left == NULL &amp;&amp; (*delNode).right == NULL) {
+
+        // 뭐 더 하지 않고 삭제.
+        if(lastMove) {
+            (*prevNode).right = NULL;
+        }
+        else {
+            (*prevNode).left = NULL;
+        }
+        (*bst).count -= 1;
+        // delNode의 
+        free(delNode);
+        return 0;
+    }
+    // 1. 오른쪽 자식이 없는경우 
+    // 왼쪽 트리 그냥 올려버리기
+    else if((*delNode).right == NULL) {
+        if(lastMove) {
+            (*prevNode).right = (*delNode).left;
+        }
+        else {
+            (*prevNode).left = (*delNode).left;
+        }
+        (*bst).count -= 1;
+        free(delNode);
+        return 0;
+    }
+    // 2. 왼쪽 자식이 없는 경우
+    else if((*delNode).left == NULL) {
+        if(lastMove) {
+            (*prevNode).right = (*delNode).right;
+        }
+        else {
+            (*prevNode).left = (*delNode).right;
+        }
+        (*bst).count -= 1;
+        free(delNode);
+        return 0;
+    }
+    // 3. 양쪽 자식이 있는경우
+    // 오른쪽에서 가장 작은 값 찾아서 대체시키기
+    else {
+        struct Node *prevSubNode = NULL;
+        struct Node *subNode = (*delNode).right;
+
+        // 바로 오른쪽 자식이 가장 작은값일 때
+        if((*subNode).left == NULL) {
+            if(lastMove) {
+                (*prevNode).right = subNode;
+            }
+            else {
+                (*prevNode).left = subNode;
+            }
+            (*subNode).left = (*delNode).left;
+            (*bst).count -= 1;
+            free(delNode);
+            return 0;
+        }
+        // 바로 오른쪽 자식이 가장 작은값이 아닐 때
+        while((*subNode).left != NULL) {
+            prevSubNode = subNode;
+            subNode = (*subNode).left;
+        }
+
+        // subNode의 오른쪽에 값이 있을 수 있으므로 subNode &gt; delNode를 할 때 
+        // subNode의 오른쪽 자식을 이식해줘야함
+
+        (*prevSubNode).left = (*subNode).right;
+        if(lastMove) {
+            (*prevNode).right = subNode;
+        }
+        else {
+            (*prevNode).left = subNode;
+        }
+        (*subNode).left = (*delNode).left;
+        (*subNode).right = (*delNode).right;
+        (*bst).count -= 1;
+        free(delNode);
+        return 0;
+    }
+
+
+}
+
+// 유틸용 함수 구하기
+// struct Node* getLeftNodeValue(struct Node *n){
+//     if((*n).left != NULL) {
+//         return (*n).left;
+//     }
+//     return NULL;
+// }
+
+// struct Node*  getRightNodeValue(struct Node *n){
+//     if((*n).right != NULL) {
+//         return (*n).right;
+//     }
+//     return NULL;
+// }
+
+// 중위 순위
+void inorder(struct Node *node) {
+    if(node == NULL) {
+        return;
+    }
+
+    if((*node).left != NULL) {
+        inorder((*node).left);
+    }
+    printf(&quot;%d: %d\n&quot;, (*node).value, (*node).count); // 중복 값들은 생략
+    if((*node).right != NULL) {
+        inorder((*node).right);
+    }
+}
+
+// 전위순위
+void preorder(struct Node *node) {
+    if(node == NULL) {
+        return;
+    }
+
+    printf(&quot;%d: %d\n&quot;, (*node).value, (*node).count); // 중복 값들은 생략
+    if((*node).left != NULL) {
+        preorder((*node).left);
+    }
+    if((*node).right != NULL) {
+        preorder((*node).right);
+    }
+}
+
+// 후위순위
+void postorder(struct Node *node) {
+    if(node == NULL) {
+        return;
+    }
+
+    if((*node).left != NULL) {
+        postorder((*node).left);
+    }
+    if((*node).right != NULL) {
+        postorder((*node).right);
+    }
+    printf(&quot;%d: %d\n&quot;, (*node).value, (*node).count); // 중복 값들은 생략
+}
+
+int main() {
+    BinarySearchTree bst =  {0, NULL};
+
+    int values[] = {50, 30, 70, 20, 40, 60, 80, 30, 70};
+    int size = sizeof(values) / sizeof(values[0]);
+
+    for (int i = 0; i &lt; size; i++) {
+        insert(&amp;bst, values[i]);
+    }
+
+    printf(&quot;=== init ===\n&quot;);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== 30 discount 30 ===\n&quot;);
+    delete(&amp;bst, 30);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== 20 delete leaf ===\n&quot;);
+    delete(&amp;bst, 20);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== 70 delete: discount 70 ===\n&quot;);
+    delete(&amp;bst, 70);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== 70 delete again (fail) ===\n&quot;);
+    delete(&amp;bst, 70);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== 50 (root) delete ===\n&quot;);
+    delete(&amp;bst, 50);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    printf(&quot;\n=== non exist value 999 delete ===\n&quot;);
+    int result = delete(&amp;bst, 999);
+    printf(&quot;result: %d\n&quot;, result);
+    printf(&quot;count: %d\n&quot;, bst.count);
+    inorder(bst.root);
+
+    return 0;
+}
+
+
+</code></pre>
+    </section>
+  </article>
+</body>
+</html>
