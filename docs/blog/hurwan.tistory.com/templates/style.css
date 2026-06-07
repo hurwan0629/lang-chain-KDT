@@ -1,4 +1,4 @@
-/* Blog design version: v1.2 */
+/* Blog design version: v1.3 */
 .tech-post {
   --bg: #ffffff;
   --text: #1f2937;
@@ -181,6 +181,24 @@
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
+}
+
+.numbered-list {
+  margin: 12px 0 0;
+  padding-left: 24px;
+}
+
+.numbered-list li {
+  margin: 8px 0;
+  padding-left: 4px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-card .numbered-list li::before {
+  display: none;
+  content: none;
 }
 
 .post-card img {

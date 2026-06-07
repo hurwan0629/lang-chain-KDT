@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>[소프트웨어 공학의 모든 것] 프로젝트 계획과 관리부터 요구 분석까지</title>
   <style>
-/* Blog design version: v1.2 */
+/* Blog design version: v1.3 */
 .tech-post {
   --bg: #ffffff;
   --text: #1f2937;
@@ -549,6 +549,11 @@
   font-weight: 500;
 }
 
+.post-card .numbered-list li::before {
+  display: none;
+  content: none;
+}
+
 .code-box {
   overflow-x: auto;
   margin: 16px 0;
@@ -820,7 +825,7 @@ WBS는 Work Breakdown Structure의 약자로, 작업해야 할 것들을 계층�
       <div class="post-card stack">
         <h3>WBS</h3>
         <p><code>WBS</code>는 <code>Work Breakdown Structure</code>의 약자로, 작업해야 할 것들을 <strong>계층적으로 나열한 것</strong>입니다.</p>
-        <img src="../../../../workspace/personal/software_engineering/image.png" alt="WBS 예시">
+        <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/61ea2b8e64e64b486e0f271d80250ea12b3e7112/workspace/personal/software_engineering/image.png" alt="WBS 예시">
         <p>이를 통해 소작업들의 일정을 계획할 수 있습니다.</p>
         <p>이렇게 만들어진 작업 단위들은 이후 작업의 순서를 만드는 데 쓰이게 됩니다.</p>
       </div>
@@ -830,9 +835,9 @@ WBS는 Work Breakdown Structure의 약자로, 작업해야 할 것들을 계층�
         <p>여기에는 <code>인원</code>, <code>자원</code>, <code>기간</code>, <code>리스크</code> 등 여러 가지 고려해야 할 사항이 존재합니다.</p>
         <p>가장 먼저 순서를 결정하는 데 유용한 방식은 <strong>CPM 네트워크</strong>를 사용하는 것입니다. <code>CPM 네트워크</code>는 각 작업별 소요 기간을 나타내는 노드(간선)와 함께 작업들의 선행 관계를 그래프 형태로 나타낸 네트워크 표입니다.</p>
         <p>이를 통해서 작업의 <strong>여유 시간</strong>, <strong>임계 경로</strong>, <strong>임계 시간</strong> 등을 계산하여 마감 기간에 맞춘 작업을 수행할 수 있습니다.</p>
-        <img src="../../../../workspace/personal/software_engineering/image-1.png" alt="CPM 네트워크 예시">
+        <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/61ea2b8e64e64b486e0f271d80250ea12b3e7112/workspace/personal/software_engineering/image-1.png" alt="CPM 네트워크 예시">
         <p>이렇게 작업별 소요 기간이 결정되었다면, 이후에는 <strong>간트 차트</strong>를 통해 프로젝트의 진행 상황과 자원 할당을 나타낼 수 있습니다.</p>
-        <img src="../../../../workspace/personal/software_engineering/image-2.png" alt="간트 차트 예시">
+        <img src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/61ea2b8e64e64b486e0f271d80250ea12b3e7112/workspace/personal/software_engineering/image-2.png" alt="간트 차트 예시">
       </div>
     </section>
     <hr class="post-divider">
