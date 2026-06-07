@@ -507,7 +507,7 @@ a_n b_n
         <div class="post-note">숫자 42를 소수 2, 3, 7의 곱으로 분해할 수 있습니다. 이러한 분해를 소인수분해라고 하며, 수치 처리 및 암호학에서 많이 응용됩니다. 이 예는 합이 아닌 곱에 관한 것이지만, 수학적 대상을 더 작고 간단한 조각으로 분해한다는 점은 같습니다.</div>
         <p>이 절에서는 간단하면서 중요한 분해를 살펴봅니다. 하나의 벡터를 두 개의 벡터로 분해하는데, 하나는 기준 벡터와 직교하고, 다른 하나는 기준 벡터와 평행합니다. 직교벡터 분해는 통계에서 그람-슈미트 과정과 QR분해에 직접적인 연관이 있습니다. 이는 통계에서 역문제를 해결할 때 자주 사용됩니다.</p>
         <p>그림을 통해 살펴보면 아래와 같습니다.</p>
-        <img class="post-image" src="../../../../workspace/personal/math/linear_algebra_for_programmer/image.png" alt="직교벡터 분해 그림">
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/7a015d6ef65ec3f3200dfabfe38a2e4103744961/workspace/personal/math/linear_algebra_for_programmer/image.png" alt="직교벡터 분해 그림">
         <p>표준 위치에 두 개의 벡터 <code>a</code>, <code>b</code>가 존재합니다. <code>a</code>에서 <code>b</code>의 머리와 최대한 가까운 점을 찾아야 합니다. 이것을 최적화 문제로도 나타낼 수 있습니다. 즉, 투영 거리가 최소가 되도록 벡터 <code>b</code>를 벡터 <code>a</code>에 투영합니다. 그 점은 <code>a</code>의 크기를 줄인, 즉 $\beta a$가 됩니다.</p>
       </div>
 
@@ -533,7 +533,7 @@ a_n b_n
     <section class="post-section">
       <h2 class="section-title">다른 문제</h2>
       <div class="post-card">
-        <img class="post-image" src="../../../../workspace/personal/math/linear_algebra_for_programmer/image-1.png" alt="목표 벡터 분해 그림">
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/7a015d6ef65ec3f3200dfabfe38a2e4103744961/workspace/personal/math/linear_algebra_for_programmer/image-1.png" alt="목표 벡터 분해 그림">
         <p>목표 벡터를 <code>t</code>, 기준 벡터를 <code>r</code>이라고 부르겠습니다. 그리고 목표벡터로부터 만들어진 두 벡터는 수직 성분 $t_{\perp r}$과 평행 성분 $t_{\parallel r}$로 각각 표기하겠습니다.</p>
         <p>여기에서 $t_{\parallel r}$을 구하려면 직교투영공식을 통해 $\beta r$은 다음과 같다는 것을 알 수 있습니다.</p>
         <div class="math-box">$$\beta r = r \frac{\langle r, t \rangle}{\langle r, r \rangle}$$</div>
