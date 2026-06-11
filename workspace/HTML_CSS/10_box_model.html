@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>박스 모델</title>
+    <style>
+        .box1 {
+            box-sizing:border-box;
+            background-color: deepskyblue;
+            padding: 20px;
+            margin-bottom: 50px;
+            border: 1px solid #ccc;
+            width: 300px;
+        }
+        .box2 {
+            background-color: deeppink;
+            padding: 20px;
+            margin-top: 30px;
+            border: 3px dotted #ccc;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!--
+        박스 모델: HTML 요소 하나하나를 사각형 상자로 보고 내용(content), 안쪽 여백(padding), 테드리(border), 바깥 여백(margin)으로 구성된 구조로 이해하는 개념
+
+        > 브라우저는 위 네 영역을 합쳐 요소의 실제 크기와 화면에서 차지하는 공간을 계산
+    -->
+
+    <!--
+        padding: 박스 모델에서 내용과 테두리 사이의 안쪽 여백을 의미하며, 요소 내부의 컨텐츠가 테두리에 너무 붙지 않도록 공간을 만들어 가독성과 디자인 완성도를 높임
+
+        예)
+        h1 { padding: 20px; } /* 네 방향 모두 */
+        h1 { padding: 10px 20px; } /* 상하, 좌우 */
+        h1 { padding: 10px 20px 30px; } /* 상, 좌우, 하 */
+        h1 { padding: 10px 20px 30px 40px; } /* 상, 우, 하, 좌(시계 방향) */
+    -->
+
+    <!--
+        border: 박스 모델에서 요소의 테두리 영역을 의미하며, padding과 margin 사이에 위치해 요소의 경계를 시각적으로 구분해 주는 역할을 함
+        - border-width: 테두리 두께
+        - border-style: 테두리 형태 (solid, dashed, dotted 등)
+        - border-color: 테두리 색상
+        - border: 위 세 속성을 한 번에 지정하는 축약 속성
+        - border-radius: 모서리를 둥글게 처리
+    -->
+
+    <!--
+        margin: 박스 모델에서 요소의 바깥쪽 여백을 의미하며, 요소와 요소 사이의 간격을 조절하는 사용. 위아래 마진은 상황에 따라 마진 병합이 발생할 수 있어 레이아웃 이해에 중요
+
+        h1 { margin: 20px; } /* 네 방향 모두 */
+        h1 { margin: 10px 20px; } /* 상하, 좌우 */
+        h1 { margin: 10px 20px 30px; } /* 상, 좌우, 하 */
+        h1 { margin: 10px 20px 30px 40px; } /* 상, 우, 하, 좌(시계 방향) */
+
+        h1 { margin: 0 auto; } /* 가로 가운데 정렬 */
+    -->
+    
+    <!--
+      box-sizing
+      CSS에서 요소의 너비와 높이를 어떤 기준으로 계산할지 결정하는 속성으로, 박스 모델의 크기 계산 방식을 제어합니다.
+      content-box: width와 height에 내용(content)만 포함하고 padding과 border을 바깥으로 더함
+      border-box: padding과 border를 너비/높이에 포함시켜 요소의 실제 크기를 예측하기 쉽게 만듦      
+    -->
+
+    <div class="box1">
+        box1
+    </div>
+
+    <div class="box2">
+        box2
+    </div>
+</body>
+</html>

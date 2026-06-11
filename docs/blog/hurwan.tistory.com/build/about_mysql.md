@@ -127,9 +127,9 @@ MySQL은 계정과 권한 정보를 `mysql` 시스템 스키마에 저장합니�
 SHOW GRANTS FOR 'app_user'@'localhost';
 ```
 
-![mysql.user 테이블 조회 결과](about_mysql-user-table.png)
+![mysql.user 테이블 조회 결과](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/ee9d64120cf67632d3c4c6a8dac02b0950606f54/docs/blog/hurwan.tistory.com/build/about_mysql-user-table.png)
 
-![MySQL 권한 관련 컬럼](about_mysql-user-privileges.png)
+![MySQL 권한 관련 컬럼](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/ee9d64120cf67632d3c4c6a8dac02b0950606f54/docs/blog/hurwan.tistory.com/build/about_mysql-user-privileges.png)
 
 ### CREATE TABLE
 

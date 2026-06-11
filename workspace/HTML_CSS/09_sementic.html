@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div {
+      width: 500px;
+      background-color: beige;
+    }
+
+    span {
+      font-weight: bold;
+      color:blue;
+    }
+
+    header, nav, section, article, aside, footer {
+      border: 1px solid #cccccc;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div><!-- style="background-color: antiquewhite;">-->
+    이것은 div 태그입니다.
+    하나의 블록 영역을 차지합니다.
+  </div>
+  <div> <!-- style="background-color: rgb(169, 134, 88);"-->
+    이것은 div 태그입니다.
+    하나의 블록 영역을 차지합니다.
+    이 문장에서 
+    <span>이 부분만 span태그로 감쌌습니다.</span>
+  </div>
+
+  <!--
+    시멘틱 태그: 
+    header
+    nav
+    main
+    section
+    article
+    aside
+    footer
+    ...
+  -->
+    <header>
+      <h1>나의 웹사이트</h1>
+      <p>사이트 제목/소개 영역</p>
+    </header>
+
+    <nav>
+      <p>메뉴 영역</p>
+      <a href="#">홈</a>
+      <a href="#">소개</a>
+      <a href="#">연락</a>
+    </nav>
+
+    <main>
+      <section>
+        <h2>주제별 구역</h2>
+        <p>이 섹션은 하나의 주제를 묶는 영역입니다.</p>
+      </section>
+      <article>
+        <h2>독립 컨텐츠</h2>
+        <p>
+          게시글/뉴스처럼 단독으로 의미가 있는 컨텐츠 입니다.
+        </p>
+      </article>
+
+      <aside>
+        <h3>부가정보</h3>
+        <p>본문과 간접적으로 관련된 사이드 내용입니다.</p>
+      </aside>
+
+      <footer>
+        <p>하단 정보(저작권, 연락처 등)</p>
+      </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+
+  <style>
+
+    @font-face {
+    font-family: 'OngleipParkDahyeon';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/Ownglyph_ParkDaHyun.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+    
+    * {
+      font-family: "OngleipParkDahyeon", "Black Ops One", system-ui;
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+      font-size: 50px;
+    }
+
+    body {
+      line-height: 1.6
+    }
+
+    .small-text {
+      font-size: 0.5rem;
+    }
+    
+    .highlight {
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 5px;
+    }
+
+    p { 
+      font-size: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+  <!--
+    font-family
+    예) h1 { family: "Noto Sans KR", Arial, sans-serif }
+    - 텍스트에 사용할 글꼴의 우선순위 목록을 지정
+    - 앞의 글꼴이 없으면 다음 글꼴로 대체됨
+
+    웹 폰트
+    사용자의 컴퓨터에 해당 글꼴이 설치되어있지 않아도 웹 페이지가 서버 글꼴 파일을 직접 내려받아 동일한 글꼴로 표시해주는 기술
+  --> 
+  <!--
+    font-weight
+
+    font-style
+    font-variant
+    line-height
+    letter-spacing
+    word-spacing
+    text-decoration
+    font-weight
+  -->
+  <h1>눈누 웹폰트 예제</h1>
+
+  <p style="font-size: 50px;">
+    this iks font ♤ ♧ † £ ¢ ♤ ♧ † £ ¢
+  </p>
+
+  <p>
+    <span class="highlight">이 문장은 em단위로 강조되어있습니다.</span>
+  </p>
+
+  <p>
+    <span class="small-text">이 문장은 em단위로 강조되어있습니다.</span>
+  </p>
+</body>
+</html>

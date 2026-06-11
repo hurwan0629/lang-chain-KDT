@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>버블 정렬 / 선택 정렬과 삽입 정렬</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+.tech-post * { box-sizing: border-box; }
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+  box-shadow: var(--shadow);
+}
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+.post-hero-inner { position: relative; z-index: 1; }
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+.source-toggle {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+}
+.source-toggle summary {
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+.source-box,
+.code-box {
+  overflow-x: auto;
+  margin: 14px 0 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 2;
+}
+.source-box code,
+.code-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.post-toc {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+.toc-title {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+.post-card h3 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+.tech-post p code,
+.post-note code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+}
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+  font-weight: 500;
+}
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+@media (max-width: 720px) {
+  .tech-post { padding: 26px 14px 60px; }
+  .post-hero { padding: 28px 20px; border-radius: 22px; }
+  .post-title { font-size: 28px; }
+  .toc-list { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">정렬 알고리즘</p>
+        <h1 class="post-title">버블 정렬 / 선택 정렬과 삽입 정렬</h1>
+        <p class="post-subtitle">버블 정렬은 일반적으로 실무에서 잘 쓰이지 않는 정렬 방식으로 교육을 위해 많이 쓰이는 방식입니다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본 - 버블 정렬</summary>
+      <pre class="source-box"><code># 버블 정렬
+버블 정렬은 일반적으로 실무에서 잘 쓰이지 않는 정렬 방식으로 교육을 위해 많이 쓰이는 방식입니다.
+
+정렬의 이름에 존재하는 **버블**이라는 말과 같이 리스트의 앞부분부터 2개씩 순서대로 `[0, 1] [1, 2] [2, 3], ... [n-2, n-1]`을 정렬하는 것을 반복하여 최종적으로 정렬 상태를 만들게 됩니다.
+
+최초의 실행에는 확실하게 `n-1`번째 인덱스가 제자리를 찾고, 그다음 실행에는 `n-2`가 확정되어 최종적으로 `n*(n-1) / 2`의 시간 복잡도, 즉 `O(n^2)`의 시간 복잡도를 가지며 공간 복잡도의 경우에는 그나마 교환을 위한 임시 저장 공간만을 요구하기 때문에 `O(1)`의 공간 복잡도를 소모합니다.
+
+최선의 경우에는 `O(n)`으로 그냥 한 번 순회했을 때 정렬되어 있으면 그냥 패스하기도 합니다.
+
+&gt; 정렬에서 `O(n^2)`라는 시간 복잡도는 웬만하면 잘 나타나지 않는 최악에 가까운 시간 복잡도입니다.
+
+# 버블 정렬의 구현
+
+import random
+
+# 20 ~ 30개 리스트 (중복이 많으면 더 줄 수 있음)
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+
+def bubble_sort(rand_list:list, order_type: str):
+  # 횟수 세기용 count
+  count = 0
+
+  # 버블 정렬
+  # 마지막 한 번은 안 해도 문제없음
+  for i in range(len(rand_list)-1):
+    # 인덱스를 0 ~ (n-1)-i 까지 순회하며 정렬
+    # 추가로 n-2, n-1 인덱스 교환만 하면 되기 때문에 n-2까지만 가면 됨
+    
+    # 중간에 정렬되었을 경우를 참고해서 한 번 검사해 주기
+    swap = 0
+    # print(f"{i+1}/{len(rand_list)-1}번째 순회")
+    for j in range(len(rand_list) - i - 1):
+      count += 1
+      if rand_list[j] &gt; rand_list[j+1] if order_type == "asc" else rand_list[j] &lt; rand_list[j+1]:
+          swap += 1
+          # ▼ ▼ ▼ ▼ ▼ ▼ 파이썬의 좋은 점 ▼ ▼ ▼ ▼ ▼ ▼ 
+          # 함수 하나를 안 만들어도 됨...
+          rand_list[j], rand_list[j+1] = rand_list[j+1], rand_list[j]
+    
+    if swap == 0:
+      print("정렬 완료")
+      break
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"버블 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+
+print("\n --- asc --- \n")
+bubble_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+bubble_sort(rand_list, "desc")</code></pre>
+    </details>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본 - 선택 정렬과 삽입 정렬</summary>
+      <pre class="source-box"><code># 선택 정렬과 삽입 정렬
+선택 정렬과 삽입 정렬은 메커니즘이 닮아 있습니다.
+
+선택 정렬은 뒤의 값들에서 최솟값을 하나씩 앞으로 보내는 방식이며 삽입 정렬은 앞에서부터 하나씩 올바른 위치에 놓는 방식입니다. 
+
+예를 들어
+
+`d a b e c`가 있으면 
+
+선택 정렬의 경우에는
+```
+[a] [d b e c]
+[a b] [d e c]
+[a b c] [d e]
+[a b c d] [e]
+[a b c d e]
+```
+방식이고 삽입 정렬은
+```
+[d] [a b e c]
+[a d] [b e c]
+[a b d] [e c]
+[a b d e] [c]
+[a b c d e]
+```
+입니다.
+
+결국 모두 랜덤값 기준 `O(n^2)`의 시간 복잡도를 가지지만 비운의 교육용 3대 정렬 알고리즘인 `버블`, `삽입`, `선택` 중에서 `삽입 정렬`은 이미 정렬되어 있는 경우 한 번의 순회만으로 추가 값을 넣을 수 있다는 점에서 실무에서 종종 쓰이기도 합니다.
+
+&gt; 역시나 잘 쓰이지 않는다는 점은 존재하지만 선택정렬 또한 **교환 횟수가 적다**라는 이점이 존재하여 교환 비용이 비싼 경우에는 유리합니다.
+
+# 삽입 정렬 구현
+import random
+
+# 20~30개 리스트 
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+order_type = "asc"
+# order_type = "desc" # (desc가 아니어도 asc만 아니면 됨)
+
+# 2번 만들기 귀찮아서.... 하핫
+def insertion_sort(rand_list:list, order_type: str) -&gt; list:
+  # 횟수 세기용 count
+  count = 0
+  # 처음부터 하나씩 골라서 앞에 보내는 것이기 때문에 len(rand_list)-1까지 반복.
+  # 하지만 0의 경우에는 이미 정렬되었다 가정. 따라서 1부터 시작
+  for i in range(1, len(rand_list)):
+    # print(f"{i}/{len(rand_list)-1}번째 순회")
+    # print(rand_list)
+    
+    # 다음 값 뽑기
+    pick = rand_list[i]
+    j = i - 1
+    # 기존 앞부분에서 알맞은 곳 탐색
+    # 맨 뒤에서부터 자기의 알맞은 위치 찾아가기
+    while j &gt;= 0 and (rand_list[j] &gt; pick if order_type == "asc" else rand_list[j] &lt; pick):
+      count+=1
+      j -= 1
+    
+    # j+1 위치에 값을 넣으면 됨 (rand_list[j] &lt; pick 인 상황이기 때문)
+    # 나머지는 다 오른쪽으로 밀어버리기
+    rand_list[j+2:i+1], rand_list[j+1] = rand_list[j+1:i], pick
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"탐색 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+  return rand_list
+
+print("\n --- asc --- \n")
+insertion_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+insertion_sort(rand_list, "desc")
+
+# 선택 정렬 구현
+import random
+
+# 20 ~ 30개 리스트 (중복이 많으면 더 줄 수 있음)
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+def selection_sort(rand_list:list, order_type: str) -&gt; list:
+  # 횟수 세기용 count
+  count = 0
+
+  # 무조건 순회 n*(n+1)/2
+  for i in range(len(rand_list)):
+    # print(f"{i+1}/{len(rand_list)-1}번째 순회")
+    # print(rand_list)
+    
+    if order_type == "asc":
+      # i번째 인덱스 값 구하기
+      # 방법은 i부터 최솟값 탐색
+      min = rand_list[i]
+      min_index = i
+      for j in range(i, len(rand_list)):
+        count+=1
+        if min &gt; rand_list[j]:
+          min = rand_list[j]
+          min_index = j
+      
+      rand_list[i], rand_list[min_index] = min, rand_list[i]
+    else:
+      # i번째 인덱스 값 구하기
+      # 방법은 i부터 최댓값 탐색
+      max = rand_list[i]
+      max_index = i
+      for j in range(i, len(rand_list)):
+        count+=1
+        if max &lt; rand_list[j]:
+          max = rand_list[j]
+          max_index = j
+      
+      rand_list[i], rand_list[max_index] = max, rand_list[i]
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"탐색 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+  return rand_list
+
+print("\n --- asc --- \n")
+selection_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+selection_sort(rand_list, "desc")</code></pre>
+    </details>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span><span>설명부 - 버블 정렬</span></a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span><span>설명부 - 선택 정렬과 삽입 정렬</span></a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span><span>구현부 - 버블 정렬</span></a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span><span>구현부 - 삽입 정렬</span></a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span><span>구현부 - 선택 정렬</span></a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">설명부 - 버블 정렬</h2>
+      <div class="post-card">
+        <h3>버블 정렬</h3>
+        <p>버블 정렬은 일반적으로 실무에서 잘 쓰이지 않는 정렬 방식으로 교육을 위해 많이 쓰이는 방식입니다.</p>
+        <p>정렬의 이름에 존재하는 <strong>버블</strong>이라는 말과 같이 리스트의 앞부분부터 2개씩 순서대로 <code>[0, 1] [1, 2] [2, 3], ... [n-2, n-1]</code>을 정렬하는 것을 반복하여 최종적으로 정렬 상태를 만들게 됩니다.</p>
+        <p>최초의 실행에는 확실하게 <code>n-1</code>번째 인덱스가 제자리를 찾고, 그다음 실행에는 <code>n-2</code>가 확정되어 최종적으로 <code>n*(n-1) / 2</code>의 시간 복잡도, 즉 <code>O(n^2)</code>의 시간 복잡도를 가지며 공간 복잡도의 경우에는 그나마 교환을 위한 임시 저장 공간만을 요구하기 때문에 <code>O(1)</code>의 공간 복잡도를 소모합니다.</p>
+        <p>최선의 경우에는 <code>O(n)</code>으로 그냥 한 번 순회했을 때 정렬되어 있으면 그냥 패스하기도 합니다.</p>
+      </div>
+      <div class="post-note">정렬에서 <code>O(n^2)</code>라는 시간 복잡도는 웬만하면 잘 나타나지 않는 최악에 가까운 시간 복잡도입니다.</div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">설명부 - 선택 정렬과 삽입 정렬</h2>
+      <div class="post-card">
+        <h3>선택 정렬과 삽입 정렬</h3>
+        <p>선택 정렬과 삽입 정렬은 메커니즘이 닮아 있습니다.</p>
+        <p>선택 정렬은 뒤의 값들에서 최솟값을 하나씩 앞으로 보내는 방식이며 삽입 정렬은 앞에서부터 하나씩 올바른 위치에 놓는 방식입니다.</p>
+        <p>예를 들어</p>
+        <p><code>d a b e c</code>가 있으면</p>
+        <p>선택 정렬의 경우에는</p>
+        <pre class="code-box"><code>[a] [d b e c]
+[a b] [d e c]
+[a b c] [d e]
+[a b c d] [e]
+[a b c d e]</code></pre>
+        <p>방식이고 삽입 정렬은</p>
+        <pre class="code-box"><code>[d] [a b e c]
+[a d] [b e c]
+[a b d] [e c]
+[a b d e] [c]
+[a b c d e]</code></pre>
+        <p>입니다.</p>
+        <p>결국 모두 랜덤값 기준 <code>O(n^2)</code>의 시간 복잡도를 가지지만 비운의 교육용 3대 정렬 알고리즘인 <code>버블</code>, <code>삽입</code>, <code>선택</code> 중에서 <code>삽입 정렬</code>은 이미 정렬되어 있는 경우 한 번의 순회만으로 추가 값을 넣을 수 있다는 점에서 실무에서 종종 쓰이기도 합니다.</p>
+      </div>
+      <div class="post-note">역시나 잘 쓰이지 않는다는 점은 존재하지만 선택정렬 또한 <strong>교환 횟수가 적다</strong>라는 이점이 존재하여 교환 비용이 비싼 경우에는 유리합니다.</div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-03">
+      <h2 class="section-title">구현부 - 버블 정렬</h2>
+      <pre class="code-box"><code class="language-python"># 버블 정렬의 구현
+
+import random
+
+# 20 ~ 30개 리스트 (중복이 많으면 더 줄 수 있음)
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+
+def bubble_sort(rand_list:list, order_type: str):
+  # 횟수 세기용 count
+  count = 0
+
+  # 버블 정렬
+  # 마지막 한 번은 안 해도 문제없음
+  for i in range(len(rand_list)-1):
+    # 인덱스를 0 ~ (n-1)-i 까지 순회하며 정렬
+    # 추가로 n-2, n-1 인덱스 교환만 하면 되기 때문에 n-2까지만 가면 됨
+    
+    # 중간에 정렬되었을 경우를 참고해서 한 번 검사해 주기
+    swap = 0
+    # print(f"{i+1}/{len(rand_list)-1}번째 순회")
+    for j in range(len(rand_list) - i - 1):
+      count += 1
+      if rand_list[j] &gt; rand_list[j+1] if order_type == "asc" else rand_list[j] &lt; rand_list[j+1]:
+          swap += 1
+          # ▼ ▼ ▼ ▼ ▼ ▼ 파이썬의 좋은 점 ▼ ▼ ▼ ▼ ▼ ▼ 
+          # 함수 하나를 안 만들어도 됨...
+          rand_list[j], rand_list[j+1] = rand_list[j+1], rand_list[j]
+    
+    if swap == 0:
+      print("정렬 완료")
+      break
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"버블 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+
+print("\n --- asc --- \n")
+bubble_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+bubble_sort(rand_list, "desc")</code></pre>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-04">
+      <h2 class="section-title">구현부 - 삽입 정렬</h2>
+      <pre class="code-box"><code class="language-python"># 삽입 정렬 구현
+import random
+
+# 20~30개 리스트 
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+order_type = "asc"
+# order_type = "desc" # (desc가 아니어도 asc만 아니면 됨)
+
+# 2번 만들기 귀찮아서.... 하핫
+def insertion_sort(rand_list:list, order_type: str) -&gt; list:
+  # 횟수 세기용 count
+  count = 0
+  # 처음부터 하나씩 골라서 앞에 보내는 것이기 때문에 len(rand_list)-1까지 반복.
+  # 하지만 0의 경우에는 이미 정렬되었다 가정. 따라서 1부터 시작
+  for i in range(1, len(rand_list)):
+    # print(f"{i}/{len(rand_list)-1}번째 순회")
+    # print(rand_list)
+    
+    # 다음 값 뽑기
+    pick = rand_list[i]
+    j = i - 1
+    # 기존 앞부분에서 알맞은 곳 탐색
+    # 맨 뒤에서부터 자기의 알맞은 위치 찾아가기
+    while j &gt;= 0 and (rand_list[j] &gt; pick if order_type == "asc" else rand_list[j] &lt; pick):
+      count+=1
+      j -= 1
+    
+    # j+1 위치에 값을 넣으면 됨 (rand_list[j] &lt; pick 인 상황이기 때문)
+    # 나머지는 다 오른쪽으로 밀어버리기
+    rand_list[j+2:i+1], rand_list[j+1] = rand_list[j+1:i], pick
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"탐색 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+  return rand_list
+
+print("\n --- asc --- \n")
+insertion_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+insertion_sort(rand_list, "desc")</code></pre>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-05">
+      <h2 class="section-title">구현부 - 선택 정렬</h2>
+      <pre class="code-box"><code class="language-python"># 선택 정렬 구현
+import random
+
+# 20 ~ 30개 리스트 (중복이 많으면 더 줄 수 있음)
+# 1 ~ 2000 중 랜덤 고르기
+rand_list = random.sample([a for a in range(1, 2001)], k=random.randint(20, 30))
+print(rand_list)
+
+def selection_sort(rand_list:list, order_type: str) -&gt; list:
+  # 횟수 세기용 count
+  count = 0
+
+  # 무조건 순회 n*(n+1)/2
+  for i in range(len(rand_list)):
+    # print(f"{i+1}/{len(rand_list)-1}번째 순회")
+    # print(rand_list)
+    
+    if order_type == "asc":
+      # i번째 인덱스 값 구하기
+      # 방법은 i부터 최솟값 탐색
+      min = rand_list[i]
+      min_index = i
+      for j in range(i, len(rand_list)):
+        count+=1
+        if min &gt; rand_list[j]:
+          min = rand_list[j]
+          min_index = j
+      
+      rand_list[i], rand_list[min_index] = min, rand_list[i]
+    else:
+      # i번째 인덱스 값 구하기
+      # 방법은 i부터 최댓값 탐색
+      max = rand_list[i]
+      max_index = i
+      for j in range(i, len(rand_list)):
+        count+=1
+        if max &lt; rand_list[j]:
+          max = rand_list[j]
+          max_index = j
+      
+      rand_list[i], rand_list[max_index] = max, rand_list[i]
+
+  print(rand_list)
+  print(f"rand_list 길이: {len(rand_list)}")
+  print(f"탐색 횟수: {count}")
+  print(f"N^2 = {len(rand_list)**2}")
+  return rand_list
+
+print("\n --- asc --- \n")
+selection_sort(rand_list, "asc")
+print("\n --- desc --- \n")
+selection_sort(rand_list, "desc")</code></pre>
+    </section>
+  </article>
+</body>
+</html>

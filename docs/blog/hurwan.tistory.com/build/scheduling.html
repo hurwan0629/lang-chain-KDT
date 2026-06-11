@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>운영체제의 스케줄링</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+  width: min(1080px, calc(100% - 36px));
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+.tech-post * { box-sizing: border-box; }
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+  box-shadow: var(--shadow);
+}
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+.post-hero-inner { position: relative; z-index: 1; }
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+.post-subtitle {
+  max-width: 860px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+.post-toc {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15,23,42,.04);
+}
+.toc-title {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25,185,124,.16);
+  border-radius: 12px;
+  background: rgba(255,255,255,.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25,185,124,.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.post-section { margin-top: 52px; scroll-margin-top: 22px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25,185,124,.3);
+  flex-shrink: 0;
+}
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148,163,184,.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15,23,42,.04);
+}
+.card-title {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+.tech-post p code,
+.post-note code {
+  display: inline-block;
+  padding: .08em .38em;
+  border: 1px solid rgba(148,163,184,.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: .92em;
+  font-weight: 600;
+}
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120,255,196,.14), rgba(255,255,255,.92));
+  color: #334155;
+  font-weight: 500;
+}
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148,163,184,.35), transparent);
+}
+.source-link {
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+}
+.source-link:hover { text-decoration: underline; }
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 26px 14px 60px;
+  }
+  .post-hero { padding: 28px 20px; border-radius: 22px; }
+  .post-title { font-size: 28px; }
+  .toc-list { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">운영체제 학습</p>
+        <h1 class="post-title">운영체제의 스케줄링</h1>
+        <p class="post-subtitle"><a class="source-link" href="https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000002921356">운영체제 책</a>의 챕터 6, 스케줄링을 읽고 작성한 글입니다.</p>
+      </div>
+    </header>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span><span>스케줄링의 단계</span></a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span><span>스케줄링의 방식</span></a></li>
+      </ol>
+    </nav>
+
+    <section id="section-01" class="post-section">
+      <h2 class="section-title">스케줄링의 단계</h2>
+      <div class="post-card">
+        <p>
+운영체제의 스케줄링... 이전까지는 그냥 적당히 프로세스의 순서를 지정해 주는 것일 뿐이라고 알고 있었는데 이렇게까지 심오한 내용인 줄은 몰랐습니다.<br>일단 스케줄링에는 단계가 존재하였습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">장기 스케줄링(작업 스케줄링)</h3>
+        <p>디스크의 작업 중 어떤 작업을 메모리에 올릴지 결정하게 됩니다.</p>
+        <p>이는 프로세스를 밀리초 단위로 할당해 주는 일반적인 (단기) 스케줄링과 다르게 분 단위와 크거나 작은 더 큰 단위로 지정해 주는 간격이 생기게 됩니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">중기 스케줄링(스와핑 스케줄링)</h3>
+        <p>메모리의 프로세스를 잠시 빼거나 다시 넣어 줍니다. 단기와 장기 스케줄링의 중간 정도의 주기를 가집니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">단기 스케줄링(CPU 스케줄링)</h3>
+        <p>이전까지 제가 알던 스케줄링의 유일한 종류입니다.</p>
+        <p>작업(CPU의 할당)을 원하는 프로세스에 대해서 자원을 할당해 줍니다. 이를 <strong>디스패치</strong>라고 하며, 평균적인 대기 시간을 줄이고, 기아 상태의 프로세스를 줄이며, 컨텍스트 오버헤드가 많지 않은 방식을 지향하게 됩니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-02" class="post-section">
+      <h2 class="section-title">스케줄링의 방식</h2>
+      <div class="post-card">
+        <h3 class="card-title">선입 선처리</h3>
+        <p><code>First Come First Served</code>라고 하는 방식으로 먼저 온 프로세스를 끝날 때까지 실행시켜 주는 방식입니다. 이는 매우 간단하지만 오래 걸리는 작업이 짧은 작업들이 시행되지 못하게 하는 경우를 많이 발생시킬 수 있으며, 대화형 시스템이 원하는 특성인 빠른 응답에 반하는 특성을 가집니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">최소 작업 우선</h3>
+        <p><code>Shortest Job First</code>라는 방식으로 실행 시간이 가장 짧은 작업부터 실행하는 방식입니다.</p>
+        <p>이는 선점과 비선점 실행이 모두 가능하며 평균 대기 시간을 짧게 할 수 있지만 짧은 작업들이 연속해서 들어오면 긴 작업의 대기가 길어질 수 있습니다.</p>
+        <p>선점형의 경우에는 남은 시간이 짧은 프로세스를 실행해 주며 이를 <strong>최소 잔여 시간 우선</strong> 스케줄링이라고 부릅니다. 이는 평균 대기 시간과 평균 반환 시간을 짧게 하지만 문맥 교환 비용이 들기 때문에 항상 좋다고는 볼 수 없습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">우선순위 스케줄링</h3>
+        <p>최소 작업 우선 스케줄링은 일반적인 우선순위 스케줄링의 구현 방식 중 하나입니다.</p>
+        <p>우선순위 스케줄링은 동일한 프로세스들은 선입 선처리 순서로 스케줄링하며, 프로세스 버스트(실행 시간)의 역을 통해 우선순위를 산출합니다. 이에 따라 우선순위가 높을수록 먼저 실행하게 되며 높은 우선순위가 끝나야 다음 우선순위 큐를 실행할 수 있게 됩니다.</p>
+        <p>이 또한 동일하게 선점 또는 비선점이 가능합니다.</p>
+      </div>
+      <div class="post-note">우선순위 스케줄링 알고리즘의 주요 문제인 무한 대기와 기아의 경우에는 <strong>에이징</strong>이라는 우선순위가 낮은 프로세스에 시간이 지남에 따라 점점 우선순위를 높여 주는 방식으로 해결이 가능합니다.</div>
+      <div class="post-card">
+        <h3 class="card-title">라운드 로빈 스케줄링</h3>
+        <p>일반적으로 저희가 아는 <strong>라운드 로빈</strong>과 동일하게 일정량의 <strong>규정 시간량</strong> 또는 <strong>시간 할당량</strong>을 주는 방식입니다. 이는 항상 선점형 스케줄링입니다.</p>
+        <p>여기에서 중요한 것은 <code>q</code>(시간 할당량)로, <code>q</code>의 크기가 너무 크면 선입 선처(FCFS)리 스케줄링과 거의 같아지며 너무 작은 경우에는 문맥 교환 비용이 거대해지게 됩니다.</p>
+        <p>이는 기아가 잘 생기지 않으며 빠른 응답이 가능한 장점이 존재하지만 하드웨어에 타이머가 필요하며 <code>q</code>의 설정을 잘해 주어야 하는 단점이 존재합니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">다단계 큐 스케줄링</h3>
+        <p><code>MultiLevel Queue</code> 스케줄링으로 각 작업을 서로 다른 묶음으로 분류할 수 있을 때 사용합니다. 예를 들어 작업을 포그라운드와 백그라운드로 분류하여 두 유형의 일반적인 반응 시간이 다름을 이용하여 다르게 스케줄링하는 방식입니다.</p>
+        <p>여기에는 각 큐의 묶음에 우선순위를 절대적으로 지정하여 큐를 모두 써야 다음 우선순위 큐의 작업을 실행 가능하게 하는 방식입니다.</p>
+        <p>여기에는 작업의 우선순위에 따라 다른 비율의 라운드 로빈 방식을 사용하여 높은 우선순위에는 70%를, 낮은 우선순위에는 30%를 할당하는 방식을 사용할 수 있습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">다단계 피드백 큐 스케줄링</h3>
+        <p>다단계 큐 스케줄링은 작업이 시스템에 들어가면 한 큐에서만 고정되어 실행됩니다.</p>
+        <p>이런 융통성의 부족에 의해 예외 사항에 유연하게 대처할 수 없음에 따라 작업이 큐 사이를 이동할 수 있게 한 방식의 스케줄링 방식입니다.</p>
+        <p>또한 긴 작업이 규정 시간을 다 사용할 때마다 다음번에 할당해 주는 규정 시간을 늘려 주는 방식을 이용할 수 있습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">HRN 스케줄링</h3>
+        <p>최소 작업 우선 스케줄링의 약점인 긴 작업에 대해서 대기 시간이 길어지는 것을 방지하기 위해 <code>응답률 = (대기 시간 + 서비스 시간) / 서비스 시간</code>의 공식을 이용하여 오래 기다릴수록 우선순위가 높아지는 방법입니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">다중 프로세서 스케줄링</h3>
+        <p>프로세서가 여러 개면 스케줄링 문제가 복잡해짐에 따라 하나의 큐를 여러 프로세서가 공유하는 방식(대칭형 다중 처리)과 하나의 프로세서(비대칭형 다중 처리)가 다른 프로세서에게 프로세스들을 할당해 주는 방식이 존재합니다.</p>
+        <p>대칭형 다중 처리(SMP)는 동시성 문제를 고려해야 하고, 비대칭형 다중 처리는 마스터 프로세서의 부담이 커진다는 단점들이 존재합니다.</p>
+      </div>
+      <div class="post-note">책이 어려운 건지, 뭔가 눈에 잘 안 들어오는 개념이었던 것 같습니다.</div>
+    </section>
+  </article>
+</body>
+</html>
