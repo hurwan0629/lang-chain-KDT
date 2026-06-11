@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>position - absolute</title>
+  <style>
+    .parent {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      border: 2px solid black;
+      margin: 50px;
+      top: 30px;
+    }
+
+    .child {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: deepskyblue;
+    }
+  </style>
+</head>
+<body>
+  <div class="parent">
+    부모 영역
+    <div class="child">
+      자식영역
+    </div>
+  </div>
+</body>
+</html>

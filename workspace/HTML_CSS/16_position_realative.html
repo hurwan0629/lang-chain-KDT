@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>position - relative</title>
+  <style>
+    #box1 {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        background-color: deeppink;
+        top: 30px;
+        left: 30px;
+        z-index: -2;
+    }
+
+    #box2 {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        background-color: deepskyblue;
+        right: 30px;
+
+    }
+    #box3 {
+        position: relative;
+        background-color: greenyellow;
+        top: 50px;
+        z-index: -10;
+    }
+  </style>
+</head>
+<body>
+  <div id="box3">
+    박스3
+    <div id="box1">박스1</div>
+    <div id="box2">박스2</div>
+  </div>
+</body>
+</html>
