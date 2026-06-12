@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 1000px;
+      margin: 20px auto;
+      border: 2px solid #000;
+      padding: 10px;
+    }
+
+    header, footer {
+      border: 2px solid #000;
+      padding: 20px;
+      margin-bottom: 10px;
+    }
+
+    .columns {
+      display: flex;
+      gap: 15px;
+      height: 400px;
+      /* align-items: center; */
+      /* align-items: space-around; */
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border: 2px solid #583232;
+    }
+
+    .columns > * {
+      /* height: 150px; */
+      /* width: 30%; */
+      border: 2px solid #000;
+      
+      /* margin: 10px auto; */
+      padding: 20px;
+      /* margin: 10px; */
+      /* flex: 1; */
+    }
+    
+    main {
+      flex: 2;
+      flex-grow: 1;
+    }
+    nav {
+      flex: 1;
+    }
+    aside {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    flexbox
+    css에서 요소를 한 방향(가로 또는 세로)으로 유연하게 배치하고 정렬하기 위한 레이아웃 모델로, 부모 요소에 display: lflex를 적용해 자식 요소들의 크기, 정렬, 간격을 쉽게 제어할 수 있음
+
+    컨테이너
+    - flexbox에서 display: flex가 적용된 부모 요소를 의미
+    - 내부에 있는 자식 요소들을 어떻게 배치하고 정렬할지에 대한 기준과 규칙을 정하는 역할
+
+    아이템
+    - flex 컨테이너 안에 포함된 자식 요소들을 의미하며, 컨테이너가 정한 배치 규칙에 다라 실제로 화면에 놓이는 대상
+
+    flex-direction
+    flex-direction: rox/column
+
+    justify-content
+    가로 또는 세로 방향 정렬
+    축을 기준으로 수평 방향으로의 순서를 지정해주는 방식
+    [flex-start, center, space-between [양 끝 요소를 끝에 붙이고 사이 간격만 동일하게],
+     space-around [요소 주변에 동일한 여백을 줌 ]]
+
+     align-items
+     주축과 수직 방향 정렬
+     stretch # 기본값, 위로부터 정렬 * .자식의 height가 없을 때 동작
+     center: 가운데
+     flex-end: 아래로 정렬
+     
+     flex-wrap
+     줄바꿈 처리
+     nowrap: 기본값, 줄바꿈 하지 않음
+     wrap: 줄바꿈
+
+     align-content
+     여러 줄 정렬
+     center: 가운데정렬
+     space-between: 
+
+     gap:
+     item같 간격
+
+     flex-grow:
+     남는 공간을 얼마나 차지할지
+     flex-grow: 1; 전체적으로 꽉차게
+     flex-grow: 1 1; 2칸씩 할당해주겠다
+
+     flex-shrink:
+     공간이 부족할 때 얼마나 줄일지
+
+     flex-basis
+     아이템의 시작 크기
+     flex-basis: 200px
+
+     flex
+     축약 속성
+     flex 1 1 200px # flex-frow flex-shrink flex-basis 순서
+
+     align-self
+     특정 아이템만 정렬 다르게 적용
+  -->
+    
+  <div class="container">
+    <header>
+      헤더 영역
+    </header>
+    <div class="columns">
+      <nav>nav 왼쪽메뉴</nav>
+      <main>main (가운데 본문)</main>
+      <aside>aside (오른쪽 사이드)</aside>
+    </div>
+    <footer>footer 영역</footer>
+  </div>
+</body>
+</html>

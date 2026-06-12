@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSS 우선순위 체크 예제</title>
+
+  <style>
+    p {
+      color: blue;
+    }
+
+    .text {
+      color: green;
+    }
+
+    #target {
+      color: red;
+    }
+
+    .text {
+      color: purple;
+    }
+
+    .force {
+      color: orange !important;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>CSS 우선순위 확인</h2>
+
+  <p id="target" class="text">1번 <!-- purple -->
+  </p>
+
+  <p id="target" class="text force">2번 <!-- orange -->
+
+  </p>
+
+  <p id="target" class="text force" style="color: black;">3번 <!-- orange -->
+
+  </p>
+
+  <p id="target" class="text" style="color: black;">4번 <!-- black -->
+
+  </p>
+
+</body>
+</html>

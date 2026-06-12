@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .box {
+      padding: 40px;
+      text-align: center;
+      font-size: 20px;
+      background-color: deepskyblue;
+    }
+
+    @media (max-width: 1024px) {
+      .box {
+        background-color: deeppink;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .box {
+        background-color: gold;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+    <!--
+      반응형
+      웹이나 앱 화면이 사용자 기기 환경에 맞춰 화면 크기, 해상도, 방향(가로, 세로) 등에 따라 레이아웃과 요소 배치가 자동으로 변화하도록 설계하는 사고방식을 의미
+
+      미디어 쿼리
+      CSS에서 화면의 너비, 높이, 해상도, 기기 방향같은 조건에 따라 서로다른 스타일을 적용할 수 있게 해주는 기능
+
+      @media (조건) {
+        조건을 만족할 때 적용되는 CSS
+      }
+
+      브레이크 포인트
+      - 반응형 웹에서 화면 크기에 따라 레이아웃이나 스타일이 바뀌는 기준을 의미
+      - 주로 미디어 쿼리에서 min-width나 max-width 값으로 설정되며, 이 지점을 기준으로 요소의 배치, 크기, 정렬 방식이 달라져 모바일(태블릿/데스크탑 등 각 기기에 맞는 화면 구성을 만들 수 있음)
+      크기, 정렬 방식이 달라져 ㅁ바일/태블릿/데스크탑 등 각 기기에 맞는 화면 구성을 만들 수 있음
+        - 480px 이하: 모바일
+        - 768px 이하: 태블릿
+        - 1024px 이상: 데스크탑
+        - 1200px 이상: 와이드 데스크탑
+
+      max-width(이하)
+      @media (max-width: 768px) { ... }
+      768px 이하로 작아지면 적용
+
+      min-width(이상)
+      @media (min-width: 1024px) { ... }
+      1024px 이상으로 커지명 적용
+
+      AND
+      @media (min-width: 768px) and (max-width: 1023px) { ... }
+      768px ~ 1023px 사이에만
+
+      OR
+      @media (nax-width: 480px) or (min-width: 1200px) { ... }
+      480px 이하 또는 1200px 이상
+      -->
+
+    <div class="box">
+      화면 크기에 따라 색과 글자 크기가 달라집니다.
+    </div>
+</body>
+</html>

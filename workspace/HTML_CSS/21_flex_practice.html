@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flex 전체 예제</title>
+
+  <style>
+    .container {
+      width: 700px;
+      height: 500px;
+      border: 3px solid black;
+
+      display: flex;
+
+      /* 주축 방향: 가로 방향 */
+      flex-direction: row;
+      /*
+        row: 왼쪽 → 오른쪽, 기본값
+        row-reverse: 오른쪽 → 왼쪽
+        column: 위 → 아래
+        column-reverse: 아래 → 위
+      */
+
+      /* 주축 방향 정렬 */
+      justify-content: space-between;
+      /*
+        flex-start: 주축 시작 지점에 붙임
+        center: 주축 가운데 정렬
+        flex-end: 주축 끝 지점에 붙임
+        space-between: 양 끝 요소를 끝에 붙이고 사이 간격 동일
+        space-around: 각 요소 주변에 동일한 여백
+        space-evenly: 모든 간격을 완전히 동일하게
+      */
+
+      /* 교차축 방향 정렬 */
+      align-items: center;
+      /*
+        stretch: 기본값, 아이템을 교차축 방향으로 늘림
+        flex-start: 교차축 시작 지점에 정렬
+        center: 교차축 가운데 정렬
+        flex-end: 교차축 끝 지점에 정렬
+        baseline: 글자 기준선에 맞춰 정렬
+      */
+
+      /* 줄바꿈 처리 */
+      flex-wrap: wrap;
+      /*
+        nowrap: 기본값, 줄바꿈하지 않음
+        wrap: 공간이 부족하면 다음 줄로 넘김
+        wrap-reverse: 반대 방향으로 줄바꿈
+      */
+
+      /* 여러 줄 전체 정렬 */
+      align-content: space-around;
+      /*
+        stretch: 기본값, 여러 줄이 공간을 채우도록 늘어남
+        flex-start: 여러 줄을 교차축 시작 지점에 모음
+        center: 여러 줄을 교차축 가운데에 모음
+        flex-end: 여러 줄을 교차축 끝 지점에 모음
+        space-between: 첫 줄과 마지막 줄을 끝에 붙이고 사이 간격 동일
+        space-around: 각 줄 주변에 동일한 여백
+        space-evenly: 줄 사이와 양 끝 간격을 모두 동일하게
+      */
+
+      /* 아이템 사이 간격 */
+      gap: 20px;
+    }
+
+    .item {
+      background-color: lightblue;
+      border: 2px solid blue;
+      padding: 20px;
+      font-size: 24px;
+      text-align: center;
+
+      flex: 1 1 120px;
+      /*
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 120px;
+      */
+    }
+
+    .item1 {
+      flex: 1 1 2000px;
+    }
+
+    .item2 {
+      flex: 2 1 120px;
+    }
+
+    .item3 {
+      flex: 1 0 120px;
+    }
+
+    .item4 {
+      /* 이 아이템만 교차축 시작 지점에 정렬 */
+      align-self: flex-start;
+      /*
+        auto: 기본값, 부모의 align-items 값을 따름
+        stretch: 아이템을 교차축 방향으로 늘림
+        flex-start: 교차축 시작 지점에 정렬
+        center: 교차축 가운데 정렬
+        flex-end: 교차축 끝 지점에 정렬
+        baseline: 글자 기준선에 맞춰 정렬
+      */
+    }
+
+    .item5 {
+      /* 이 아이템만 교차축 끝 지점에 정렬 */
+      align-self: flex-end;
+      /*
+        auto: 부모의 align-items 값을 따름
+        stretch: 교차축 방향으로 늘어남
+        flex-start: 위쪽 또는 왼쪽 정렬
+        center: 가운데 정렬
+        flex-end: 아래쪽 또는 오른쪽 정렬
+        baseline: 텍스트 기준선 정렬
+      */
+    }
+
+    .item6 {
+      flex: 1 1 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="item item1">1</div>
+    <div class="item item2">2</div>
+    <div class="item item3">3</div>
+    <div class="item item4">4</div>
+    <div class="item item5">5</div>
+    <div class="item item6">6</div>
+  </div>
+</body>
+</html>
