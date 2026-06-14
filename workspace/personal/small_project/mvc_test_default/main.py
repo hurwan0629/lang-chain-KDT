@@ -1,0 +1,48 @@
+from service import Todo_service
+
+class Menu:
+  def __init__(self):
+    self.service = Todo_service()
+
+  def run(self):
+    while True:
+      print()
+      print("===== Todo 프로그램 =====")
+      print("1. 할 일 등록")
+      print("2. 할 일 전체 조회")
+      print("3. 제목으로 검색")
+      print("4. 할 일 수정")
+      print("5. 할 일 삭제")
+      print("6. 프로그램 종료")
+
+      try:
+        menu = int(input("메뉴를 선택하세요: "))
+      except ValueError:
+        print("숫자를 입력해주세요.")
+        continue
+
+      try:
+        if menu == 1:
+          self.service.create_todo()
+        elif menu == 2:
+          self.service.show_all_list()
+        elif menu == 3:
+          self.service.search_title()
+        elif menu == 4:
+          self.service.update_todo()
+        elif menu == 5:
+          self.service.delete_todo()
+        elif menu == 6:
+          print("프로그램을 종료합니다.")
+          break
+        else:
+          print("메뉴는 1부터 6까지만 선택할 수 있습니다.")
+      except ValueError:
+        print("입력값의 형식이 올바르지 않습니다.")
+      except Exception as e:
+        print("오류:", e)
+
+
+if __name__ == "__main__":
+  menu = Menu()
+  menu.run()

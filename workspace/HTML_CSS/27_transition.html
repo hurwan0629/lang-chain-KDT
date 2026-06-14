@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transition</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 120px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .single {
+            background-color: deepskyblue;
+            transition: background-color 0.8s ease;
+        }
+
+        .single:hover {
+            background-color: blue;
+        }
+
+        .multiple {
+            background-color: deeppink;
+            transition:
+                background-color 0.4s ease,
+                transform 0.4s ease,
+                box-shadow 0.4s ease;
+        }
+
+        .multiple:hover {
+            background-color: pink;
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!--
+        transition
+        요소의 상태가 변경될 때(hover, 클래스 변경 등) 스타일 값이 즉시 바뀌지 않고 일정 시간에 걸쳐 부드럽게 변화하도록 만드는 기능
+
+        선택자 { transition: 속성 시간; }
+
+        transition-property: width, background-color;
+        어떤 속성을 애니메이션 할지 지정
+
+        transition-duration: 0.5s;
+        변화가 진행되는 시간
+
+        transition-timing-function: ease;
+        변화 속도의 흐름
+            - ease: 시작과 끝은 느리고 중간은 빠르게 움직임
+            - linear: 처음부터 끝까지 같은 속도로 움직
+            - ease-in: 시작은 느리고 점점 빨라짐
+            - ease-out: 시작은 빠르고 끝은 느려짐
+            - ease-in-out: 시작과 끝은 느리고 중간은 빠르게 움직임
+
+
+        transition-delay: 0.2s
+        시작 지연 시간
+
+        transition: 속성 시간 타이밍 지연;
+        축약 문법
+    -->
+
+    <h2>단일 transition</h2>
+    <div class="box single">hover 해보세요</div>
+
+    <h2>여러 transition</h2>
+    <div class="box multiple">hover 해보세요</div>
+</body>
+</html>

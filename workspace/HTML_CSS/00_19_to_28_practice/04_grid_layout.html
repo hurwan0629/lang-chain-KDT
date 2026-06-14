@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4단계 - Grid 페이지 구성</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: Arial, sans-serif;
+      background-color: #eef2ff;
+    }
+
+    .page {
+      max-width: 1000px;
+      min-height: 700px;
+      margin: 0 auto;
+
+      /* 실습 코드를 작성하세요. */
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      grid-template-areas:
+        "header header"
+        "nav nav"
+        "main aside"
+        "footer footer";
+      gap: 16px;
+    }
+
+    header,
+    nav,
+    main,
+    aside,
+    footer {
+      padding: 24px;
+      border: 2px solid #312e81;
+      background-color: white;
+    }
+
+    header {
+      /* 영역 이름을 연결하세요. */
+      background-color: #c7d2fe;
+      grid-area: header;
+    }
+
+    nav {
+      /* 영역 이름을 연결하세요. */
+      background-color: #ddd6fe;
+      grid-area: nav;
+    }
+
+    main {
+      /* 영역 이름을 연결하세요. */
+      grid-area: main;
+    }
+
+    aside {
+      /* 영역 이름을 연결하세요. */
+      background-color: #ede9fe;
+      grid-area: aside;
+    }
+
+    footer {
+      /* 영역 이름을 연결하세요. */
+      background-color: #c7d2fe;
+      grid-area: footer;
+    }
+
+    .card-list {
+      margin-top: 20px;
+
+      /* 반응형 카드 Grid를 작성하세요. */
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 130px;
+      padding: 20px;
+      border: 2px solid #7c3aed;
+      border-radius: 8px;
+      background-color: #f5f3ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>강의 페이지</h1>
+    </header>
+
+    <nav>홈 | 강의 | 질문</nav>
+
+    <main>
+      <h2>HTML/CSS 강의</h2>
+
+      <div class="card-list">
+        <article class="card">Flexbox</article>
+        <article class="card">Grid</article>
+        <article class="card">반응형 웹</article>
+        <article class="card">CSS 변수</article>
+      </div>
+    </main>
+
+    <aside>
+      <h2>학습 현황</h2>
+      <p>진행 중</p>
+    </aside>
+
+    <footer>2026 HTML/CSS Study</footer>
+  </div>
+</body>
+</html>

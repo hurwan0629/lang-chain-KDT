@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transform</title>
+    <style>
+        .container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .box {
+            width: 150px;
+            height: 150px;
+            background-color: deepskyblue;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .translate:hover {
+            transform: translateY(-20px);
+        }
+
+        .scale:hover {
+            transform: scale(1.2);
+        }
+
+        .rotate:hover {
+            transform: rotate(15deg);
+        }
+
+        .skew:hover {
+            transform: skew(10deg, 5deg);
+        }
+    </style>
+</head>
+<body>
+    <!--
+        transform
+        - 요소의 위치나 형태를 변경하는 속성으로 화면에서 요소를 이동시키거나, 회전시키고, 크기를 변경하거나, 기울이는 등의 변형을 할 수 있음
+        - 문서의 실제 레이아웃 흐름에는 영향을 주지 않고 시각적으로만 변형되기 때문에 다른 요소의 배치가 깨지지 않으며, GPU 가속을 활용해 성능이 좋아 애니메이션이나 인터렉션 효과를 구현할 때 자주 사용
+
+            선택자 { transform: 변형함수(값); }
+
+        translate: 이동
+        scale: 크기 변경
+        rotate: 회전
+        skew: 기울이기
+        transform: 여러 변형 함께 사용
+    -->
+
+    <h2>transform 변형 함수</h2>
+    <div class="container">
+        <div class="box translate">translate</div>
+        <div class="box scale">scale</div>
+        <div class="box rotate">rotate</div>
+        <div class="box skew">skew</div>
+    </div>
+</body>
+</html>

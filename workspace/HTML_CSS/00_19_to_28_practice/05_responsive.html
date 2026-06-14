@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5단계 - 반응형 웹</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: Arial, sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      min-height: 180px;
+      padding: 24px;
+      border: 2px solid #0284c7;
+      border-radius: 10px;
+      background-color: #e0f2fe;
+      font-size: 20px;
+    }
+
+    /* 과제 1: 1024px 이하에서 카드 목록을 2열로 변경하세요. */
+    @media (max-width: 1024px) {
+      .card-list {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding: 16px;
+      }
+
+      .card-list {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        font-size: 16px;
+      }
+    }
+
+    /* 과제 2: 767px 이하에서 카드 목록을 1열로 변경하세요.
+       body 여백은 16px, 카드 글자 크기는 16px로 변경하세요. */
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>반응형 강의 목록</h1>
+
+    <section class="card-list">
+      <article class="card">HTML 기초</article>
+      <article class="card">Flexbox</article>
+      <article class="card">Grid</article>
+      <article class="card">반응형 웹</article>
+      <article class="card">CSS 변수</article>
+      <article class="card">Transition</article>
+    </section>
+  </main>
+</body>
+</html>
