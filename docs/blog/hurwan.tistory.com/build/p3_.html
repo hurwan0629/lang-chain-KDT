@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>벡터 응용과 행렬, 파트 1</title>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    .tech-post {
+      --text: #1f2937; --muted: #64748b; --line: #e5e7eb;
+      --accent: #19b97c; --accent-dark: #119164;
+      --soft: rgba(25,185,124,.08); --shadow: 0 16px 36px rgba(15,23,42,.06);
+      max-width: 860px; margin: 0 auto; padding: 40px 18px 80px;
+      color: var(--text); font-family: Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      line-height: 1.72; word-break: keep-all;
+    }
+    .tech-post * { box-sizing: border-box; }
+    .post-hero {
+      position: relative; overflow: hidden; padding: 38px 28px;
+      border: 1px solid rgba(25,185,124,.12); border-radius: 28px;
+      background: radial-gradient(circle at 14% 12%,rgba(120,255,196,.24),transparent 28%),
+        radial-gradient(circle at 84% 15%,rgba(186,156,255,.12),transparent 28%),
+        radial-gradient(circle at 50% 100%,rgba(130,210,255,.13),transparent 36%),
+        linear-gradient(135deg,#fff 0%,#fbfffd 48%,#fff 100%);
+      box-shadow: var(--shadow);
+    }
+    .post-hero-inner { position: relative; z-index: 1; }
+    .post-kicker {
+      display: inline-block; margin: 0 0 14px; padding: 6px 12px; border-radius: 999px;
+      background: var(--soft); color: var(--accent-dark); font-size: 13px; font-weight: 700;
+    }
+    .post-title { margin: 0; color: #111827; font-size: 34px; line-height: 1.28; letter-spacing: -.04em; }
+    .post-subtitle { max-width: 700px; margin: 16px 0 0; color: #475569; font-size: 16px; font-weight: 500; }
+    .source-toggle,.post-toc {
+      margin: 24px 0 0; padding: 16px 18px; border: 1px solid rgba(25,185,124,.14);
+      border-radius: 18px; background: linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.9));
+      box-shadow: 0 12px 30px rgba(15,23,42,.04);
+    }
+    .source-toggle summary { cursor: pointer; color: #111827; font-size: 15px; font-weight: 800; }
+    .source-box {
+      overflow: auto; max-height: 460px; margin: 14px 0 0; padding: 16px 18px;
+      border-radius: 16px; background: #0f172a; color: #e2e8f0;
+      font: 14px/1.7 "JetBrains Mono","D2Coding",Consolas,monospace; white-space: pre-wrap; word-break: break-word;
+    }
+    .source-box code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
+    .post-toc { padding: 22px; }
+    .toc-title { display: block; margin: 0 0 12px; color: #111827; font-size: 18px; font-weight: 800; }
+    .toc-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 12px; margin: 0; padding: 0; list-style: none; }
+    .toc-list a {
+      display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 7px 10px;
+      border: 1px solid rgba(25,185,124,.16); border-radius: 12px; background: rgba(255,255,255,.72);
+      color: #2563eb; font-size: 14px; font-weight: 800; text-decoration: none;
+    }
+    .toc-index {
+      display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+      border-radius: 50%; background: var(--soft); color: var(--accent-dark); font-size: 12px;
+    }
+    .post-section { margin-top: 50px; scroll-margin-top: 22px; }
+    .section-title {
+      display: flex; align-items: center; gap: 12px; margin: 0 0 18px;
+      color: #111827; font-size: 27px; line-height: 1.35; letter-spacing: -.04em;
+    }
+    .section-title::before {
+      content: ""; width: 8px; height: 28px; border-radius: 999px;
+      background: linear-gradient(180deg,#83ffc0,#19b97c); box-shadow: 0 0 16px rgba(25,185,124,.3);
+    }
+    .post-card {
+      margin: 18px 0; padding: 24px 22px; border: 1px solid rgba(148,163,184,.14);
+      border-radius: 22px; background: linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.92));
+      box-shadow: 0 12px 30px rgba(15,23,42,.04);
+    }
+    .post-card h3 { margin: 0 0 12px; color: #111827; font-size: 20px; }
+    .tech-post p,.tech-post li { color: #334155; font-size: 16px; font-weight: 500; }
+    .tech-post p { margin: 10px 0; }
+    .tech-post strong { color: #0f172a; font-weight: 800; }
+    .tech-post code {
+      padding: .08em .38em; border: 1px solid rgba(148,163,184,.22); border-radius: 6px;
+      background: #f1f5f9; color: #1f2937; font-family: "JetBrains Mono","D2Coding",Consolas,monospace;
+      font-size: .92em; font-weight: 600;
+    }
+    .post-card ul { margin: 12px 0 0; padding-left: 20px; }
+    .post-card li { margin: 8px 0; }
+    .numbered-list { margin: 12px 0 0; padding-left: 24px; }
+    .math-box {
+      margin: 16px 0; padding: 14px 16px; overflow-x: auto;
+      border: 1px solid rgba(25,185,124,.16); border-radius: 14px; background: rgba(25,185,124,.05);
+    }
+    .post-note {
+      margin: 18px 0; padding: 18px 20px; border-left: 4px solid var(--accent);
+      border-radius: 16px; background: linear-gradient(90deg,rgba(120,255,196,.14),rgba(255,255,255,.92));
+      color: #334155; font-weight: 600;
+    }
+    .post-image {
+      display: block; max-width: 100%; height: auto; margin: 18px auto;
+      border: 1px solid rgba(148,163,184,.16); border-radius: 14px; background: #fff;
+      box-shadow: 0 12px 30px rgba(15,23,42,.05);
+    }
+    .post-divider { height: 1px; margin: 42px 0 0; border: 0; background: linear-gradient(90deg,transparent,rgba(25,185,124,.36),transparent); }
+    .commit-link { color: #2563eb; font-size: 14px; font-weight: 800; text-decoration: none; }
+    .post-hero::after {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(82,255,173,.14), transparent 24%),
+        radial-gradient(circle at 75% 20%, rgba(186,156,255,.08), transparent 20%);
+      filter: blur(18px);
+      pointer-events: none;
+    }
+    .post-card {
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.92)),
+        radial-gradient(circle at top right,rgba(120,255,196,.24),transparent 32%);
+    }
+    .post-card ul {
+      margin: 12px 0 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .post-card ul li {
+      position: relative;
+      padding-left: 18px;
+    }
+    .post-card ul li::before {
+      content: "";
+      position: absolute;
+      top: .72em;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .post-card .numbered-list {
+      padding-left: 24px;
+      list-style: decimal;
+    }
+    .post-card .numbered-list li {
+      padding-left: 4px;
+    }
+    .post-card .numbered-list li::before {
+      display: none;
+      content: none;
+    }
+    .toc-list li {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      min-width: 0;
+    }
+    .toc-list a {
+      min-width: 0;
+      transition: transform .16s ease,border-color .16s ease,background .16s ease;
+    }
+    .toc-list a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(25,185,124,.36);
+      background: rgba(240,253,247,.92);
+      color: #1d4ed8;
+    }
+    .commit-link {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-top: 12px;
+    }
+    .commit-link::after {
+      content: ">";
+      margin-left: 6px;
+      font-size: 13px;
+    }
+    @media (min-width: 1024px) {
+      .tech-post {
+        width: min(760px, calc(100vw - 420px));
+        max-width: none;
+        min-width: 620px;
+        margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+        margin-right: 0;
+      }
+    }
+    @media (max-width: 720px) {
+      .tech-post {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 26px 14px 60px;
+      }
+      .post-hero { padding: 28px 20px; border-radius: 22px; }
+      .post-title { font-size: 28px; }
+      .section-title { font-size: 23px; }
+      .toc-list { grid-template-columns: 1fr; }
+      .post-card { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <span class="post-kicker">Linear Algebra for Programmer</span>
+        <h1 class="post-title">벡터 응용과 행렬, 파트 1</h1>
+        <p class="post-subtitle">상관관계, 시계열 필터링, k-평균 클러스터링과 행렬의 기본 연산을 정리합니다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># 벡터 응용
+&gt; 데이터 분석에서의 벡터
+
+앞장에서는 기저, 독립성, 부분공간, 투영 등에 대해서 공부하였습니다. (저는 직교 벡터 분해의 원리가 기억이 안 나서 복습을 한 번 더 했네요 ;~;)
+
+이번 장에서는 벡터와 벡터 연산이 데이터 과학에서 어떻게 사용되는지를 배웁니다.
+
+## 상관관계와 코사인 유사도
+상관관계는 통계와 머신러닝에서 가장 근본적이면서 중요한 분석 방법입니다. 상관계수는 두 변수 사이의 선형 관계를 정량화한 하나의 숫자입니다. 상관계수의 데이터들은 `-1`~`1`의 범위를 가지며 `-1`에 가까울수록 반대 방향의 관계, `1`에 가까울수록 같이 움직이는 특성을 `0`의 경우에는 벡터의 경우에는 선형 관계가 없다는 뜻과 같이 전혀 관계없는 관계임을 나타냅니다.
+
+![alt text](image-9.png)
+
+파이썬에서는 이 관계를 `[np/pd].corr()` 과 같이 쉽게 행렬의 형태로 확인할 수 있습니다.
+
+1장에서는 내적이 상관계수와 관련이 있고 내적의 크기는 데이터 내의 수치값의 크기와 관련이 있다고 하였는데 여기에서 수치값의 크기에 따른 영향도를 없애기 위해 정규화할 필요가 있습니다.
+
+평균 중심화는 각 데이터 값에서 평균값을 뺀 뒤, 벡터의 내적을 노름의 곱으로 나누게 되면 됩니다.
+
+이는 해석을 해보자면 두 변수 벡터가 얼마나 같은 방향으로 움직이는지를 보는 공식입니다.
+
+기본적으로 피어슨 상관계수 공식은 다음과 같습니다.
+
+![alt text](image-10.png)
+
+여기에서 분자는 두 벡터의 내적이며, 분모는 벡터 길이의 곱이 됩니다. r_xy는 표본상관계수를, ρ는 모상관계수를 말합니다. 또한 이는 두 벡터의 코사인 유사도와 동일한 식이 됩니다.
+
+![alt text](image-11.png)
+
+따라서 피어슨 상관계수는 평균 중심화된 코사인 유사도라는 사실을 알 수 있습니다.
+
+## 시계열 필터링과 특징 탐지
+내적은 시계열 필터링에도 사용됩니다. 필터링은 본질적으로 특징 탐지 기법입니다. 필터링은 본질적으로 템플릿이 시계열 신호와 일치하는 특징을 찾습니다. 이렇게 필터링된 결과는 또 다른 시계열이 되며 이를 통해 신호의 특성이 커널의 특성과 얼마나 일치하는지 알 수 있습니다. 매끄러운 변동, 날카로운 에지, 특정 파형 모양 등과 같은 특정 기준에 최적화되도록 커널을 신중하게 구성합니다.
+
+&gt; 여기에서 말하는 템플릿은 시계열 데이터 안에서 찾고 싶은 특정한 모양을 나타내는 짧은 기준 패턴을 말합니다. 예를 들면 증가하는 모양, 위아래로 진동하는 모양 등이 있습니다. 커널은 실제 계산에 쓰는 작은 필터 벡터를 이야기합니다. 커널을 통해 템플릿을 찾을 수 있습니다.
+
+커널과 시계열 신호 사이의 내적을 계산하는 것이 필터링 메커니즘입니다. 하지만 필터링할 때 일반적으로 지역 특징을 탐지해야 하고, 커널은 일반적으로 전체 시계열보다 훨씬 짧습니다. 따라서 커널과 동일한 길이의 짧은 데이터 조각과 커널 사이의 내적을 계산함으로써 내적이 높을수록 원하는 패턴에 가깝다는 결론을 내릴 수 있습니다. (이를 수학적으로 합성곱이라고 합니다.)
+
+여기에서 데이터가 갑자기 변화하는 것과 같은 부분을 에지라고 하며, 이를 평활화하기 위해서 이후 벡터를 사용합니다.
+
+## k-평균 클러스터링
+k-평균 클러스터링은 그룹 중심까지의 거리를 최소화하도록 다변량 데이터를 상대적으로 적은 수(k)의 그룹 또는 범주로 분류하는 비지도 기법입니다.
+
+이의 구현 방식은
+1. K개의 중심점을 임의로 정합니다.
+2. 각 데이터를 가장 가까운 중심점에 배정합니다.
+3. 각 그룹의 평균 위치로 중심점을 다시 이동합니다.
+4. 다시 각 데이터를 가장 가까운 중심점에 배정합니다.
+5. 위 과정을 중심점이 거의 바뀌지 않을 때까지 반복합니다.
+
+이를 통해서 K개의 클래스를 만들어내는 비지도 학습 기법입니다.
+
+# 행렬, 파트 1
+행렬은 벡터를 한 차원 더 끌어올린 것입니다. 행렬은 매우 다채로운 수학적 객체입니다.
+
+방정식, 기하학적 변형, 시간에 따른 입자의 위치, 재무 기록 등 무수히 다양한 정보를 행렬에 저장할 수 있습니다. 데이터 과학에서는 행렬을 관측치 행과 특징 열을 가진 데이터 테이블로 간주하곤 합니다.
+
+행렬은 **A** 또는 **M**과 같은 굵은 대문자로 표시합니다. 행렬의 크기는 (행, 열) 규칙으로 나타냅니다.
+
+### 특수 행렬
+행렬의 수는 무한합니다. 행렬의 숫자를 구성하는 무한한 방법이 있기 때문입니다. 그러나 다소 적은 특성만으로 행렬을 설명할 수 있으며, 이 특성으로 행렬은 어떠한 군 또는 범주에 속하게 됩니다. 특정 연산에서 등장하는 범주도 있고 범주마다 유용한 속성을 가지고 있기 때문에 꼭 알아야 합니다.
+
+어떤 범주의 행렬은 너무 자주 사용되어 Numpy 함수가 있기도 합니다.
+
+- 난수행렬: 일반적으로 가우스와 같은 분포로부터 무작위로 추출된 숫자를 가진 행렬입니다.
+- 정방 행렬과 비정방 행렬: 정방 행렬의 행 수는 열 수와 같습니다. `R^(N x N)` 행렬입니다. 비정방 행렬은 정방 행렬이 아닌 것을 의미합니다. 비정방 행렬의 행 수가 열 수보다 많으면 높다고 하고 열 수가 많으면 넓다고 합니다.
+- 대각 행렬: 행렬의 대각은 왼쪽 위에서 오른쪽 아래로 내려가는 원소들입니다. 대각 행렬은 모든 비대각 원소가 0인 행렬을 말합니다. (대각 원소는 0 또는 0이 아닌 값을 가질 수 있는 유일한 원소입니다.) `np.diag()`는 행렬을 넣을 경우에는 대각 원소를 뽑으며, 벡터를 넣을 경우에는 대각 행렬을 만듭니다.
+- 삼각 행렬: 삼각행렬은 주 대각선의 위 또는 아래가 모두 0입니다. 0이 아닌 원소가 대각선 위에 있으면 행렬을 `상삼각 행렬`이라 하고 0이 아닌 원소가 대각선 아래에 있으면 `하삼각 행렬`이라고 합니다.
+
+- 단위 행렬: 행렬 또는 벡터에 단위 행렬을 곱하면 동일한 행렬 또는 벡터가 되는 행렬입니다. 이는 과거 [포스팅](https://hurwan.tistory.com/14)에서 공분산을 다룰 때 이야기했었습니다. (개념이 어려워서 좀 까먹긴 했지만 써 본 기억은 나네요 ;~;) 아무튼 행렬계의 숫자 1처럼 곱하면 같은 행렬 또는 벡터가 되며 주대각선이 1인 정방 대각 행렬입니다.
+- 영행렬: 모든 원소가 0인 행렬입니다.
+
+![alt text](image-12.png)
+
+### 행렬 수학
+#### 덧셈과 뺄셈
+덧셈과 뺄셈의 경우에는 벡터와 마찬가지로 같은 위치의 원소들 끼리 합하거나 뺍니다.
+
+#### 행렬의 이동
+벡터와 마찬가지로 행렬에서도 스칼라를 더할 수 없습니다. 그러나 파이썬에서는 브로드캐스팅을 통해 가능합니다. 하지만 선형대수학 연산은 아닙니다.
+
+선형대수학에서는 정방행렬에 스칼라를 추가하는 방식이 있는데 이를 **행렬 이동**이라고 합니다. 대각에 상숫값을 더하는 것과 같이 `단위행렬 * 스칼라` 방식으로 구현됩니다.
+
+![alt text](image-13.png)
+
+행렬을 이동하면 대각 원소만 변경되고 나머지는 그대로입니다. 데이터 과학 분야에서는 행렬의 수치적 안정성을 높이고 이동의 효과를 보면서 행렬의 가능한 많은 정보를 보존하기 위해 상대적으로 적은 양을 이동합니다. (이후 장에서 다룬다고 합니다.)
+
+정확히 얼마나 이동해야 하는지는 머신러닝, 통계, 딥러닝, 제어공학 등 여러 분야에서 연구 중입니다.
+
+&gt; 행렬의 **이동**은 두 가지 매우 중요한 응용이 있습니다. 행렬의 고윳값을 찾는 메커니즘과 모델을 데이터에 적합시킬 때 행렬을 정규화하는 메커니즘입니다.
+
+&gt; 찾아보니 고유값의 정의는 `Av = λv`인데 `Av - λv = (A - λI)v = 0`이며 여기에서 `v`가 0이 아닌 해를 가지려면 `det(A-λI) = 0`를 가져야한다 해서 이부분에서 고유 행렬을 통한 이동을 말하는 것으로 보입니다.
+
+&gt; 모델 정규화의 경우에는 `X^T X` 과정에서 행렬이 불안정할 때 해당 `λI` 값을 더하면 대각선 값이 조금 커져서 행렬이 더 안정화된다고 합니다.
+
+#### 스칼라 곱셈과 아다마르 곱
+이 두 가지 유형의 곱셈은 벡터와 마찬가지로 행렬에서도 원소별로 동작합니다. 아다마르곱은 `ndarray`의 `A*B`로 이루어집니다. `A@B`는 행렬곱입니다.
+
+## 표준 행렬 곱셈 
+A(n, m), B(m, k)의 행렬을 A의 행 x B의 열 순서대로 A를 기준으로 B의 열을 모두 곱하는 방식으로 값을 나열해 나갑니다. 결과는 `(n, k)`가 됩니다. A의 열과 B의 행의 개수가 동일해야 연산이 가능합니다.
+
+### 행렬 - 벡터 곱셈
+표준 행렬 곱셈과 동일한 메커니즘으로 동작하지만 여러 분야에서 응용되며 행렬과 벡터 곱셈의 결과는 항상 벡터입니다.
+
+&gt; **행렬과 벡터의 곱셈에서 벡터는 항상 `열벡터`여야 합니다.**
+
+행렬-벡터 곱셈은 여러 곳에서 응용됩니다. 
+
+- 통계에서 모델 예측 데이터값은 설계 행렬에 회귀 계수를 곱해서 구하며 이는 `Xβ`로 표기합니다. 
+- 주성분 분석에서는 데이터 집합 Y의 분산을 최대화하도록 특징 중요도 가중치의 벡터를 얻을 수 있고 `(YᵀY)v = λv`로 나타냅니다. (v는 특징 중요도 벡터, 고유벡터입니다.)
+- 이미지 좌표 변환에서 점의 좌표를 벡터로 둔 뒤, 변환 행렬을 곱하여 회전, 확대, 축소, 이동과 같은 변환을 행렬곱으로 처리할 수 있습니다. (`T*p`이며 T가 변환 행렬, p가 점의 좌표 벡터입니다)
+
+&gt; 가장 중요한 것은 고유벡터로 보이며 향후 다룬다고 합니다.</code></pre>
+    </details>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span>상관관계와 코사인 유사도</a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span>시계열 필터링과 특징 탐지</a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span>k-평균 클러스터링</a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span>행렬과 특수 행렬</a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span>행렬 수학</a></li>
+        <li><a href="#section-06"><span class="toc-index">06</span>표준 행렬 곱셈</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section">
+      <div class="post-card">
+        <div class="post-note">데이터 분석에서의 벡터</div>
+        <p>앞장에서는 <strong>기저</strong>, <strong>독립성</strong>, <strong>부분공간</strong>, <strong>투영</strong> 등에 대해서 공부하였습니다. (저는 직교 벡터 분해의 원리가 기억이 안 나서 복습을 한 번 더 했네요 ;~;)</p>
+        <p>이번 장에서는 벡터와 벡터 연산이 데이터 과학에서 어떻게 사용되는지를 배웁니다.</p>
+      </div>
+    </section>
+
+    <section id="section-01" class="post-section">
+      <h2 class="section-title">상관관계와 코사인 유사도</h2>
+      <div class="post-card">
+        <p>상관관계는 통계와 머신러닝에서 가장 근본적이면서 중요한 분석 방법입니다. <strong>상관계수</strong>는 두 변수 사이의 선형 관계를 정량화한 하나의 숫자입니다. 상관계수의 데이터들은 $-1$부터 $1$의 범위를 가지며, $-1$에 가까울수록 반대 방향의 관계, $1$에 가까울수록 같이 움직이는 특성을 나타냅니다. $0$의 경우에는 벡터 사이에 선형 관계가 없다는 뜻과 같이 전혀 관계없는 관계임을 나타냅니다.</p>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/42e930b6f85c7b837a4ee319cb1755addbaf5691/workspace/personal/math/linear_algebra_for_programmer/image-9.png" alt="상관계수에 따른 데이터 분포">
+        <p>파이썬에서는 이 관계를 <code>[np/pd].corr()</code>과 같이 쉽게 행렬의 형태로 확인할 수 있습니다.</p>
+        <p>1장에서는 내적이 상관계수와 관련이 있고 내적의 크기는 데이터 내의 수치값의 크기와 관련이 있다고 하였는데, 여기에서 수치값의 크기에 따른 영향도를 없애기 위해 <strong>정규화</strong>할 필요가 있습니다.</p>
+        <p>평균 중심화는 각 데이터 값에서 평균값을 뺀 뒤, 벡터의 내적을 노름의 곱으로 나누게 되면 됩니다.</p>
+        <p>이는 해석을 해보자면 두 변수 벡터가 얼마나 같은 방향으로 움직이는지를 보는 공식입니다.</p>
+      </div>
+      <div class="post-card">
+        <h3>피어슨 상관계수</h3>
+        <div class="math-box">$$r_{xy}=\frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}}$$</div>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/42e930b6f85c7b837a4ee319cb1755addbaf5691/workspace/personal/math/linear_algebra_for_programmer/image-10.png" alt="피어슨 상관계수 공식">
+        <p>여기에서 분자는 두 벡터의 내적이며, 분모는 벡터 길이의 곱이 됩니다. $r_{xy}$는 표본상관계수를, $\rho$는 모상관계수를 말합니다. 또한 이는 두 벡터의 코사인 유사도와 동일한 식이 됩니다.</p>
+        <div class="math-box">$$\cos(\theta)=\frac{\mathbf{x}^{\mathsf T}\mathbf{y}}{\lVert\mathbf{x}\rVert\lVert\mathbf{y}\rVert}$$</div>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/42e930b6f85c7b837a4ee319cb1755addbaf5691/workspace/personal/math/linear_algebra_for_programmer/image-11.png" alt="코사인 유사도 공식">
+        <div class="post-note">따라서 피어슨 상관계수는 <strong>평균 중심화된 코사인 유사도</strong>라는 사실을 알 수 있습니다.</div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-02" class="post-section">
+      <h2 class="section-title">시계열 필터링과 특징 탐지</h2>
+      <div class="post-card">
+        <p>내적은 시계열 필터링에도 사용됩니다. 필터링은 본질적으로 <strong>특징 탐지 기법</strong>입니다. 필터링은 본질적으로 템플릿이 시계열 신호와 일치하는 특징을 찾습니다. 이렇게 필터링된 결과는 또 다른 시계열이 되며 이를 통해 신호의 특성이 커널의 특성과 얼마나 일치하는지 알 수 있습니다. 매끄러운 변동, 날카로운 에지, 특정 파형 모양 등과 같은 특정 기준에 최적화되도록 커널을 신중하게 구성합니다.</p>
+        <div class="post-note">여기에서 말하는 <strong>템플릿</strong>은 시계열 데이터 안에서 찾고 싶은 특정한 모양을 나타내는 짧은 기준 패턴을 말합니다. 예를 들면 증가하는 모양, 위아래로 진동하는 모양 등이 있습니다. <strong>커널</strong>은 실제 계산에 쓰는 작은 필터 벡터를 이야기합니다. 커널을 통해 템플릿을 찾을 수 있습니다.</div>
+        <p>커널과 시계열 신호 사이의 내적을 계산하는 것이 필터링 메커니즘입니다. 하지만 필터링할 때 일반적으로 지역 특징을 탐지해야 하고, 커널은 일반적으로 전체 시계열보다 훨씬 짧습니다. 따라서 커널과 동일한 길이의 짧은 데이터 조각과 커널 사이의 내적을 계산함으로써 내적이 높을수록 원하는 패턴에 가깝다는 결론을 내릴 수 있습니다. (이를 수학적으로 합성곱이라고 합니다.)</p>
+        <p>여기에서 데이터가 갑자기 변화하는 것과 같은 부분을 <strong>에지</strong>라고 하며, 이를 평활화하기 위해서 이후 벡터를 사용합니다.</p>
+      </div>
+    </section>
+
+    <section id="section-03" class="post-section">
+      <h2 class="section-title">k-평균 클러스터링</h2>
+      <div class="post-card">
+        <p><strong>k-평균 클러스터링</strong>은 그룹 중심까지의 거리를 최소화하도록 다변량 데이터를 상대적으로 적은 수 $k$의 그룹 또는 범주로 분류하는 비지도 기법입니다.</p>
+        <ol class="numbered-list">
+          <li>$K$개의 중심점을 임의로 정합니다.</li>
+          <li>각 데이터를 가장 가까운 중심점에 배정합니다.</li>
+          <li>각 그룹의 평균 위치로 중심점을 다시 이동합니다.</li>
+          <li>다시 각 데이터를 가장 가까운 중심점에 배정합니다.</li>
+          <li>위 과정을 중심점이 거의 바뀌지 않을 때까지 반복합니다.</li>
+        </ol>
+        <p>이를 통해서 $K$개의 클래스를 만들어내는 비지도 학습 기법입니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-04" class="post-section">
+      <h2 class="section-title">행렬과 특수 행렬</h2>
+      <div class="post-card">
+        <p>행렬은 벡터를 한 차원 더 끌어올린 것입니다. 행렬은 매우 다채로운 수학적 객체입니다.</p>
+        <p>방정식, 기하학적 변형, 시간에 따른 입자의 위치, 재무 기록 등 무수히 다양한 정보를 행렬에 저장할 수 있습니다. 데이터 과학에서는 행렬을 <strong>관측치 행</strong>과 <strong>특징 열</strong>을 가진 데이터 테이블로 간주하곤 합니다.</p>
+        <p>행렬은 $\mathbf{A}$ 또는 $\mathbf{M}$과 같은 굵은 대문자로 표시합니다. 행렬의 크기는 <code>(행, 열)</code> 규칙으로 나타냅니다.</p>
+      </div>
+      <div class="post-card">
+        <h3>특수 행렬</h3>
+        <p>행렬의 수는 무한합니다. 행렬의 숫자를 구성하는 무한한 방법이 있기 때문입니다. 그러나 다소 적은 특성만으로 행렬을 설명할 수 있으며, 이 특성으로 행렬은 어떠한 군 또는 범주에 속하게 됩니다. 특정 연산에서 등장하는 범주도 있고 범주마다 유용한 속성을 가지고 있기 때문에 꼭 알아야 합니다.</p>
+        <p>어떤 범주의 행렬은 너무 자주 사용되어 <code>NumPy</code> 함수가 있기도 합니다.</p>
+        <ul>
+          <li><strong>난수행렬</strong>: 일반적으로 가우스와 같은 분포로부터 무작위로 추출된 숫자를 가진 행렬입니다.</li>
+          <li><strong>정방 행렬과 비정방 행렬</strong>: 정방 행렬의 행 수는 열 수와 같습니다. $\mathbb{R}^{N\times N}$ 행렬입니다. 비정방 행렬은 정방 행렬이 아닌 것을 의미합니다. 비정방 행렬의 행 수가 열 수보다 많으면 높다고 하고 열 수가 많으면 넓다고 합니다.</li>
+          <li><strong>대각 행렬</strong>: 행렬의 대각은 왼쪽 위에서 오른쪽 아래로 내려가는 원소들입니다. 대각 행렬은 모든 비대각 원소가 0인 행렬을 말합니다. 대각 원소는 0 또는 0이 아닌 값을 가질 수 있는 유일한 원소입니다. <code>np.diag()</code>는 행렬을 넣을 경우에는 대각 원소를 뽑으며, 벡터를 넣을 경우에는 대각 행렬을 만듭니다.</li>
+          <li><strong>삼각 행렬</strong>: 삼각행렬은 주 대각선의 위 또는 아래가 모두 0입니다. 0이 아닌 원소가 대각선 위에 있으면 행렬을 <code>상삼각 행렬</code>이라 하고 0이 아닌 원소가 대각선 아래에 있으면 <code>하삼각 행렬</code>이라고 합니다.</li>
+          <li><strong>단위 행렬</strong>: 행렬 또는 벡터에 단위 행렬을 곱하면 동일한 행렬 또는 벡터가 되는 행렬입니다. 이는 과거 <a href="https://hurwan.tistory.com/14">포스팅</a>에서 공분산을 다룰 때 이야기했었습니다. (개념이 어려워서 좀 까먹긴 했지만 써 본 기억은 나네요 ;~;) 아무튼 행렬계의 숫자 1처럼 곱하면 같은 행렬 또는 벡터가 되며 주대각선이 1인 정방 대각 행렬입니다.</li>
+          <li><strong>영행렬</strong>: 모든 원소가 0인 행렬입니다.</li>
+        </ul>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/42e930b6f85c7b837a4ee319cb1755addbaf5691/workspace/personal/math/linear_algebra_for_programmer/image-12.png" alt="특수 행렬의 종류">
+      </div>
+    </section>
+
+    <section id="section-05" class="post-section">
+      <h2 class="section-title">행렬 수학</h2>
+      <div class="post-card">
+        <h3>덧셈과 뺄셈</h3>
+        <p>덧셈과 뺄셈의 경우에는 벡터와 마찬가지로 같은 위치의 원소들끼리 합하거나 뺍니다.</p>
+      </div>
+      <div class="post-card">
+        <h3>행렬의 이동</h3>
+        <p>벡터와 마찬가지로 행렬에서도 스칼라를 더할 수 없습니다. 그러나 파이썬에서는 브로드캐스팅을 통해 가능합니다. 하지만 선형대수학 연산은 아닙니다.</p>
+        <p>선형대수학에서는 정방행렬에 스칼라를 추가하는 방식이 있는데 이를 <strong>행렬 이동</strong>이라고 합니다. 대각에 상숫값을 더하는 것과 같이 <code>단위행렬 * 스칼라</code> 방식으로 구현됩니다.</p>
+        <div class="math-box">$$\widetilde{\mathbf{A}}=\mathbf{A}+\lambda\mathbf{I}$$</div>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/42e930b6f85c7b837a4ee319cb1755addbaf5691/workspace/personal/math/linear_algebra_for_programmer/image-13.png" alt="행렬 이동">
+        <p>행렬을 이동하면 대각 원소만 변경되고 나머지는 그대로입니다. 데이터 과학 분야에서는 행렬의 수치적 안정성을 높이고 이동의 효과를 보면서 행렬의 가능한 많은 정보를 보존하기 위해 상대적으로 적은 양을 이동합니다. (이후 장에서 다룬다고 합니다.)</p>
+        <p>정확히 얼마나 이동해야 하는지는 머신러닝, 통계, 딥러닝, 제어공학 등 여러 분야에서 연구 중입니다.</p>
+        <div class="post-note">행렬의 <strong>이동</strong>은 두 가지 매우 중요한 응용이 있습니다. 행렬의 고윳값을 찾는 메커니즘과 모델을 데이터에 적합시킬 때 행렬을 정규화하는 메커니즘입니다.</div>
+        <div class="post-note">찾아보니 고유값의 정의는 $\mathbf{A}\mathbf{v}=\lambda\mathbf{v}$인데, $(\mathbf{A}-\lambda\mathbf{I})\mathbf{v}=0$이며 여기에서 $\mathbf{v}$가 0이 아닌 해를 가지려면 $\det(\mathbf{A}-\lambda\mathbf{I})=0$를 가져야 한다 해서 이 부분에서 고유 행렬을 통한 이동을 말하는 것으로 보입니다.</div>
+        <div class="post-note">모델 정규화의 경우에는 $\mathbf{X}^{\mathsf T}\mathbf{X}$ 과정에서 행렬이 불안정할 때 해당 $\lambda\mathbf{I}$ 값을 더하면 대각선 값이 조금 커져서 행렬이 더 안정화된다고 합니다.</div>
+      </div>
+      <div class="post-card">
+        <h3>스칼라 곱셈과 아다마르 곱</h3>
+        <p>이 두 가지 유형의 곱셈은 벡터와 마찬가지로 행렬에서도 원소별로 동작합니다. 아다마르곱은 <code>ndarray</code>의 <code>A * B</code>로 이루어집니다. <code>A @ B</code>는 행렬곱입니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-06" class="post-section">
+      <h2 class="section-title">표준 행렬 곱셈</h2>
+      <div class="post-card">
+        <p>$\mathbf{A}\in\mathbb{R}^{n\times m}$, $\mathbf{B}\in\mathbb{R}^{m\times k}$의 행렬을 A의 행 x B의 열 순서대로 A를 기준으로 B의 열을 모두 곱하는 방식으로 값을 나열해 나갑니다. 결과는 $\mathbb{R}^{n\times k}$가 됩니다. A의 열과 B의 행의 개수가 동일해야 연산이 가능합니다.</p>
+        <div class="math-box">$$\mathbf{A}_{n\times m}\mathbf{B}_{m\times k}=\mathbf{C}_{n\times k}$$</div>
+      </div>
+      <div class="post-card">
+        <h3>행렬-벡터 곱셈</h3>
+        <p>표준 행렬 곱셈과 동일한 메커니즘으로 동작하지만 여러 분야에서 응용되며 행렬과 벡터 곱셈의 결과는 항상 벡터입니다.</p>
+        <div class="post-note"><strong>행렬과 벡터의 곱셈에서 벡터는 항상 <code>열벡터</code>여야 합니다.</strong></div>
+        <p>행렬-벡터 곱셈은 여러 곳에서 응용됩니다.</p>
+        <ul>
+          <li>통계에서 모델 예측 데이터값은 설계 행렬에 회귀 계수를 곱해서 구하며 이는 $\mathbf{X}\boldsymbol{\beta}$로 표기합니다.</li>
+          <li>주성분 분석에서는 데이터 집합 $\mathbf{Y}$의 분산을 최대화하도록 특징 중요도 가중치의 벡터를 얻을 수 있고 $(\mathbf{Y}^{\mathsf T}\mathbf{Y})\mathbf{v}=\lambda\mathbf{v}$로 나타냅니다. ($\mathbf{v}$는 특징 중요도 벡터, 고유벡터입니다.)</li>
+          <li>이미지 좌표 변환에서 점의 좌표를 벡터로 둔 뒤, 변환 행렬을 곱하여 회전, 확대, 축소, 이동과 같은 변환을 행렬곱으로 처리할 수 있습니다. ($\mathbf{T}\mathbf{p}$이며 $\mathbf{T}$가 변환 행렬, $\mathbf{p}$가 점의 좌표 벡터입니다.)</li>
+        </ul>
+        <div class="post-note">가장 중요한 것은 고유벡터로 보이며 향후 다룬다고 합니다.</div>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

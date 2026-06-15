@@ -3,6 +3,13 @@ from service import Todo_service
 class Menu:
   def __init__(self):
     self.service = Todo_service()
+    self.menu = {
+      1: self.service.create_todo,
+      2: self.service.show_all_list,
+      3: self.service.search_title,
+      4: self.service.update_todo,
+      5: self.service.delete_todo
+    }
 
   def run(self):
     while True:
@@ -22,16 +29,9 @@ class Menu:
         continue
 
       try:
-        if menu == 1:
-          self.service.create_todo()
-        elif menu == 2:
-          self.service.show_all_list()
-        elif menu == 3:
-          self.service.search_title()
-        elif menu == 4:
-          self.service.update_todo()
-        elif menu == 5:
-          self.service.delete_todo()
+        func = self.menu.get(menu, None)
+        if func is not None:
+          func()
         elif menu == 6:
           print("프로그램을 종료합니다.")
           break
