@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>객체 기초</title>
+    <script>
+        /*
+            1. 절차 지향 프로그래밍
+                - 코드를 순서대로 실행되는 절차로 구성하는 방식
+                const names = ['김사과', '반하나', '오렌지', '이메론']
+                for(let i=0; i<names.length; i++){
+                    if(names[i].startsWith("김")){
+                        console.log("안녕하세요, " + names[i] + "님!")
+                    }
+                }
+
+            2. 객체 지향 프로그래밍
+                - 프로그램을 구성할 때 현실 세계의 사물들을 객체로 모델링하여, 객체 간의 상호작용을 통해 문제를 해결하는 방식
+                const greeter = {
+                    names: ['김사과', '반하나', '오렌지', '이메론'],
+                    greetKim: function() {
+                        for(let i=0; i<names.length; i++){
+                            if(names[i].startsWith("김")){
+                                console.log("안녕하세요, " + names[i] + "님!")
+                            }
+                        }
+                    }
+                }
+                greeter.greetKim()
+
+            3. 함수형 프로그래밍
+                - 함수 자체를 중심에 두는 프로그래밍 패러다임
+                - 데이터를 변경하지 않고, 순수 함수를 조합하여 문제를 해결
+                const names = ['김사과', '반하나', '오렌지', '이메론']
+                names
+                    .filter(name => name.startsWith("김"))
+                    .forEach(name => console.log("안녕하세요, " + name + "님!"))
+
+
+            객체
+            - 하나의 값에 여러 데이터를 담을 수 있는 자료형
+            - 속성(프로퍼티), 동작(메서드)을 함께표현할 수 있는 구조
+            - 키-값 쌍의 형태로 데이터를 저장
+
+            1) 객체 리터럴
+                - 중괄호 {} 안에 직접 속성과 메서드를 정의
+
+            2) new Object() 생성자 사용
+                - 객체를 빈 상태로 만들고, 나중에 속성 추가
+
+            3) 생성자 함수 사용
+                - 객체를 여러 개 찍어낼 수 있는 템플릿 역할
+                - new 키워드와 함께 사용
+        */
+
+    </script>
+</head>
+<body>
+    <h1>객체 리터럴</h1>
+    <script>
+        const person1 = {
+            name: "김사과",
+            age: 20,
+            greet: function() {
+                console.log("안녕하세요, 저는 " + this.name + "입니다.")
+            }
+        }
+        person1.greet()
+    </script>
+
+    <hr>
+
+    <h1>new Object()</h1>
+    <script>
+        const person2 = new Object()
+        person2.name = "김사과"
+        person2.age = 20
+        person2.greet = function() {
+            console.log("안녕하세요, 저는 " + this.name + "입니다.")
+        }
+        person2.greet()
+    </script>
+
+    <hr>
+
+    <h1>생성자 함수</h1>
+    <script>
+        function Person(name, age){
+            this.name = name
+            this.age = age
+            this.greet = function() {
+                console.log("안녕하세요, 저는 " + this.name + "입니다.")
+            }
+        }
+
+        const person3 = new Person("김사과", 20)
+        person3.greet()
+    </script>
+</body>
+</html>

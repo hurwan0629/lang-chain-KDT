@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배열</title>
+    <script>
+        /*
+            배열
+            - 여러 개의 값을 하나의 변수에 순서대로 저장할 수 있는 자료구조
+            - index라는 번호로 구분되며, 대부분 0으로 시작
+            - 여러 가지 자료형을 함께 저장할 수 있음
+            - 인덱스를 기준으로 값을 저장하고 접근함
+            - 길이는 자동으로 관리됨
+            - 자바스크립트의 배열은 연속적일 필요가 없음
+            - 배열도 사실은 객체(Object)
+
+                let 변수명 = [값1, 값2, 값3 ...]
+                let mixed = [1, "Hello", true, {name:"김사과"}, function(){console.log('hi')}]
+                console.log(mixed[0])   // 1
+                mixed[1] = "반하나"
+                console.log(mixed.length)   // 5
+                mixed[6] = 100 // [1, "Hello", true, {name:"김사과"}, function(){console.log('hi')}, undefined, 100]
+                console.log(mixed.length)   // 7
+
+            배열 메서드
+            1. push(): 배열의 끝에 요소를 추가
+            2. pop(): 배열의 마지막 요소를 제거
+            3. unshift(): 배열의 앞에 요소를 추가
+            4. shift(): 배열의 첫 번째 요소를 제거
+            5. forEach(): 배열의 각 요소를 순서대로 하나씩 처리
+            6. map(): 각 요소를 가공하여 새로운 배열을 반환
+            7. filter(): 조건을 만족하는 요소만 골라 새 배열 반환
+            8. reduce(): 배열을 하나의 값으로 누적 계산(합계, 객체 생성)
+            9. find(): 조건을 만족하는 첫 번째 요소 반환
+            10. findIndex(): 조건을 만족하는 첫 번째 요소의 인덱스를 반환
+            11. includes(): 특정 값이 포함되어 있는지 여부 반환
+            12. indexOf(): 특정 값의 첫 인덱스 반환(없으면 -1)
+            13. sort(): 배열 요소를 정렬(원본 배열 변경)
+            14. reverse(): 배열 순서 반전
+            15. slice(): 배열의 일부를 잘라 새 배열 반환(원본 유지)
+            16. splice(): 요소 추가/삭제/교체(원본 배열 변경)
+            17. join(): 배열을 문자열로 변환
+            18. concat(): 배열을 합쳐서 새 배열 반환
+            19. flat(): 중첩 배열을 평단화
+        */
+    </script>
+</head>
+<body>
+    <script>
+        const user = [1, 'apple', '김사과', 20, '서울 서초구']
+        console.log(user)
+
+        console.log(user[0])
+        console.log(user[1])
+        console.log(user[2])
+        console.log(user[3])
+        console.log(user[4])
+        
+        user[4] = '서울 강남구'
+        console.log(user)
+        console.log(user.length)
+
+        user[6] = '여자'
+        console.log(user)
+        console.log(user.length)
+        console.log(user[5])
+
+        for(let i=0; i<user.length; i++){
+            console.log(user[i])
+        }
+
+
+        user.push("ISTJ")
+        console.log(user)
+
+        let temp = user.pop()
+        console.log(user)
+        console.log(temp)
+
+        temp = user.shift()
+        console.log(user)
+        console.log(temp)
+
+        const profile = ['A형', 'ISTJ']
+        let result = user.concat(profile)
+        console.log(result)
+
+        result = user.join('😎')
+        console.log(result)
+        console.log(typeof result)
+
+        const arr = ['apple', 'banana', 'orange', 'Apple', 'melon']
+        arr.sort()  // 오름차순
+        console.log(arr)
+
+        arr.reverse()
+        console.log(arr)
+    </script>
+</body>
+</html>

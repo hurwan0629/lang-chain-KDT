@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제어문 - 조건문</title>
+    <script>
+        /*
+            if(조건) {
+                조건이 참일 때 실행
+            }
+
+            if(조건) {
+                조건이 참일 때 실행
+            }else{
+                조건이 거짓일 때 실행
+            }
+
+            if(조건1) {
+                조건1이 참일 때 실행
+            }else if(조건2){
+                // 조건1은 거짓이고, 조건2가 참일 때 실행
+            }else{
+                위 모든 조건이 거짓일 때 실행
+            }
+
+
+            switch 문
+            여러 개의 경우(case)를 비교할 때 사용하는 조건문
+
+            switch(값) {
+                case 값1:
+                    값이 값1과 일치할 때 실행할 코드
+                    break
+                case 값2:
+                    값이 값2와 일치할 때 실행할 코드
+                    break
+                default:
+                    위에 모든 case에 값이 일치하지 않을 때 실행할 코드
+            }
+        */
+    </script>
+</head>
+<body>
+    <h1>if / else if / else 예제</h1>
+    <script>
+        let age = 15
+
+        if (age > 19) {
+            console.log("성인입니다")
+        }else if(age > 14) {
+            console.log("청소년입니다")
+        }else if(age > 7) {
+            console.log("어린이입니다")
+        }else{
+            console.log("유아입니다")
+        }
+    </script>
+    <hr>
+    <h1>switch문 예제</h1>
+    <script>
+        let mbti = "ENFP"
+
+        switch(mbti) {
+            case "INFJ":
+                console.log("조용하지만 깊은 통찰력")
+                break
+            case "ENFP":
+                console.log("열정 가득")
+                break
+            case "ISTJ":
+                console.log("현실주의자")
+                break
+            case "ENTJ":
+                console.log("리더쉽이 뛰어남")
+                break
+            default:
+                console.log("등록되지 않은 MBTI")
+        }
+    </script>
+
+    <hr>
+
+    <script>
+        const month = 6
+
+        switch(month) {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                console.log(`${month}월의 마지막 일자는 31일입니다`)
+                break
+            case 2:
+                console.log(`${month}월의 마지막 일자는 28일 또는 29일입니다`)
+                break
+            case 4: case 6: case 9: case 11:
+                console.log(`${month}월의 마지막 일자는 30일입니다`)
+                break
+        }
+    </script>
+
+</body>
+</html>
