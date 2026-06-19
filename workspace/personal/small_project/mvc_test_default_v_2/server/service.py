@@ -1,4 +1,4 @@
-from data import *
+from .data import *
 
 class Todo_service:
   def __init__(self):
@@ -62,4 +62,4 @@ class Todo_service:
     else:
       print("업데이트 0건")
   
-  
+single_service = Todo_service()

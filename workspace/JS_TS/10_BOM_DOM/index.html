@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+  function showWindowInfo(){
+      console.log("전체 URL: ", location.href)
+      console.log("프로토콜: ", location.protocol)
+      console.log("호스트: ", location.host)
+      console.log("호스트명: ", location.hostname)
+      console.log("포트번호: ", location.port)
+      console.log("경로: ", location.pathname)
+      console.log("쿼리 문자열: ", location.search)
+  }
+  function reloadPage() {
+    location.reload()
+  }
+
+  function gotoNaver() {
+    location.href = "https://www.naver.com"
+  }
+
+  function goBack() {
+    history.back()
+  }
+
+  function goForward() {
+    history.forward()
+  }
+  
+  function showHistoryLength() {
+    alert(history.length)
+  }
+
+  function showNavigatorInfo(){
+      console.log("브라우저 이름(userAgent): ", navigator.userAgent)
+      console.log("운영체제: ", navigator.platform)
+      console.log("언어 설정: ", navigator.language)
+      console.log("쿠키 사용 가능 여부: ", navigator.cookieEnabled)
+  }
+
+  function getLocation() {
+      if(navigator.geolocation){
+        function showPosition(position) {
+          const latitude = position.coords.latitude
+          const longitude = position.coords.longitude
+          document.querySelector("#locationInfo").innerText = "데이터를 불로오는 중입니다...";
+          document.querySelector("#locationInfo").innerText = `위도: ${latitude} 경도: ${longitude}`
+        }
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("사용자가 위치 정보 제공을 거부했습니다.")
+                    break
+                case error.POSITION_UNAVAILABLE:
+                    alert("위치 정보를 사용할 수 없습니다.")
+                    break
+                case error.TIMEOUT:
+                    alert("위치 정보를 가져오는 데 시간이 초과되었습니다.")
+                    break
+                default:
+                    alert("알 수 없는 오류가 발생했습니다. ")
+            }
+        }
+        navigator.geolocation.getCurrentPosition(showPosition, showError)
+      }else{
+          document.getElementById("locationInfo").innerText = "이브라우저는 위치 정보를 지원하지 않습니다."
+      }
+  }
+  </script>
+
+  <button onclick="reloadPage()">새로고침</button>
+  <button onclick="gotoNaver()">네이버로 이동</button>
+  <button onclick="showWindowInfo()">주소정보 보기</button><hr>
+  <button onclick="goBack()">뒤로가기</button>
+  <button onclick="goForward()">앞으로가기</button>
+  <button onclick="showHistoryLength()">방문 페이지 수 보기</button><hr>
+  <button onclick="showNavigatorInfo()">네비게이터 정보 보기</button><hr>
+  <button onclick="getLocation()">위치정보 표시하기</button>
+  <p id="locationInfo">위치정보 표시 위치</p>
+</body>
+</html>

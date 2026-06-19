@@ -11,6 +11,15 @@ class Todo_dto_insert():
       todo_content='{self.todo_content}',
     )
     """
+  
+  # @property
+  # def todo_pk(self):
+  #   return self.__todo_pk
+
+  # @todo_pk.setter
+  # def todo_pk(self, todo_pk):
+  #   self.__todo_pk = todo_pk
+
 
   @property
   def todo_title(self):
@@ -33,17 +42,23 @@ class Todo_dto_insert():
       raise ValueError("내용은 존재해야합니다.")
     self.__todo_content = todo_content
 
+  
+  # @property
+  # def created_at(self):
+  #   return self.__created_at
 
+  # @created_at.setter
+  # def created_at(self, created_at):
+  #   self.__created_at = created_at
+  
 
+  # @property
+  # def updated_at(self):
+  #   return self.__updated_at
 
-
-
-
-
-
-
-
-
+  # @updated_at.setter
+  # def updated_at(self, updated_at):
+  #   self.__updated_at = updated_at
 
 class Todo_dto_update():
 

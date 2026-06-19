@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <p id="greeting">안녕하세요</p>
+  <p class="item desc">아이템 1</p>
+  <p class="item">아이템 2</p>
+  <ul id="list">
+    <li>기존 항목</li>
+  </ul>
+  <p id="notice">이 문장은 곧 사라집니다</p>
+  <div id="box"></div>
+  <button onclick="changeText()">텍스트 바꾸기</button>
+  <button onclick="highlightItems()">강조</button>
+
+  <button onclick="changeText()">텍스트 바꾸기</button>
+  <button onclick="highlightItems()">강조</button>
+  <button onclick="updateFirst()">1번째 문장만 바꾸기</button>
+
+  <button onclick="addItem()">항목 추가</button>
+  <button onclick="removeText()">삭제하기</button>
+  <hr>
+  <button onclick="appendP()">새 문단 추가</button>
+
+  <script>
+    function changeText() {
+            document.getElementById("greeting").innerText = " 반가워요"
+        }
+
+        function highlightItems() {
+            const items = document.getElementsByClassName("item")
+            for (let i = 0; i < items.length; i++) {
+                items[i].style.color = "deeppink"
+            }
+        }
+
+        function updateFirst(){
+            const item = document.querySelector(".desc")
+            item.innerHTML = "<h1>바뀐 문장</h1>"
+        }
+
+        function updateDesc(){
+            const items = document.querySelectorAll(".desc")
+            for(let i=0; i<items.length; i++){
+                items[i].innerHTML = "<h3>바뀐 문장</h3>"
+            }
+        }
+
+        function addItem() {
+            const newItem = document.createElement("li") // <li></li>
+            newItem.innerText = "새 항목"   // <li>새 항목</li>
+            document.getElementById("list").appendChild(newItem)
+        }
+
+        function removeText() {
+          document.getElementById("notice").remove()
+        }
+        let key_num = 1
+        function appendP() {
+          const d = document.createElement("p")
+          d.innerText = "새 문단"
+          d.key = `${key_num++}`
+
+          document.getElementById("box").appendChild(d)
+        }
+  </script>
+</body>
+</html>
