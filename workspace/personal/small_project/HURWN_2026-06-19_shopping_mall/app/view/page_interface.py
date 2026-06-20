@@ -9,7 +9,7 @@ class Page(ABC):
     pass
   
   @abstractmethod
-  def run_page(self):
+  def run_page(self) -> bool:
     pass
 
   # """ 

@@ -1,17 +1,19 @@
 import MySQLdb
 from app.server.data.dto.user_regist_dto import UserRegistDTO
+from app.server.data.dto.user_login_dto import UserLoginSuccessDTO
+
 from typing import Optional
 
 class UserDAO:
 
-  sql_check_id_exists = "select 1 from member where id = %s"
+  sql_check_username_exists = "select 1 from member where username = %s"
   sql_check_email_exists = "select 1 from member where email = %s"
   sql_insert_user = "insert into member (username, password, name, email) values (%s, %s, %s, %s)"
   sql_login_check = "select id, username, name from member where username = %s and password = %s"
 
   """아이디 존재하는지 확인"""
-  def check_id_exists(self, cur, id: str) -> int: 
-    return cur.execute(self.sql_check_id_exists, (id, ))
+  def check_username_exists(self, cur, id: str) -> int: 
+    return cur.execute(self.sql_check_username_exists, (id, ))
   
   """이메일 존재하는지 확인"""
   def check_email_exists(self, cur, email: str) -> int:
@@ -26,5 +28,8 @@ class UserDAO:
   
   """로그인 시도"""
   def login_check(self, cur, username: str, password: str):
-    result = cur.execute(self.sql_login_check, (username, password))
-    obj= cur.fetchone()
+    cur.execute(self.sql_login_check, (username, password))
+    result = cur.fetchone()
+    if result is None:
+      return None
+    return UserLoginSuccessDTO(*result)

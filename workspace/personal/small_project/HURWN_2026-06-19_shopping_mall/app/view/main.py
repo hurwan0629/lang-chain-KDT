@@ -6,5 +6,5 @@ class StartPage(Page):
   def __init__(self, service: Service):
     self.guest_page = GuestPage(service)
   
-  def run_page(self):
-    self.guest_page.run_page()
+  def run_page(self) -> bool:
+    return self.guest_page.run_page()

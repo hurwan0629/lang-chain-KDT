@@ -30,12 +30,16 @@ class GuestPage(Page):
       # 먼저 프로그램 종료
       if user_input == 0:
          print("\n --- 프로그램을 종료합니다. --- \n")
-         break
+         return True
       result = self.__menu_func.get(user_input, None)
 
       # 이미 정확하지만 혹시 모르니 에러 잡기
       try:
         if result is not None:
-          result()
+          if result():
+            print("\n --- 프로그램을 종료합니다. --- \n")
+            return True
+          else:
+            continue
       except Exception as e:
         print(f"[ {__name__} ] 예상하지 못한 에러 발생: {e}")

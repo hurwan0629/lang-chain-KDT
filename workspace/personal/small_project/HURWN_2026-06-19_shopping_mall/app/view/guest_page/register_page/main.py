@@ -31,7 +31,7 @@ class RegisterPage(Page):
 
       if flag:
         print("메인페이지로 갑니다.")
-        break
+        return False
 
       user_regist_dto = self.__service.regist_user(id, password, name, email)
       if user_regist_dto is not None:
@@ -40,7 +40,7 @@ class RegisterPage(Page):
         print(f"오류로 인해 로그인이 실패하였습니다.")
       
       input("아무 키를 눌러 메인 메뉴로 나가기")
-      break
+      return False
 
 
 
@@ -67,7 +67,7 @@ class RegisterPage(Page):
         continue
 
       # 중복 체크
-      if self.__service.check_id_duplicated(user_input):
+      if self.__service.check_username_duplicated(user_input):
         print("중복된 아이디 입니다. 다시 입력해주세요 ㅠㅠ")
         continue
 

@@ -7,6 +7,7 @@ def get_menu_number(menu_info: tuple[str, tuple[tuple[int, str], ...]]) -> int:
   available_number = [a for (a, s) in menu]
 
   while True:
+    print("\n"*10)
     print("==========================")
     print(f"  {menu_title}")
     print("==========================")
@@ -21,7 +22,7 @@ def get_menu_number(menu_info: tuple[str, tuple[tuple[int, str], ...]]) -> int:
 
       return user_input
     except Exception:
-      print("올바른 메뉴 번호를 입력해주세요")
+      input("올바른 메뉴 번호를 입력해주세요 (아무키나 입력)" )
 
   
 # 회원가입 페이지 폼
