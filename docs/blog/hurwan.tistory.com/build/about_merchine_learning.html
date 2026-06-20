@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>머신러닝이란?</title>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['', ''], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    .tech-post {
+      --accent: #19b97c;
+      --accent-dark: #119164;
+      --text: #1f2937;
+      --muted: #475569;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 18px 80px;
+      color: var(--text);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.72;
+      word-break: keep-all;
+    }
+    .tech-post * { box-sizing: border-box; }
+    .post-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 38px 28px;
+      border: 1px solid rgba(25, 185, 124, 0.12);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(120, 255, 196, 0.24), transparent 28%),
+        radial-gradient(circle at 84% 15%, rgba(186, 156, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(130, 210, 255, 0.13), transparent 36%),
+        #fff;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+    }
+    .post-hero-inner { position: relative; z-index: 1; }
+    .post-title {
+      margin: 0;
+      color: #111827;
+      font-size: 34px;
+      line-height: 1.28;
+      letter-spacing: -0.04em;
+    }
+    .source-toggle, .post-toc {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border: 1px solid rgba(25, 185, 124, 0.14);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,255,252,.94));
+      box-shadow: 0 12px 30px rgba(15,23,42,.04);
+    }
+    .source-toggle summary, .toc-title {
+      cursor: pointer;
+      color: #111827;
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .source-box {
+      overflow: auto;
+      max-height: 520px;
+      margin: 14px 0 0;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font: 14px/1.7 "JetBrains Mono", "D2Coding", Consolas, monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .source-box code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
+    .toc-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .toc-list a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid rgba(25, 185, 124, 0.16);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.76);
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .toc-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(25, 185, 124, 0.09);
+      color: var(--accent-dark);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .post-section { margin-top: 52px; scroll-margin-top: 22px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 18px;
+      color: #111827;
+      font-size: 27px;
+      line-height: 1.35;
+      letter-spacing: -0.04em;
+    }
+    .section-title::before {
+      content: "";
+      width: 8px;
+      height: 28px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #83ffc0, #19b97c);
+      box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+      flex-shrink: 0;
+    }
+    .subsection-title {
+      margin: 30px 0 14px;
+      padding: 18px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.92));
+      color: #111827;
+      font-size: 22px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+    }
+    .card-title { margin: 24px 0 10px; color: #111827; font-size: 18px; }
+    .tech-post p, .tech-post li { color: #334155; font-size: 16px; font-weight: 500; }
+    .tech-post p { margin: 10px 0; }
+    .tech-post strong { color: #0f172a; font-weight: 800; }
+    .tech-post code {
+      padding: 0.08em 0.38em;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #1f2937;
+      font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+      font-size: .92em;
+      font-weight: 600;
+    }
+    .numbered-list, .bullet-list { margin: 12px 0; padding-left: 24px; }
+    .numbered-list li, .bullet-list li { margin: 8px 0; }
+    .post-note {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      background: linear-gradient(90deg, rgba(120,255,196,.14), rgba(255,255,255,.92));
+    }
+    .code-box {
+      overflow-x: auto;
+      margin: 16px 0;
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font: 14px/1.7 "JetBrains Mono", "D2Coding", Consolas, monospace;
+    }
+    .code-box code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
+    .post-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 18px auto;
+      border: 1px solid rgba(148,163,184,.16);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(15,23,42,.05);
+    }
+    .post-divider {
+      height: 1px;
+      margin: 42px 0 0;
+      border: 0;
+      background: linear-gradient(90deg, transparent, rgba(25,185,124,.36), transparent);
+    }
+    mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+    @media (max-width: 720px) {
+      .tech-post { padding: 26px 14px 60px; }
+      .post-hero { padding: 28px 20px; border-radius: 22px; }
+      .post-title { font-size: 28px; }
+      .toc-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <h1 class="post-title">머신러닝이란?</h1>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># 머신러닝이란?
+머신러닝은 사람이 규칙을 짜는 대신 데이터가 보고 컴퓨터가 규칙을 찾게 하는 방법입니다.
+
+데이터들을 통해 특정 패턴에 따라 결론일 확률을 도출해 내는 방법(수식)을 도출해 내는 방식으로 이루어집니다.
+
+단순히 수학적으로 말하면 `y = f(x)`와 같은 함수를 기계가 직접 도출해 내는 방식이 됩니다.
+
+## 행렬과의 관계
+일반적으로 머신러닝을 하게 되면 `pandas`의 `DataFrame`과 같은 데이터 또는 `numpy`의 `ndarray` 같은 `n`차원의 데이터를 사용하게 됩니다.
+
+여기에서 데이터를 보통 입력값 `x`와 정답 `y`로 나누게 됩니다.
+
+이를 `pandas` 식으로 풀어내 보게 된다면
+```python
+import pandas as pd
+
+df = pd.read_csv(&#39;./data.csv&#39;)
+
+# 제공되는 입력값 데이터들
+X = df.iloc[:, :-1]
+# 정답 y
+y = df.iloc[:, -1]
+```
+와 같은 형태가 됩니다.
+
+## 머신러닝 예시
+또한 선형 회귀 모델을 예시로 `sklearn`을 사용해보면
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+X_train, X_test, y_train, y_test = train_test_split(
+  X, y,
+  test_size = 0.2, # 테스트 데이터를 20%로 맞추기
+  random_state=42, # 지속적으로 동일한 무작위 시드 부여
+)
+
+# 모델 선택
+model = LinearRegression()
+
+# 학습
+model.fit(X_train, y_train)
+
+# 예측 결과 보기
+pred = model.predict(X_test)
+
+print(pred)
+```
+
+## 머신러닝의 큰 분류
+머신러닝은 크게 3가지로 나뉘어 있습니다.
+
+1. 지도학습
+2. 비지도학습
+3. 강화학습 - 따로 설명하진 않겠지만 보상을 통해 컴퓨터가 알아서 수식을 수정해 나가는 방식입니다.
+
+### 지도학습
+지도학습은 정답이 있는 데이터를 통해 학습하는 과정을 말합니다. 예를 들어 주어진 이미지 50장이 있을 때, 이것이 강아지 또는 고양이라는 정확한 `y`값이 존재할 때, 이를 통해 학습을 시키는 방법입니다.
+
+지도학습에서도 분류가 2가지로 나뉩니다.
+
+#### 지도학습 - 회귀 (Regressor)
+연속적인 숫자 값을 예측하는 것을 말합니다.
+
+결과가 `[&#39;강아지&#39;, &#39;고양이&#39;, &#39;사과&#39;]` 등과 같이 나뉘어 있는 것이 아닌 `결과 = 정수값`, `결과 = 내일 주식의 종가` 등과 같은 형태로 나타나는 것을 말합니다.
+
+대표적인 모델로는
+1. 선형 회귀: 데이터의 경향성을 가장 잘 나타내는 하나의 직선을 찾는 모델
+2. 릿지 회귀: 선형 회귀에서 과적합을 막기 위해 **중요도가 낮은 변수의 영향력을 0에 가깝게 줄여서** 안정적으로 만드는 모델 (L2 규제)
+3. 라쏘 회귀: 릿지와 동일하게 과적합을 막기 위해 **중요도가 떨어지는 변수의 영향력을 0으로 만들어 제거**하는 방식 (L1 규제)
+4. 랜덤 포레스트 회귀: 수많은 의사결정 나무(if문과 같은 조건 트리)를 독립적으로 만든 후, 그 예측값들의 평균을 내어 결과를 내는 모델 (분류도 가능)
+5. XGBoost 회귀: 나무를 한 번에 만들지 않고, 앞선 나무가 틀린 오류를 다음 나무가 보완하는 방식 (과적합 위험 있음, 난이도 있음) (분류도 가능)
+
+가 있습니다.
+
+#### 지도학습 - 분류 (Classifier)
+분류는 이미 말하였듯, `[&#39;강아지&#39;, &#39;고양이&#39;, &#39;사과&#39;]` 또는 `[&#39;남자&#39;, &#39;여자&#39;]` 등과 같이 몇 가지 정답들이 이미 정해져 있는 경우를 말합니다. 
+
+대표적인 모델로는
+
+1. 로지스틱 회귀: 데이터를 나누는 선형 경계선을 찾아 시그모이드 함수를 통해 결과를 확률로 바꾸어 `0.5`(또는 사용자 설정)보다 크면 통과시키는 방식으로 판단하는 분류입니다. (회귀를 통해 확률을 찾아 `회귀`라는 단어가 붙습니다.)
+2. KNN: `K-Nearest Neighbors`라는 의미로 가장 가까운 데이터 `K`개를 통해 분류합니다.
+3. 결정 트리: 앞에서 설명한 의사결정 트리(if문과 같은 조건 트리)입니다.
+4. 랜덤 포레스트: 위에서 말한 `랜덤 포레스트 회귀`에서 평균을 내는 것이 아닌 다수결을 따르는 방식입니다.
+5. SVM: `Support Vector Machine`으로 두 클래스 사이의 거리를 가장 넓게 벌리는 최고 경계선(범위 또는 도로로 표현 가능)을 찾아 분류하는 모델입니다. (로지스틱 회귀와 비슷한 느낌)
+6. 나이브 베이즈: 조건부 확률을 활용하여 특정 조건들이 주어졌을 때 어떤 클래스일 확률이 가장 높은지 계산하는 모델. 모든 요소들이 독립적으로 움직인다는 가정하에 요소에 따라 다른 점수를 부여하여 판단하는 모델입니다.
+7. XGBoost: 위와 동일
+
+## 비지도 학습
+비지도학습은 단어에서 알 수 있듯이 정답 `y`가 없는 데이터에서 `X`만을 가지고 데이터 패턴을 찾는 방식입니다. 데이터에 존재하는 수학적 성질을 기준으로 컴퓨터가 스스로 기준을 세워 학습하게 됩니다. 또한 사용자는 정답 대신에 데이터를 묶거나 쪼개는 규칙 (알고리즘과 하이퍼파라미터)을 설정하여 원하는 방향으로 학습을 유도하게 됩니다. 
+
+이것이 일반적으로 고객들을 비슷한 그룹으로 나누기, 비슷한 상품끼리 묶기 등의 예시가 있습니다.
+
+대표적인 비지도 학습으로는
+- K-Means (군집화): 사용자가 최종적으로 나눌 그룹의 개수 `K`를 지정하면 `K`개의 그룹으로 묶는 군집화 방식입니다.
+- DBSCAN (군집화): 데이터가 얼마나 빽빽하게 모여 있는지를 기준으로 그룹을 나누는 군집화 알고리즘입니다. 특정 수치 이상의 밀도로 데이터가 모여 있으면 묶고, 그 외의 데이터들은 노이즈로 판별합니다.
+- PCA (차원 축소, 주성분 분석): 복잡하고 변수가 많은 고차원 데이터에서 핵심 정보로 데이터를 변환시킵니다. 보통 행렬곱을 통해 만들어집니다. 고유값분해를 통해 정보를 가장 적게 잃어버리는 축을 찾는 방식입니다.
+- Isolation Forest (이상치 탐지): 데이터 중에서 정상 패턴과 완전히 동떨어진 이상치를 빠르게 찾아내는 이상 탐지 알고리즘입니다. 데이터를 무작위로 쪼개어 나가는 트리를 만들어 적은 조건만으로 혼자 남게 되는 데이터를 찾아내는 방식입니다.
+
+## 중간 궁금증 - PCA에서 왜 고유벡터가 주성분을 만드는 가중치인지
+&gt; PCA는 고유값분해를 통해 `[(고유값 λ, 고유벡터), ...]`을 찾게 됩니다. 여기에서 기존의 행렬 `A (n, m)`에서 공분산인 `C (m, m)`을 찾았을 때 벡터 `v (1, m)`과 고유값 `λ`(람다)를 찾아야 합니다. 이를 통해 `X (벡터 개수, m)`을 만들게 됩니다.
+&gt; 왜 하필이면 행렬식으로 나온 고유벡터 `v`가 나오는 걸까요? 이것은 기존의 데이터를 가중치로 선형결합했을 때의 새로운 분산을 최대화하는 것을 목표로 잡은 것입니다. 여기에서 `변환된 분산` = `전치v` 행렬곱 `C 곱하기 v`가 최대가 되어야 하는데 `v`의 요소들이 무한히 증가하면 `변환된 분산` 또한 무한히 증가하기 때문에 `전치v 외적 v`(자기내적)이 `1`이 되어야 하는 제약 조건을 가지게 됩니다. 여기에서 **라그랑주 승수법**이라는 도구를 통해 식 `L`을 만들어 이를 미분하여 최종적으로 고유값 방정식의 형태가 나옵니다. 
+
+![alt text](image.png)
+
+&gt; 내용이 주제와 다르기 때문에 나중에 더 자세히 알아보겠습니다.
+
+## 전처리
+실제 머신러닝에서는 모델보다 전처리가 더 중요할 때가 많은데, 데이터들에서 좋은 모델을 만들기 위한 적합한 것들을 선별하고, 데이터를 좋은 형태로 바꾸는 것을 말합니다.
+
+예를 들면
+- 결측치
+- 이상치
+- 스케일링
+- 원-핫 인코딩
+- 라벨 인코딩
+- `train`/`test` 나누기
+
+## 파이프라이닝/그리드서치CV
+전처리, 모델 학습, 평가를 하나의 형태로 만들어 하나의 흐름으로 만들게 하는 방식을 말합니다.
+
+## 내부 원리
+내부적으로 사용하는 원리를 이용하여 더욱 세밀한 원리와 이해를 할 수 있습니다.
+
+배우는 것 중 몇 가지를 예시로 들면
+- 선형 회귀 원리
+- 경사 하강법
+- 손실함수
+- 가중치와 편향
+- 엔트로피
+- 랜덤 포레스트
+- 공분산 
+- 차원축소
+
+등이 있습니다.
+
+## 딥러닝
+딥러닝은 위에서 말한 머신러닝의 하위 개념으로 가중치, 편향, L1/L2 규제 등과 같은 여러 기법을 통해 여러 층을 통한 신경망을 만드는 것입니다. (저는 몇 년 전에는 대단하다고 생각했는데 알고 보니까 머신러닝의 일부분일 뿐이었습니다!)
+
+## 앞으로 할 일
+우선 이제 슬슬 수학만 하지 않고 직접 여러 모델 피팅과 전처리 등을 해보면서 병합 지점을 잡아 나가려고 합니다.
+</code></pre>
+    </details>
+
+    <nav class="post-toc">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span>행렬과의 관계</a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span>머신러닝 예시</a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span>머신러닝의 큰 분류</a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span>비지도 학습</a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span>중간 궁금증 - PCA에서 왜 고유벡터가 주성분을 만드는 가중치인지</a></li>
+        <li><a href="#section-06"><span class="toc-index">06</span>전처리</a></li>
+        <li><a href="#section-07"><span class="toc-index">07</span>파이프라이닝/그리드서치CV</a></li>
+        <li><a href="#section-08"><span class="toc-index">08</span>내부 원리</a></li>
+        <li><a href="#section-09"><span class="toc-index">09</span>딥러닝</a></li>
+        <li><a href="#section-10"><span class="toc-index">10</span>앞으로 할 일</a></li>
+      </ol>
+    </nav>
+
+      <p>머신러닝은 사람이 규칙을 짜는 대신 데이터가 보고 컴퓨터가 규칙을 찾게 하는 방법입니다.</p>
+      <p>데이터들을 통해 특정 패턴에 따라 결론일 확률을 도출해 내는 방법(수식)을 도출해 내는 방식으로 이루어집니다.</p>
+      <p>단순히 수학적으로 말하면 $y = f(x)$와 같은 함수를 기계가 직접 도출해 내는 방식이 됩니다.</p>
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">행렬과의 관계</h2>
+      <p>일반적으로 머신러닝을 하게 되면 <code>pandas</code>의 <code>DataFrame</code>과 같은 데이터 또는 <code>numpy</code>의 <code>ndarray</code> 같은 $n$차원의 데이터를 사용하게 됩니다.</p>
+      <p>여기에서 데이터를 보통 입력값 $x$와 정답 $y$로 나누게 됩니다.</p>
+      <p>이를 <code>pandas</code> 식으로 풀어내 보게 된다면</p>
+      <pre class="code-box"><code class="language-python">import pandas as pd
+
+df = pd.read_csv(&#39;./data.csv&#39;)
+
+# 제공되는 입력값 데이터들
+X = df.iloc[:, :-1]
+# 정답 y
+y = df.iloc[:, -1]</code></pre>
+      <p>와 같은 형태가 됩니다.</p>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">머신러닝 예시</h2>
+      <p>또한 선형 회귀 모델을 예시로 <code>sklearn</code>을 사용해보면</p>
+      <pre class="code-box"><code class="language-python">from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+X_train, X_test, y_train, y_test = train_test_split(
+  X, y,
+  test_size = 0.2, # 테스트 데이터를 20%로 맞추기
+  random_state=42, # 지속적으로 동일한 무작위 시드 부여
+)
+
+# 모델 선택
+model = LinearRegression()
+
+# 학습
+model.fit(X_train, y_train)
+
+# 예측 결과 보기
+pred = model.predict(X_test)
+
+print(pred)</code></pre>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-03">
+      <h2 class="section-title">머신러닝의 큰 분류</h2>
+      <p>머신러닝은 크게 3가지로 나뉘어 있습니다.</p>
+      <ol class="numbered-list">
+        <li>지도학습</li>
+        <li>비지도학습</li>
+        <li>강화학습 - 따로 설명하진 않겠지만 보상을 통해 컴퓨터가 알아서 수식을 수정해 나가는 방식입니다.</li>
+      </ol>
+      <h3 class="subsection-title">지도학습</h3>
+      <p>지도학습은 정답이 있는 데이터를 통해 학습하는 과정을 말합니다. 예를 들어 주어진 이미지 50장이 있을 때, 이것이 강아지 또는 고양이라는 정확한 $y$값이 존재할 때, 이를 통해 학습을 시키는 방법입니다.</p>
+      <p>지도학습에서도 분류가 2가지로 나뉩니다.</p>
+      <h4 class="card-title">지도학습 - 회귀 (Regressor)</h4>
+      <p>연속적인 숫자 값을 예측하는 것을 말합니다.</p>
+      <p>결과가 <code>[&#39;강아지&#39;, &#39;고양이&#39;, &#39;사과&#39;]</code> 등과 같이 나뉘어 있는 것이 아닌 <code>결과 = 정수값</code>, <code>결과 = 내일 주식의 종가</code> 등과 같은 형태로 나타나는 것을 말합니다.</p>
+      <p>대표적인 모델로는</p>
+      <ol class="numbered-list">
+        <li>선형 회귀: 데이터의 경향성을 가장 잘 나타내는 하나의 직선을 찾는 모델</li>
+        <li>릿지 회귀: 선형 회귀에서 과적합을 막기 위해 <strong>중요도가 낮은 변수의 영향력을 0에 가깝게 줄여서</strong> 안정적으로 만드는 모델 ($L_2$ 규제)</li>
+        <li>라쏘 회귀: 릿지와 동일하게 과적합을 막기 위해 <strong>중요도가 떨어지는 변수의 영향력을 0으로 만들어 제거</strong>하는 방식 ($L_1$ 규제)</li>
+        <li>랜덤 포레스트 회귀: 수많은 의사결정 나무(if문과 같은 조건 트리)를 독립적으로 만든 후, 그 예측값들의 평균을 내어 결과를 내는 모델 (분류도 가능)</li>
+        <li>XGBoost 회귀: 나무를 한 번에 만들지 않고, 앞선 나무가 틀린 오류를 다음 나무가 보완하는 방식 (과적합 위험 있음, 난이도 있음) (분류도 가능)</li>
+      </ol>
+      <p>가 있습니다.</p>
+      <h4 class="card-title">지도학습 - 분류 (Classifier)</h4>
+      <p>분류는 이미 말하였듯, <code>[&#39;강아지&#39;, &#39;고양이&#39;, &#39;사과&#39;]</code> 또는 <code>[&#39;남자&#39;, &#39;여자&#39;]</code> 등과 같이 몇 가지 정답들이 이미 정해져 있는 경우를 말합니다. </p>
+      <p>대표적인 모델로는</p>
+      <ol class="numbered-list">
+        <li>로지스틱 회귀: 데이터를 나누는 선형 경계선을 찾아 시그모이드 함수를 통해 결과를 확률로 바꾸어 $0.5$(또는 사용자 설정)보다 크면 통과시키는 방식으로 판단하는 분류입니다. (회귀를 통해 확률을 찾아 <code>회귀</code>라는 단어가 붙습니다.)</li>
+        <li>KNN: <code>K-Nearest Neighbors</code>라는 의미로 가장 가까운 데이터 $K$개를 통해 분류합니다.</li>
+        <li>결정 트리: 앞에서 설명한 의사결정 트리(if문과 같은 조건 트리)입니다.</li>
+        <li>랜덤 포레스트: 위에서 말한 <code>랜덤 포레스트 회귀</code>에서 평균을 내는 것이 아닌 다수결을 따르는 방식입니다.</li>
+        <li>SVM: <code>Support Vector Machine</code>으로 두 클래스 사이의 거리를 가장 넓게 벌리는 최고 경계선(범위 또는 도로로 표현 가능)을 찾아 분류하는 모델입니다. (로지스틱 회귀와 비슷한 느낌)</li>
+        <li>나이브 베이즈: 조건부 확률을 활용하여 특정 조건들이 주어졌을 때 어떤 클래스일 확률이 가장 높은지 계산하는 모델. 모든 요소들이 독립적으로 움직인다는 가정하에 요소에 따라 다른 점수를 부여하여 판단하는 모델입니다.</li>
+        <li>XGBoost: 위와 동일</li>
+      </ol>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-04">
+      <h2 class="section-title">비지도 학습</h2>
+      <p>비지도학습은 단어에서 알 수 있듯이 정답 $y$가 없는 데이터에서 $X$만을 가지고 데이터 패턴을 찾는 방식입니다. 데이터에 존재하는 수학적 성질을 기준으로 컴퓨터가 스스로 기준을 세워 학습하게 됩니다. 또한 사용자는 정답 대신에 데이터를 묶거나 쪼개는 규칙 (알고리즘과 하이퍼파라미터)을 설정하여 원하는 방향으로 학습을 유도하게 됩니다. </p>
+      <p>이것이 일반적으로 고객들을 비슷한 그룹으로 나누기, 비슷한 상품끼리 묶기 등의 예시가 있습니다.</p>
+      <p>대표적인 비지도 학습으로는</p>
+      <ul class="bullet-list">
+        <li>K-Means (군집화): 사용자가 최종적으로 나눌 그룹의 개수 $K$를 지정하면 $K$개의 그룹으로 묶는 군집화 방식입니다.</li>
+        <li>DBSCAN (군집화): 데이터가 얼마나 빽빽하게 모여 있는지를 기준으로 그룹을 나누는 군집화 알고리즘입니다. 특정 수치 이상의 밀도로 데이터가 모여 있으면 묶고, 그 외의 데이터들은 노이즈로 판별합니다.</li>
+        <li>PCA (차원 축소, 주성분 분석): 복잡하고 변수가 많은 고차원 데이터에서 핵심 정보로 데이터를 변환시킵니다. 보통 행렬곱을 통해 만들어집니다. 고유값분해를 통해 정보를 가장 적게 잃어버리는 축을 찾는 방식입니다.</li>
+        <li>Isolation Forest (이상치 탐지): 데이터 중에서 정상 패턴과 완전히 동떨어진 이상치를 빠르게 찾아내는 이상 탐지 알고리즘입니다. 데이터를 무작위로 쪼개어 나가는 트리를 만들어 적은 조건만으로 혼자 남게 되는 데이터를 찾아내는 방식입니다.</li>
+      </ul>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-05">
+      <h2 class="section-title">중간 궁금증 - PCA에서 왜 고유벡터가 주성분을 만드는 가중치인지</h2>
+      <div class="post-note"><p>PCA는 고유값분해를 통해 $[(\text{고유값 } \lambda, \text{고유벡터}), \ldots]$을 찾게 됩니다. 여기에서 기존의 행렬 $A\ (n, m)$에서 공분산인 $C\ (m, m)$을 찾았을 때 벡터 $v\ (1, m)$과 고유값 $\lambda$(람다)를 찾아야 합니다. 이를 통해 $X\ (\text{벡터 개수}, m)$을 만들게 됩니다.</p></div>
+      <div class="post-note"><p>왜 하필이면 행렬식으로 나온 고유벡터 $v$가 나오는 걸까요? 이것은 기존의 데이터를 가중치로 선형결합했을 때의 새로운 분산을 최대화하는 것을 목표로 잡은 것입니다. 여기에서 $\text{변환된 분산} = v^\top C v$가 최대가 되어야 하는데 $v$의 요소들이 무한히 증가하면 <code>변환된 분산</code> 또한 무한히 증가하기 때문에 $v^\top v$(자기내적)이 $1$이 되어야 하는 제약 조건을 가지게 됩니다. 여기에서 <strong>라그랑주 승수법</strong>이라는 도구를 통해 식 $L$을 만들어 이를 미분하여 최종적으로 고유값 방정식의 형태가 나옵니다. </p></div>
+      <img class="post-image" src="about_merchine_learning.png" alt="alt text">
+      <div class="post-note"><p>내용이 주제와 다르기 때문에 나중에 더 자세히 알아보겠습니다.</p></div>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-06">
+      <h2 class="section-title">전처리</h2>
+      <p>실제 머신러닝에서는 모델보다 전처리가 더 중요할 때가 많은데, 데이터들에서 좋은 모델을 만들기 위한 적합한 것들을 선별하고, 데이터를 좋은 형태로 바꾸는 것을 말합니다.</p>
+      <p>예를 들면</p>
+      <ul class="bullet-list">
+        <li>결측치</li>
+        <li>이상치</li>
+        <li>스케일링</li>
+        <li>원-핫 인코딩</li>
+        <li>라벨 인코딩</li>
+        <li><code>train</code>/<code>test</code> 나누기</li>
+      </ul>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-07">
+      <h2 class="section-title">파이프라이닝/그리드서치CV</h2>
+      <p>전처리, 모델 학습, 평가를 하나의 형태로 만들어 하나의 흐름으로 만들게 하는 방식을 말합니다.</p>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-08">
+      <h2 class="section-title">내부 원리</h2>
+      <p>내부적으로 사용하는 원리를 이용하여 더욱 세밀한 원리와 이해를 할 수 있습니다.</p>
+      <p>배우는 것 중 몇 가지를 예시로 들면</p>
+      <ul class="bullet-list">
+        <li>선형 회귀 원리</li>
+        <li>경사 하강법</li>
+        <li>손실함수</li>
+        <li>가중치와 편향</li>
+        <li>엔트로피</li>
+        <li>랜덤 포레스트</li>
+        <li>공분산 </li>
+        <li>차원축소</li>
+      </ul>
+      <p>등이 있습니다.</p>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-09">
+      <h2 class="section-title">딥러닝</h2>
+      <p>딥러닝은 위에서 말한 머신러닝의 하위 개념으로 가중치, 편향, $L_1/L_2$ 규제 등과 같은 여러 기법을 통해 여러 층을 통한 신경망을 만드는 것입니다. (저는 몇 년 전에는 대단하다고 생각했는데 알고 보니까 머신러닝의 일부분일 뿐이었습니다!)</p>
+    </section>
+    <hr class="post-divider">
+    <section class="post-section" id="section-10">
+      <h2 class="section-title">앞으로 할 일</h2>
+      <p>우선 이제 슬슬 수학만 하지 않고 직접 여러 모델 피팅과 전처리 등을 해보면서 병합 지점을 잡아 나가려고 합니다.</p>
+    </section>
+  </article>
+</body>
+</html>
