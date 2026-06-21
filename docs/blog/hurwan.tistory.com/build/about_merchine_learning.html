@@ -463,7 +463,7 @@ print(pred)</code></pre>
       <h2 class="section-title">중간 궁금증 - PCA에서 왜 고유벡터가 주성분을 만드는 가중치인지</h2>
       <div class="post-note"><p>PCA는 고유값분해를 통해 $[(\text{고유값 } \lambda, \text{고유벡터}), \ldots]$을 찾게 됩니다. 여기에서 기존의 행렬 $A\ (n, m)$에서 공분산인 $C\ (m, m)$을 찾았을 때 벡터 $v\ (1, m)$과 고유값 $\lambda$(람다)를 찾아야 합니다. 이를 통해 $X\ (\text{벡터 개수}, m)$을 만들게 됩니다.</p></div>
       <div class="post-note"><p>왜 하필이면 행렬식으로 나온 고유벡터 $v$가 나오는 걸까요? 이것은 기존의 데이터를 가중치로 선형결합했을 때의 새로운 분산을 최대화하는 것을 목표로 잡은 것입니다. 여기에서 $\text{변환된 분산} = v^\top C v$가 최대가 되어야 하는데 $v$의 요소들이 무한히 증가하면 <code>변환된 분산</code> 또한 무한히 증가하기 때문에 $v^\top v$(자기내적)이 $1$이 되어야 하는 제약 조건을 가지게 됩니다. 여기에서 <strong>라그랑주 승수법</strong>이라는 도구를 통해 식 $L$을 만들어 이를 미분하여 최종적으로 고유값 방정식의 형태가 나옵니다. </p></div>
-      <img class="post-image" src="about_merchine_learning.png" alt="alt text">
+      <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/5bafbea5d9ee394ce8d9c3af76e6a9c449a556ed/docs/blog/hurwan.tistory.com/build/about_merchine_learning.png" alt="alt text">
       <div class="post-note"><p>내용이 주제와 다르기 때문에 나중에 더 자세히 알아보겠습니다.</p></div>
     </section>
     <hr class="post-divider">
