@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정규식</title>
+  <script>
+    /*
+      정규식
+      문자열에서 특정한 패턴을 찾거나, 검사하거나, 치환하기 우해 사용하는 표현식
+
+      /패턴/옵션
+      또는
+      new RegExp("패턴", "옵션")
+
+      # 정규식의 패턴
+      # # 문자 하나 찾기
+      `a`: 문자 a. abc (문자열 abc)
+      `.`: 아무 문자 1개
+      `[abc]`: a 또는 b 또는 c 
+      `[a-z]`: a 부터 z
+      `[가-힣]`: 모든 한글
+      `[0-9]`: 모든 숫자
+      `[^0-9]`: 숫자가 아닌 문자 (^ = not)
+      `*`: 0번 이상
+      `+`: 1번 이상
+      `?`: 0 또는 1
+      `{n}`: 정확히 n번
+      `{n,}`: n번 이상
+      `{n,m}`: n-m번
+      `^`: 문자열 시작
+      `$`: 문자열 끝
+      `\d`: 숫자
+      `\D`: 숫자 아님
+      `\w`: 문자 또는 숫자 또는 _
+      `\W`: 문자 또는 숫자 또는 _ 외 문자
+      `\s`: 공백
+      `\S`: 공백 아닌 문자
+      `g`: 전체 검색
+      `i`: 대소문자 무시
+      `m`: 여러줄 처리
+
+      test(): 패턴 존재 여부
+      - const reg =  /^[0-9]+$/
+      - reg.test("a123") // false
+      - reg.test("123a") // true
+
+      match(): 일치 결과 반환
+      - "abc123".match(/\d+/) // ["123"]
+      
+      replace(): 치환
+      - "010-1234-5678".replace(/-/g, "") //01012345678
+
+      search(): 위치 반환
+      - "hello".search(/e/) // 1
+
+
+    */
+  </script>
+</head>
+  <button id="checkBtn">검색하기</button>
+  <input id="email-input" />
+  <input id="phone-input" placeholder="전화번호"/>
+  <script>
+    document.getElementById("checkBtn").addEventListener("click", function() {
+      const email = document.getElementById("email-input").value
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/  // 공백과 @을 제외한 무언가
+
+       console.log("이메일 검사:", emailRegex.test(email))
+
+      const phone = document.getElementById("phone-input").value
+      const phoneRegex = /^010-\d{3,4}-\d{4}$/  // 공백과 @을 제외한 무언가
+
+       console.log("핸드폰 검사:", phoneRegex.test(phone))
+    })
+  </script>
+
+  
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+  <style>
+    p.warn {
+      color: red;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h2>회원가입</h2>
+  <form onsubmit="return handleSubmit(event)">
+    아이디: <input id="id" type="text" maxlength="20" placeholder="아이디를 입력하세요"><br>
+    <p hidden class="warn" id="id-warn">아이디 형식이 맞지 않습니다.</p>
+    비밀번호: <input id="password" type="password" maxlength="20" placeholder="비밀번호를 입력하세요"><br>
+    <p hidden class="warn" id="password-warn">비밀번호 형식이 맞지 않습니다.</p>
+    이메일: <input id="email" type="text" maxlength="30" placeholder="이메일을 입력하세요"><br>
+    <p hidden class="warn" id="email-warn">이메일 형식이 맞지 않습니다.</p>
+    전화번호: <input id="phone" type="text" placeholder="전화번호를 입력하세요">
+    <p hidden class="warn" id="phone-warn">전화번호 형식이 맞지 않습니다.(- 포함)</p>
+    <button type="submit">제출하기</button>
+  </form>
+
+  <script>
+    function handleSubmit(e) {
+      // e.preventDefault();
+      console.log("helloooo")
+
+      const regexId = /^[a-zA-Z][a-zA-Z0-9]*$/
+      const regexPassword = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^a-zA-Z0-9가-힣\s])[A-Za-z\d!@#$%^&*]{8,}$/
+      const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-z]+\.[a-z]+/
+      const regexPhone = /^010-\d{3,4}-\d{4}/
+
+      const Id = document.getElementById("id").value
+      const Password = document.getElementById("password").value
+      const Email = document.getElementById("email").value
+      const Phone = document.getElementById("phone").value
+      
+      
+      let flag = false
+
+      if(!regexId.test(Id)) {
+        document.getElementById("id-warn").hidden=false
+        flag=true
+      } else {
+        document.getElementById("id-warn").hidden=true
+      }
+
+      if(!regexPassword.test(Password)) {
+        document.getElementById("password-warn").hidden=false
+        flag=true
+      } else {
+        document.getElementById("password-warn").hidden=true
+      }
+
+      if(!regexEmail.test(Email)) {
+        document.getElementById("email-warn").hidden=false
+        flag=true
+      } else {
+        document.getElementById("email-warn").hidden=true
+      }
+
+      if(!regexPhone.test(Phone)) {
+        document.getElementById("phone-warn").hidden=false
+        flag=true
+      } else {
+        document.getElementById("phone-warn").hidden=true
+      }
+      if(flag===true) {
+        return false
+      }
+      else {
+        alert('회원가입 성공!')
+      }
+
+    }
+  </script>
+</body>
+</html>
