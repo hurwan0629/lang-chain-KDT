@@ -344,8 +344,8 @@ if __name__=="__main__":
 ```
 
 ### GPT가 그려준 간선도
-![간선도](https://chatgpt.com/backend-api/estuary/content?id=file_0000000095a4720ba67be22ea968d417&ts=495056&p=fs&cid=1&sig=7e8a9e75f752b8a9ce469c3089b57d8f99bff1272612c3787768a619ce023195&v=0)
+![alt text](image-1.png)
 
 힙 큐가 살짝 더 빠릅니다. (마을이 적은편이라 그런것 같습니다.)
 ## 해결 인증
-![alt text](image.png)
+![alt text](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/c138fcb97f13cad2dda8d4a0142c8de696fdfcab/workspace/personal/assignment/06_djikstra/image.png)
