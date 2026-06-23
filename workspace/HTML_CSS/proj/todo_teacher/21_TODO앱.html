@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO 앱</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app">
+        <h1>TODO 앱</h1>
+        <div class="row">
+            <input type="text" id="todoInput" placeholder="할 일을 입력하세요"> 
+            <button id="addBtn" type="button">추가</button> 
+        </div>
+        <div class="meta">
+            <div>남은 항목: <strong id="remainingCount">0</strong></div>
+            <div>전체: <strong id="totalCount">0</strong></div>
+        </div>
+        <ul id="todoList"></ul>
+    </div>
+
+    <script src="./js/todo.js"></script>
+</body>
+</html>

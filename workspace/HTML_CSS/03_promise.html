@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise</title>
+  <script>
+    /*
+      promise
+      자바스크립트에서 비동기 작업의 결과를 미래의 값으로 표현하는 객체로, 시간이 걸리는
+      작업이 성공적으로 완료되었는지 또는 실패했는지를 나중에 알려주기 위해 사용
+
+      콜백 지옥
+      콜백 지옥은 자바스크립트에서 비동기 작업을 콜백 함수로 계속 중첩해 처리하다 보니
+      코드가 오른쪽으로 깊게 들여쓰기 되며 복잡해지고, 흐름을 한눈에 이해하기 어려워지는
+      문제를 말함
+
+      const promise = new Promise((resolve, reject) => {
+          if(성공){
+              resolve(결과값) // 작업 성공 시 호출
+          }else{
+              reject(에러)    // 작업 실패 시 호출
+          }
+      })
+
+      promise.then(result => {
+          console.log("성공: ", result)
+      })
+      .catch(error => {
+          console.error("실패: ", error)
+      })
+  */
+  </script>
+</head>
+<body>
+  <script>
+    /*
+    const promise = new Promise((resolve, reject) => {
+        if(성공){
+            resolve(결과값) // 작업 성공 시 호출
+        }else{
+            reject(에러)    // 작업 실패 시 호출
+        }
+    })
+
+    promise.then(result => {
+        console.log("성공: ", result)
+    })
+    .catch(error => {
+        console.error("실패: ", error)
+    })*/
+   function orderCoffee(menu) {
+        console.log(`${menu} 주문을 접수했습니다. 잠시만 기다리세요`)
+        const availableMenu = ['아메리카노', '디카페인 아메리카노', '카페라떼',
+        '바닐라라떼']
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if(availableMenu.includes(menu)) {
+                    resolve(`${menu}가 준비되었습니다. 맛있게 드세요 :)`)
+                }else{
+                    reject(`죄송합니다. ${menu}는 판매하지 않습니다 :(`)
+                }
+            }, 2000)
+        })
+    }
+
+    orderCoffee("아메리카노").then((message) => {
+        console.log(message)
+    }).catch((error) => {
+        console.log(error)
+    }).finally(() => {
+        console.log("주문이 완료되었습니다")
+    })
+  </script>
+</body>
+</html>

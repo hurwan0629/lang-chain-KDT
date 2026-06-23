@@ -79,6 +79,6 @@ if __name__ == "__main__":
   print(result)
 ```
 
-![alt text](image.png)
+![섬 연결하기 문제 푼거](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/92e42f580251c4317818d78fd5f879d329b28dec/workspace/personal/assignment/05_greed_and_dp/image.png)
 
 > 예이~

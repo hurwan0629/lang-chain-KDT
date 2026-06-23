@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테마 변경</title>
+</head>
+<body>
+    <button onclick="toggleTheme()">테마 변경</button>
+    <p>현재 테마: <span id="themeText"></span></p>
+
+    <script>
+        const body = document.body
+
+        function applyTheme(theme) {
+            body.style.backgroundColor = theme === "dark" ? "#222" : "#fff"
+            body.style.color = theme === "dark" ? "#fff" : "#000"
+            document.getElementById("themeText").innerHTML = theme
+        }
+
+        function toggleTheme() {
+            const current = localStorage.getItem("theme") || "white"
+            const next = current === "white" ? "dark" : "white"
+            localStorage.setItem("theme", next)
+            applyTheme(next)
+        }
+
+        applyTheme(localStorage.getItem("theme") || "white")
+
+    </script>
+</body>
+</html>

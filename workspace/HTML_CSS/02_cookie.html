@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쿠키</title>
+</head>
+<body>
+  <script>
+    /*
+        쿠키(Cookie)
+        - 웹 브라우저가 사용자 정보를 작은 텍스트 데이터 형태로 저장해 두었다가, 이후 같은
+        웹사이트에 요청을 보낼 때마다 자동으로 서버에 함께 전송하는 저장 방식
+        - 저장 용량이 약 4KB로 매우 작고, 모든 요청에 포함되어 전송되기 때문에 보안과
+        성능 측면에서 주의가 필요함
+
+        쿠키 저장하기
+        document.cookie = "userid=apple"
+        만료 시간 설정하기
+        const date = new Date() // 2026-06-23 00:00:00
+        date.setDate(date.getDate() + 7) // 2026-06-23 + 7 , 7일 후 => 2026-06-30
+        document.cookie = "userid=apple; expires=" + date.toUTCString()
+        쿠키 읽기
+        console.log(document.cookie)
+        쿠키 삭제
+        > expires 값을 과거 날짜로 설정하면 자동으로 삭제됨
+    */
+
+  </script>
+<!--
+  <div><label>등산<input type="checkbox" name="hobby" value="등산"></label> 게임<input
+type="checkbox" name="hobby" value="게임" checked="true"> 영화보기<input
+type="checkbox" name="hobby" value="영화보기"></div>
+<div><input type="radio" name="gender" value="남자"> <input type="radio"
+name="gender" value="여자"></div>
+-->
+<div id="popup" style="padding:20px; background-color: #f0f0f0; border:1px solid #ccc; width:300px">
+    <p><strong>[공지]</strong> 신규 강의가 업데이트 되었습니다.</p>
+    <label><input type="checkbox" id="hideToday">
+    오늘 하루 보지 않기
+    </label>
+    <hr>
+    <button onclick="closePopup()">닫기</button>
+</div>
+
+<script>
+    function setCookie(name, value, days) {
+        const d = new Date()
+        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000))
+        const expires = "expires=" + d.toUTCString()
+        document.cookie = `${name}=${value}; ${expires};`
+    }
+
+    function closePopup() {
+        const checkbox = document.getElementById("hideToday")
+        if(checkbox.checked) {
+            setCookie("hidePopup", "true", 1)
+        }
+        document.getElementById("popup").style.display = "none"
+    }
+
+    function getCookie(name) {
+        const decodedCookie = decodeURIComponent(document.cookie)
+        const cookies = decodedCookie.split("; ")
+        for(let cookie of cookies) {
+            const [key, value] = cookie.split("=")
+            if (key === name) return value
+        }
+        return null
+    }
+
+    window.onload = function() {
+        if(getCookie("hidePopup") === "true") {
+            document.getElementById("popup").style.display = "none"
+        }
+    }
+
+</script>
+  
+</body>
+</html>
