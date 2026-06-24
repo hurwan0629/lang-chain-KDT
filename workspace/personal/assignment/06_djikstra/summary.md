@@ -344,7 +344,7 @@ if __name__=="__main__":
 ```
 
 ### 간선도
-![alt text](<graph (1).png>)
+![alt text](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/c60771ff318f5fd8b14214332651dee83c9ecf4e/workspace/personal/assignment/06_djikstra/graph%20(1).png)
 
 힙 큐가 살짝 더 빠릅니다. (마을이 적은편이라 그런것 같습니다.)
 ## 해결 인증

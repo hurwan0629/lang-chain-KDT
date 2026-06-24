@@ -15,3 +15,5 @@ Python 3.12.10
 
 ## 커밋 규칙:
 `[YYYY-mm-dd HH:MM] [note|code|html|chore]: [description]`
+
+`Construction_Process_of_an_AI_Video_Object_Detection_and_Analysis_Platform_Utilizing_LangChain`
