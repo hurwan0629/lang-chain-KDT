@@ -34,7 +34,7 @@ class OrderListPage(Page):
         input("아무 키나 눌러서 메인 메뉴로 나가기: ")
         return False
       else:
-        input("결제가 완료되었습니다! (아무키나 눌러서 나가기): ")
+        input("(아무키나 눌러서 나가기): ")
         return False
   
   def _detail_action(self, orders_data):
@@ -53,8 +53,8 @@ class OrderListPage(Page):
       except TypeError:
         print("올바른 숫자를 입력해주세요")
 
-    product_data = self.__service.get_order_item_by_id(target_order_id)
-    
+    product_data = self.__service.get_order_item_by_id(target_order_id)[0]
+    print(f"product_data {product_data}")
     print(f"주문 상품: {product_data[1]}")
     print(f"주문 수량: {product_data[2]}")
     print(f"상품 개별 금액: {product_data[3]}")
@@ -64,15 +64,19 @@ class OrderListPage(Page):
     target_order_id = 0
     while True:
       try:
-        user_input = int(input("결제할 주문 ID를 입력해주세요 (0 입력 시 나가기)"))
+        user_input = int(input("결제할 주문 ID를 입력해주세요 (0 입력 시 나가기): "))
+        # print(type(user_input))
 
         if user_input == 0:
-          break
+          return False
 
         order_ids = [row[0] for row in orders_data]
+        # print(order_ids)
         if user_input not in order_ids:
           raise ValueError
-        if self.__service.check_order_status() != 'ready':
+        product_status = self.__service.check_order_status(user_input)
+        # print(product_status)
+        if product_status != 'ready':
           print("이미 결제되거나 취소된 상품입니다.")
           continue
         target_order_id = user_input
@@ -83,7 +87,8 @@ class OrderListPage(Page):
         print("올바른 숫자를 입력해주세요")
 
     product_data = self.__service.get_order_item_by_id(target_order_id)
-    
+    print(product_data)
+
     print(f"주문 상품: {product_data[1]}")
     print(f"주문 수량: {product_data[2]}")
     print(f"상품 개별 금액: {product_data[3]}")

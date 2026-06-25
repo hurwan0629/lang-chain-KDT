@@ -39,7 +39,7 @@ class OrderService(BaseService):
 
   @service_decorator()
   def check_order_status(self, cur, order_id) -> str:
-    self._dao.get_order_status_by_id(cur, order_id)
+    return self._dao.get_order_status_by_id(cur, order_id)
 
   @service_decorator()
   def get_user_order_list(self, cur, user_id):

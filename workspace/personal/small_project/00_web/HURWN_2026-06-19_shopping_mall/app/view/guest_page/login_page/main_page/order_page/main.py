@@ -22,7 +22,7 @@ class OrderPage(Page):
       product_data = None
       while True:
         try: 
-          user_input = int(input("원하는 상품의 ID를 입력하세요"))
+          user_input = int(input("원하는 상품의 ID를 입력하세요: "))
 
           if user_input == 0:
             exit_flag = True
@@ -45,11 +45,16 @@ class OrderPage(Page):
         input("아무 키를 눌러서 메인 메뉴로 나가기: ")
         return False
       
+      # 상품 재고 0개면 바로 나가기
+      if product_data[3] == "품절":
+        input("품절된 상품입니다. 아무키를 눌러 나가기")
+        return False
+      
       # 상품 수량 선택하기
       product_count = 0
       while True:
         try: 
-          user_input = int(input("원하는 상품의 개수를 입력하세요 (0은 메인 메뉴입니다.)"))
+          user_input = int(input("원하는 상품의 개수를 입력하세요 (0은 메인 메뉴입니다.): "))
 
           if user_input == 0:
             exit_flag = True

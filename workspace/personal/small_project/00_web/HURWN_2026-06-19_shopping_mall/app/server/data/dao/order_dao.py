@@ -57,7 +57,7 @@ class OrderDAO:
   def select_one_order_item_by_id(self, cur, order_id) -> tuple[int, str, int, int]:
     cur.execute(self.sql_select_one_order_item_by_id, (order_id, ))
 
-    return cur.fetchall()
+    return cur.fetchone()
 
   """사용자 주문 결제됨 상태로 바꾸기"""
   def set_order_paid(self, cur, order_id) -> bool:
@@ -66,3 +66,6 @@ class OrderDAO:
   """주문 상태 확인하기"""
   def get_order_status_by_id(self, cur, order_id) -> str:
     cur.execute(self.sql_get_order_status_by_id, (order_id, ))
+    res = cur.fetchone()
+    # print(res[0])
+    return res[0]
