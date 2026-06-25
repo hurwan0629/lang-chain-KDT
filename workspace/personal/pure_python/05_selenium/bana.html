@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=no, width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="Cache-Control" content="no-Cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta name="theme-color" content="#fff" />
+    <link rel="shortcut icon" href="/ico_logo.ico" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- CSS, Font -->
+    <link
+      rel="stylesheet preload"
+      href="https://fonts.googleapis.com/earlyaccess/notosanskr.css"
+      as="style"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/fonts-archive/NanumGaRamYeonGgoc/NanumGaRamYeonGgoc.css"
+      type="text/css"
+      crossorigin="anonymous"
+    />
+
+    <link href="https://fonts.googleapis.com/css2?family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet" />
+
+    <!-- OG meta tag -->
+    <!-- Facebook Meta Tags / íì´ì¤ë¶ ì¤í ê·¸ëí -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.banapresso.com/" />
+    <meta property="og:title" content="ë°ëíë ì, ë í¬ê² ë ë§ìê²" />
+    <meta property="og:description" content="ë¹ì¬ì´ì¦ ì»¤í¼ì ë¤ìí ëì í¸ë¥¼ í©ë¦¬ì ì¸ ê°ê²©ì¼ë¡ ì¦ê²¨ë³´ì¸ì." />
+    <meta property="og:image" content="https://www.banapresso.com/banapresso_card_image.jpg?v=3" />
+
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ko-KR" />
+    <meta property="og:site_name" content="ë°ëíë ì" />
+
+    <meta property="fb:pages" content="https://www.banapresso.com/" />
+
+    <!-- Twitter Meta Tags / í¸ìí° -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.banapresso.com/" />
+    <meta property="twitter:title" content="ë°ëíë ì, ë í¬ê² ë ë§ìê²" />
+    <meta property="twitter:description" content="ë¹ì¬ì´ì¦ ì»¤í¼ì ë¤ìí ëì í¸ë¥¼ í©ë¦¬ì ì¸ ê°ê²©ì¼ë¡ ì¦ê²¨ë³´ì¸ì." />
+    <meta property="twitter:image" content="https://www.banapresso.com/banapresso_card_image.jpg?v=3" />
+
+    <title>ë°ëíë ì, ë í¬ê² ë ë§ìê²</title>
+
+    <!-- Canonical -->
+    <script>
+      try {
+        /* useAppEffect */
+        // const canonicalUrl = 'https://www.banapresso.com';
+        const getCookie = (key) => {
+          const cookieKey = `${key}=`;
+          let result = '';
+          const cookieArr = document.cookie.split(';');
+
+          for (let i = 0; i < cookieArr.length; i++) {
+            if (cookieArr[i][0] === ' ') {
+              cookieArr[i] = cookieArr[i].substring(1);
+            }
+
+            if (cookieArr[i].indexOf(cookieKey) === 0) {
+              result = cookieArr[i].slice(cookieKey.length, cookieArr[i].length);
+              return result;
+            }
+          }
+          return result;
+        };
+        const setCookie = (name, value, expiredays) => {
+          const todayDate = new Date();
+          todayDate.setDate(todayDate.getDate() + expiredays);
+          document.cookie = `${name}=${encodeURI(value)}; path=/; expires=${todayDate.toUTCString()};`;
+        };
+        const getIsMobileDevice = (x) => {
+          const mobileExp =
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows CE|LG|MOT|SAMSUNG|SonyEricsson|Windows Phone|Opera Mini|IEMobile|Mobile/i;
+
+          return mobileExp.test(x);
+        };
+
+        // ì¬ì©ì ë¡ê·¸ ê¸°ë¡ì© key
+        // const userKey = getCookie('bana_user_log');
+        // if (!userKey) document.cookie = `bana_user_log=USER_${new Date().getTime()}; max-age=3600`;
+        // ì¿ í¤ -> ë¡ì»¬ì¤í ë¦¬ì§ë¡ ë³ê²½ (ê¸°ì¡´ ê° ìì¼ë©´ ì¿ í¤ìì ê°ì ¸ì´)
+        const userKey = localStorage.getItem('bana_user_log');
+        if (!userKey) {
+          if (!!getCookie('bana_user_log')) localStorage.setItem('bana_user_log', getCookie('bana_user_log'));
+          else localStorage.setItem('bana_user_log', `USER_${new Date().getTime()}`);
+        }
+
+        // so íë¼ë¯¸í° ì²ë¦¬ (redirect from banapres.so)
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.has('so')) {
+          const soVal = searchParams.get('so');
+          // so=0ì´ë©´ ê¸°ë³¸, ê·¸ ì¸ìë ?so=soVal íìì¼ë¡ ì ì¥
+          if (soVal === '0') {
+            sessionStorage.setItem(localStorage.getItem('bana_user_log'), 'http://banapres.so');
+          } else {
+            sessionStorage.setItem(localStorage.getItem('bana_user_log'), `http://banapres.so/${soVal}`);
+          }
+        } else {
+          sessionStorage.setItem(localStorage.getItem('bana_user_log'), document.referrer);
+        }
+
+        if (getCookie('pcT') === 'Y') {
+          setCookie('pcT', '', -1);
+        } else {
+          const privacyPolicyUrl = {
+            '/privacy': '/policy/banapresso_privacy',
+            '/companyPrivacy': '/policy/company_privacy',
+            '/termsofservice': '/policy/termsofservice',
+            '/termsofgift': '/policy/termsofgift',
+            '/termsofpoint': '/policy/termsofpoint',
+          };
+          const redirectToModifiedUrl = {
+            '/qr/scan/partner': '/franchise_inquiry',
+            '/qr/scan/rent': '/franchise/rent',
+            '/qr/scan/recruit': '/view/recruit',
+            '/qr/scan/biz': '/biz/info',
+            '/qr/scan/menu_new': '/menu/new',
+            '/qr/scan/voc': '/view/voc/qr',
+          };
+          const stayInWebUrl = [
+            '/gift',
+            '/menuInfo',
+            '/app/download',
+            '/app_install',
+            '/menu_introduction',
+            '/home',
+            '/store',
+          ];
+
+          const handlePath = () => {
+            let pathname = window.location.pathname;
+            if (Object.keys(privacyPolicyUrl).includes(`${pathname}`)) {
+              pathname = privacyPolicyUrl[`${pathname}`];
+            } else if (Object.keys(redirectToModifiedUrl).includes(`${pathname}`)) {
+              pathname = redirectToModifiedUrl[`${pathname}`];
+            }
+            return pathname;
+          };
+
+          if (getIsMobileDevice(navigator.userAgent)) {
+            const orgPath = window.location.pathname;
+            const path = handlePath();
+
+            if (orgPath.includes('/qr/scan')) {
+              if (path.includes('/partner_')) {
+                const indexOfPartner = window.location.href.indexOf('partner_');
+                const search = window.location.href.substring(indexOfPartner + 8);
+
+                window.location.href = '/franchise/partner?path=' + search;
+              }
+              // ê³ ê°ì ìë¦¬ ì¹ë·°
+              else if (orgPath.includes('voc')) {
+                const fCode = window.location.search.replace('?fcode=', '');
+                window.location.href = `${path}/${fCode}`;
+              } else if (Object.keys(redirectToModifiedUrl).some((el) => orgPath.includes(el))) {
+                window.location.href = path + (path.includes('biz') ? '' : window.location.search);
+              }
+            } else if (Object.keys(privacyPolicyUrl).some((el) => orgPath.includes(el))) {
+              window.location.href = '/m' + path;
+            } else if (
+              path !== '/' &&
+              path !== '/franchise/tax' &&
+              !path.includes('/m') &&
+              !stayInWebUrl.includes(path)
+            ) {
+              window.location.href = '/m' + path + window.location.search;
+            }
+          }
+        }
+      } catch (e) {}
+    </script>
+
+    <!-- IEë¡ ì ì ì Edgeë¡ Redirect ì²ë¦¬ -->
+    <script>
+      if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+        window.location = 'microsoft-edge:' + window.location;
+        setTimeout(function () {
+          window.location = 'https://support.microsoft.com/office/160fa918-d581-4932-9e4e-1075c4713595';
+        });
+      }
+    </script>
+
+    <!-- polyfill -->
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es2019%2Ces2020%2Ces2021%2Ces2022%2CAbortController"
+    ></script>
+
+    <!-- Google Tag Manager  ì íë¸ ê´ê³  ê´ë ¨ -->
+    <script>
+      try {
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.defer = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-NFBWQ45');
+      } catch (error) {}
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!--240408 ë©í ëë©ì¸ì¸ì¦-->
+    <!-- <meta name="facebook-domain-verification" content="nlaqtbic3er8u352ve76wg43w2cnmx" /> -->
+    <!-- 251113 ë©í ëë©ì¸ì¸ì¦ ë³ê²½ -->
+    <meta name="facebook-domain-verification" content="qnbv1k78mmldmccgg1kxyg81l2wztt" />
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1666403444808078');
+      fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
+    <script type="module" crossorigin src="/static/js/main.eb639e94.js"></script>
+    <link rel="modulepreload" crossorigin href="/static/js/date-fns.df640bcb.js">
+    <link rel="modulepreload" crossorigin href="/static/js/lottie-web.8ae15c92.js">
+    <link rel="modulepreload" crossorigin href="/static/js/swiper.2af32963.js">
+    <link rel="modulepreload" crossorigin href="/static/js/gsap.dc65b27f.js">
+    <link rel="modulepreload" crossorigin href="/static/js/react-core.ac8cc919.js">
+    <link rel="modulepreload" crossorigin href="/static/js/react-query.a6cb7b7b.js">
+    <link rel="modulepreload" crossorigin href="/static/js/react-router.29c92eaf.js">
+    <link rel="modulepreload" crossorigin href="/static/js/styled-components.4692609c.js">
+    <link rel="stylesheet" href="/static/css/swiper.c41ec3a2.css">
+    <link rel="stylesheet" href="/static/css/react-core.d428ba04.css">
+    <link rel="stylesheet" href="/static/css/index.13a4b9ec.css">
+  </head>
+
+  <!-- <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-140675206-1"></script> -->
+  <script defer src="https://www.googletagmanager.com/gtag/js?id=AW-11050175848"></script>
+
+  <!-- SmartLog -->
+  <script defer language="javascript" src="//cdn.smlog.co.kr/core/smart.js" charset="utf-8"></script>
+
+  <!-- ë¤ì´ë² ê´ê³ ë¡ê·¸ -->
+  <!-- <script defer type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> -->
+
+  <!-- ë°ëíë ì ì¹´ì¹´ì¤ëª¨ë¨¼í¸ -->
+  <!-- <script defer type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script> -->
+
+  <!-- ëª¨ë¹ì¨ ë°°ë ê´ê³  -->
+  <!-- Enliple Tracker Start -->
+  <script defer async src="https://cdn.megadata.co.kr/dist/prod/v2/mtm.js?adverId=banaplefnb&device=W"></script>
+  <!-- Enliple Tracker End -->
+
+  <body>
+    <noscript>ì°ìí íì§ì í©ë¦¬ì ì¸ ê°ê²©, ë¹ì¬ì´ì¦ ì»¤í¼ & ë² ì´ì»¤ë¦¬ ì ë¬¸ íëì°¨ì´ì¦ ë°ëíë ììëë¤.</noscript>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=1666403444808078&ev=PageView&noscript=1"
+    /></noscript>
+    <div id="root"></div>
+    
+
+    <!-- ë¤ì´ë² ê´ê³  ë¶ì  í´ë¦­ ë°©ì§ ì¤í¬ë¦½í¸ -->
+    <!-- LOGGER(TM) TRACKING SCRIPT V.40 FOR logger.co.kr / 114632 : COMBINE TYPE / DO NOT ALTER THIS SCRIPT. -->
+    <script type="text/javascript">
+      var _TRK_LID = '114632';
+      var _L_TD = 'ssl.logger.co.kr';
+      var _TRK_CDMN = '.banapresso.com';
+    </script>
+    <script type="text/javascript">
+      var _CDN_DOMAIN = location.protocol == 'https:' ? 'https://fs.bizspring.net' : 'http://fs.bizspring.net';
+      (function (b, s) {
+        var f = b.getElementsByTagName(s)[0],
+          j = b.createElement(s);
+        j.async = true;
+        j.src = '//fs.bizspring.net/fs4/bstrk.1.js';
+        f.parentNode.insertBefore(j, f);
+      })(document, 'script');
+    </script>
+    <noscript
+      ><img alt="Logger Script" width="1" height="1" src="http://ssl.logger.co.kr/tracker.1.tsp?u=114632&amp;js=N"
+    /></noscript>
+    <!-- END OF LOGGER TRACKING SCRIPT -->
+  </body>
+
+  <script>
+    try {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      // êµ¬ê¸ analyst
+      //gtag('config', 'UA-140675206-1');
+      // gtag('config', 'G-W060HRC5RK');
+
+      // ì íë¸ GDNê´ê³  ê´ë ¨. (2022.12.28)
+      gtag('config', 'AW-11050175848');
+    } catch (error) {}
+  </script>
+  <!-- <script type="text/javascript">
+    try {
+      setTimeout(() => {
+        kakaoPixel('7607044294537465649').pageView('ë°©ë¬¸');
+      }, 1000);
+    } catch (error) {}
+  </script> -->
+
+  <!-- Smartlog -->
+  <script type="text/javascript">
+    var hpt_info = { _account: 'UHPT-20849', _server: 'a24' };
+  </script>
+
+  <noscript
+    ><img src="//a24.smlog.co.kr/smart_bda.php?_account=20849" style="display: none; width: 0; height: 0 border=0"
+  /></noscript>
+</html>
