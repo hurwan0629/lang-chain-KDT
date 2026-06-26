@@ -1,6 +1,8 @@
 # 소개
 이곳은 개발자 취준생 **허완**이 `랭체인을 활용한 AI 영상객체탐지분석 플랫폼 구축과정` 국비 과정의 작업을 하기 위한 공간입니다.
 
+(`Construction_Process_of_an_AI_Video_Object_Detection_and_Analysis_Platform_Utilizing_LangChain`)
+
 시작일: 2026년 05월 19일
 
 종료일: 2026년 12월 17일
@@ -13,7 +15,16 @@
 
 Python 3.12.10
 
+## Node Version
+- 24.18.0 (대체로 수업 진행용)
+- 22.13.0 (기존에 사용하던 것)
+
 ## 커밋 규칙:
 `[YYYY-mm-dd HH:MM] [note|code|html|chore]: [description]`
 
-`Construction_Process_of_an_AI_Video_Object_Detection_and_Analysis_Platform_Utilizing_LangChain`
+
+
+> 해당 커밋 규칙은 시작일을 기준으로 `[2026-06-26 21:08:54]` 까지 지켜지지 않았습니다. 위에 적혀있는 커밋 규칙은 믿을 규칙이 안됩니다.
+
+# 타임라인
+[2026-06-26 21:09:48]: 약 1달동안 `파이썬(백 언어) -> MySQL(DB) -> html -> css -> js -> 크롤링 -> Node`의 절차를 밟고있습니다. 노드 서버, `ejs`, 셀레니움은 많이 사용해보지 않아 이전까지는 어느정도 수업 추적만 하다 얼마 전 자격증 및 개인 학업이 어느정도 정리되어 공부를 시작하고 있습니다. `ejs`는 `.jsp`와 거의 같아서 그냥 이전에도 사용하듯이 사용할 수 있는거같고, 노드 서버 및 프로젝트 관리는 익숙해져야 할 것 같습니다. 셀레니움은 애초에 편의를 위한 라이브러리이기 때문에 구조까지 파진 않고 어느정도 실습을 위주로 연습중입니다. 1달만에 하는 회고라 말이 조금 많았습니다. 추가로 폴더 정리가 필요할지도 모르겠습니다.

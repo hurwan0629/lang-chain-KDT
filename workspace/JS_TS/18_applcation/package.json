@@ -1,0 +1,17 @@
+{
+  "name": "18_applcation",
+  "version": "1.0.0",
+  "main": "req_res.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon req_res.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "commonjs",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

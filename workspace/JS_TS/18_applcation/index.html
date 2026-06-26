@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <form method="POST" action="http://localhost:8090">
+    <input name="example" value="example-value">
+    <input name="example1" value="example-value1">
+    <input name="example2" value="example-value2">
+    <input name="example3" value="example-value3">
+    <input name="example4" value="example-value4">
+    <input name="example5" value="example-value5">
+    <input name="example1" value="example-value1">
+    <input name="example11" value="example-value11">
+    <input name="example12" value="example-value12">
+    <input name="example13" value="example-value13">
+    <input name="example14" value="example-value14">
+    <input name="example15" value="example-value15">
+    <input name="example2" value="example-value2">
+    <input name="example21" value="example-value21">
+    <input name="example22" value="example-value22">
+    <input name="example23" value="example-value23">
+    <input name="example24" value="example-value24">
+    <input name="example25" value="example-value25">
+    <input name="example3" value="example-value3">
+    <input name="example31" value="example-value31">
+    <input name="example32" value="example-value32">
+    <input name="example33" value="example-value33">
+    <input name="example34" value="example-value34">
+    <input name="example35" value="example-value35">
+    <input type="submit">
+  </form>
+
+  <br><br>
+  <button onclick="sendDataInChunks()">데이터 쪼개서 보내기</button>
+  <script>
+    async function test() {
+      await fetch("http://127.0.0.1:8091/", {
+        method: "GET"
+      })
+        .then(res => res.text())
+        .then(console.log)
+        .catch(console.error)
+    }
+
+    async function test2() {
+      fetch("http://127.0.0.1:8091/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "id=apple&pw=1234"
+      })
+        .then(res => res.text())
+        .then(console.log)
+        .catch(console.error)
+    }
+
+    async function sendDataInChunks() {
+      const rawData = "example=example-value&example1=example-value1&example2=example-value2&example3=example-value3&example4=example-value4&example5=example-value5&example1=example-value1&example11=example-value11&example12=example-value12&example13=example-value13&example14=example-value14&example15=example-value15&example2=example-value2&example21=example-value21&example22=example-value22&example23=example-value23&example24=example-value24&example25=example-value25&example3=example-value3&example31=example-value31&example32=example-value32&example33=example-value33&example34=example-value34&example35=example-value35"; // 전체 데이터
+      const encoder = new TextEncoder();
+      const uint8Array = encoder.encode(rawData);
+      
+      // 1. 프론트엔드 자체 스트림 생성
+      const stream = new ReadableStream({
+        async start(controller) {
+          const chunkSize = 100; // 100바이트씩 쪼개기
+          let offset = 0;
+
+          while (offset < uint8Array.length) {
+            const chunk = uint8Array.slice(offset, offset + chunkSize);
+            controller.enqueue(chunk); // 쪼갠 청크를 스트림 통로에 주입
+            offset += chunkSize;
+
+            // 백엔드에서 쪼개지는 것을 확실히 확인하기 위해 약간의 지연(밀리초) 유도
+            await new Promise(resolve => setTimeout(resolve, 50));
+          }
+          controller.close(); // 스트림 종료
+        }
+      });
+
+      console.log("stream: ", stream)
+
+      // 2. fetch로 스트림 전송
+      fetch('http://127.0.0.1:8091/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          // 필요에 따라 Chunked 전송을 명시 (브라우저가 자동 설정하지만 안전용)
+          // 'Transfer-Encoding': 'chunked' 
+        },
+        body: stream,
+        // 중요: 브라우저에게 스트림 업로드를 허용하도록 설정 (크롬 등 지원)
+        duplex: 'half' 
+      }).then((r) => console.log);
+    }
+  </script>
+</body>
+</html>
