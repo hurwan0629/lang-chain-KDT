@@ -1,0 +1,13 @@
+{
+  "name": "02_file_control",
+  "version": "1.0.0",
+  "description": "이번에 시험에 방명록 등을 사용한다고 하는데 잘 써본적 없는 fileWriteAsync 등의 사용을 연습해보기 위해 만든 공간입니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

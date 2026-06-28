@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방명록</title>
+</head>
+<body>
+  <h1>방명록</h1>
+  <br><hr><br>
+  <form id="guest">
+    <input type="text" name="name" placeholder="이름을 입력하세요">
+    <input type="text" name="content" placeholder="남기고 싶은 말을 입력하세요">
+    <button id="guestSubmit" type="submit">등록</button>
+  </form>
+  <br><hr><br>
+  <% if(!rows) { %>
+    <h3>방명록이 비어있습니다.</h3>
+  <% } %>
+  <ul>
+    <% rows.forEach((data) => { %>
+      <li>[<%= data.logTime %>] [<%= data.name %>]: <%= data.content %></li>
+    <% }) %>
+  </ul>
+  <script>
+    document.getElementById("guest").addEventListener("submit", async (e) => {
+      e.preventDefault()
+      console.log("버튼 눌림")
+      const form = e.currentTarget
+      const body = new URLSearchParams(new FormData(form))
+
+      await fetch("/regist", {
+        method: "POST",
+        body
+      }).then((res) => {
+        if(!res.ok) {
+          throw Error("에러")
+        }
+        alert("등록 완료!")
+        window.location.reload()
+      })
+    }).catch(err => {
+      alert(err)
+    })
+  </script>
+</body>
+</html>
