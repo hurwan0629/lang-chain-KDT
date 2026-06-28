@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+</head>
+<body>
+  <form id="registForm">
+    <input type="text" id="id" name="id" placeholder="사용할 아이디를 입력하세요">
+    <input type="password" id="password" name="password" placeholder="사용할 비밀번호를 입력하세요">
+    <input type="password" id="password-check"  placeholder="아이디를 입력하세요">
+    <input type="name" id="name" name="name" placeholder="이름을 입력하세요">
+    <button type="submit" id="submitButton">회원가입하기</button>
+  </form>
+  <script>
+    document.getElementById("registForm").addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      // 비밀번호가 잘 입력되었는지 확인
+      const pswd = document.getElementById("password").value
+      const pswdCheck = document.getElementById("password-check").value
+      if(pswd !== pswdCheck) {
+        alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요")
+        return
+      }
+
+      // 빈값 업는지 확인
+      if(!document.getElementById("password").value 
+          || !document.getElementById("password-check").value 
+          || !document.getElementById("id").value 
+          || !document.getElementById("name").value ) {
+            alert("입력되지 않은 값이 존재합니다.")
+            return
+        }
+
+      const form = e.currentTarget
+      const body = new URLSearchParams(new FormData(form))
+
+      fetch("/user", {
+        credentials: "include",
+        method: "PUT",
+        body
+      }).then((res) => {
+        if(!res.ok) {
+          if(res.status === 409) {
+            alert("중첩된 아이디가 있습니다.")
+          }
+          else if(res.status === 400) {
+            alert("올바르지 못한 입력이 존재합니다.")
+          }
+          else {
+            alert("회원가입이 실패하였습니다.")
+          }
+          return
+        }
+        return res.json()
+      }).then(data => {
+        alert("회원가입에 성공하였습니다. 로그인 후 서비스를 이용해주세요")
+        window.location = "/login"
+      })
+    })
+  </script>
+</body>
+</html>
