@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+</head>
+<body>
+  <form id="loginForm">
+    <input type="text" name="id" placeholder="아이디를 입력하세요">
+    <input type="password" name="password" placeholder="비밀번호를 입력하세요">
+    <button id="loginSubmit" type="submit">로그인하기</button>
+  </form>
+  <br>
+  <hr>
+  <br>
+  <a href="/">메인 페이지로 돌아가기</a><br>
+  <a href="/regist">회원가입 하러 가기</a>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault()
+      const form = e.currentTarget
+      const body = new URLSearchParams(new FormData(form))
+
+      fetch("/login", {
+        credentials: "include",
+        method: "POST", 
+        body
+      }).then((res) => {
+        if(!res.ok) {
+          alert("로그인 실패!")
+        }
+        else {
+          alert("로그인 성공!")
+          window.location = "/"
+        }
+      })
+    })
+  </script>
+</body>
+</html>

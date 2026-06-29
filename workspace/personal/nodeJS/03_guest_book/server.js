@@ -53,9 +53,10 @@ app.get("/favicon.ico", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-  const rows = selectAllDatas()
+  const rows = selectAllDatas().reverse()
 
   console.log("rows:", rows)
+
 
   res.render("index", {
     rows,
