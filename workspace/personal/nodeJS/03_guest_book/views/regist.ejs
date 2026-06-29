@@ -9,7 +9,7 @@
   <form id="registForm">
     <input type="text" id="id" name="id" placeholder="사용할 아이디를 입력하세요">
     <input type="password" id="password" name="password" placeholder="사용할 비밀번호를 입력하세요">
-    <input type="password" id="password-check"  placeholder="아이디를 입력하세요">
+    <input type="password" id="password-check"  placeholder="비밀번호를 확인해주세요">
     <input type="name" id="name" name="name" placeholder="이름을 입력하세요">
     <button type="submit" id="submitButton">회원가입하기</button>
   </form>
@@ -42,6 +42,7 @@
         method: "PUT",
         body
       }).then((res) => {
+        console.log(res.status)
         if(!res.ok) {
           if(res.status === 409) {
             alert("중첩된 아이디가 있습니다.")
@@ -52,6 +53,7 @@
           else {
             alert("회원가입이 실패하였습니다.")
           }
+          throw Error("에러")
           return
         }
         return res.json()

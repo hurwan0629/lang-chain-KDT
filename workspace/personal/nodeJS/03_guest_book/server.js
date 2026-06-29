@@ -5,111 +5,100 @@ const fs = require("fs")
 const cookieParser = require("cookie-parser")
 
 const currTime = require("./utils/time")
-
-const { name } = require("ejs")
+const { selectAllUsers, addUser, getUserDataByCode, getUserDataByUserId } = require("./repository/users")
+const { selectAllDatas, addLog } = require("./repository/regist_log")
 
 const app = express()
+
+//////////// [ 서버 설정 ] ////////////
 
 app.set("view engine", "ejs")
 app.set("views", path.join(__dirname, "views"))
 app.use("/resources", express.static(path.join(__dirname, "resources")))
 
+//////////// [ 미들 웨어 - 요청 디코딩 ] ////////////
 
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cookieParser())
 
+//////////// [ 미들 웨어 - 로깅 ] ////////////
+
 morgan.token("kdt-time", (req, res) => {
   return currTime()
 })
 
-app.use(morgan("[:kdt-time] :method :url :status :response-time ms - :res[content-length]"))
+app.use(morgan("[:kdt-time] [morgan] :method :url :status :response-time ms - :res[content-length]", { immediate: true }))
+app.use(morgan("[:kdt-time] [morgan] :method :url :status :response-time ms - :res[content-length]"))
+
+//////////// [ 미들 웨어 - 회원 상태 확인 (로그인 쿠키) ] ////////////
+
+app.use("/", (req, res, next) => {
+  // 쿠키 있는지 확인
+  const cookieUserCode = req.cookies?.userCode
+
+  req.user = null
+
+  if(!!cookieUserCode) {
+    const user = getUserDataByCode(cookieUserCode)
+    if(!!user) {
+      req.user = user
+    }
+  }
+  next()
+})
 
 app.get("/favicon.ico", (req, res) => {
   res.sendFile(path.join(__dirname, "resources", "dog.png"))
 })
 
 app.get("/", (req, res) => {
-  // /datas 폴더 확인
-  if(!fs.existsSync(path.join(__dirname, "datas"))) {
-    fs.mkdirSync(path.join(__dirname, "datas"), { recursive: true })
-  }
+  const rows = selectAllDatas()
 
-  // /datas/registLog.csv 파일 만들기
-  if(!fs.existsSync(path.join(__dirname, "datas", "registLog.csv"))) {
-    fs.writeFileSync(path.join(__dirname, "datas", "registLog.csv"), "")
-  }
-  datas = fs.readFileSync(path.join(__dirname, "datas", "registLog.csv"), "utf-8")
-
-
-  let rows = []
-
-  if(datas.trim()) {
-    rows = datas.trim().split(/\r?\n/).map((line) => {
-      const data = line.split(",")
-      return {
-        logTime: data[0],
-        name: data[1],
-        content: data[2]
-      }
-    })
-    console.log(rows)
-  }
+  console.log("rows:", rows)
 
   res.render("index", {
-    rows
+    rows,
+    loggedIn: !!req.user,
+    userName: req.user?.userName
   })
 })
 
 app.get("/regist", (req, res) => {
-  const cookieUserCode = req.cookies?.userCode
-  console.log(typeof(cookieUserCode))
+
   // 로그인 가능성이 있으면
-  if(cookieUserCode) {
-    if(!fs.existsSync(path.join(__dirname, "datas", "users.json"))) {
-      fs.writeFileSync(path.join(__dirname, "datas", "users.json"), "[]")
-    }
-    // 중복하는 code가 존재하면 "/"로 리다이렉트 해주기
-    if(JSON.parse(fs.readFileSync(path.join(__dirname, "datas", "users.json"), "utf-8")).some(({ userCode }) => String(userCode) === cookieUserCode)) {
-      console.log("GET /regits 리다이렉트")
-      res.redirect("/")
-      return
-    }
+  if(!!req.user) {
+    res.redirect("/")
+    return
   }
   res.render("regist")
 })
 
 app.get("/login", (req, res) => {
-  console.log("로그인 페이지 요청")
-  const cookieUserCode = req.cookies?.userCode
-  console.log(req.cookies)
-  // userCode가 없으면 확실히 로그인 안한 상태
-  if(!cookieUserCode) {
-    // unauthorized
-    res.render("login")
-    return
-  }
-
-  // 사용자 이름 뽑기af
-  if(!fs.existsSync(path.join(__dirname, "datas", "users.json"))) {
-    fs.writeFileSync(path.join(__dirname, "datas", "users.json"), "[]")
-  }
-  
-  // 사용자 userCode 목록에 있는지 확인
-  let userData = JSON.parse(fs.readFileSync(path.join(__dirname, "datas", "users.json"), "utf-8")).find(({ userCode }) => String(userCode) === cookieUserCode)
-  
-  // 이미 로그인 되어있으면 해당 페이지 주지 않기
-  console.log("userData:", userData)
-  if(userData) {
-    console.log("이미 로그인 되어있는 회원")
+  // 로그인 되어있다면
+  if(!!req.user) {
     return res.redirect("/")
   }
   res.render("login")
 })
 
+app.get("/logout", (req, res) => {
+  if(!!req.user) {
+    res.cookie("userCode", {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 0
+    }).redirect("/")
+    return
+  }
+  res.redirect("/")
+
+})
+
 app.post("/login", (req, res) => {
   const { id, password } = req.body
-  console.log(id, password)
+  console.log("id:",id)
+  console.log("password:", password)
 
   // id/password 없으면 실해
   if(!id || !password) {
@@ -119,12 +108,8 @@ app.post("/login", (req, res) => {
     return
   }
 
-  // 사용자 id있으면 userData에 넣어주기
-  if(!fs.existsSync(path.join(__dirname, "datas", "users.json"))) {
-    fs.writeFileSync(path.join(__dirname, "datas", "users.json"), "[]")
-  }
-  let userData = JSON.parse(fs.readFileSync(path.join(__dirname, "datas", "users.json"), "utf-8")).find(({ userId }) => String(userId) === id)
-  console.log(userData)
+  const userData = getUserDataByUserId(id)
+  console.log("userData:", userData)
   
   // id가 존재하지 않으면
   if(!userData) {
@@ -135,15 +120,17 @@ app.post("/login", (req, res) => {
   }
 
   // id가 존재하면 password와 대조하기
-  if(userData.password !== password) {
-    res.status(401)
+  if(userData?.password !== password) {
+    res.status(401).json({
+      "message": "아이디 또는 비밀번호가 틀렸습니다."
+    })
     return
   }
 
   res.cookie("userCode", userData.userCode, {
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 30 * 1000 // 30초
+    maxAge: 1 * 60 * 1000 // 1분
   })
   res.status(200).json({
     "message": "로그인 성공"
@@ -151,9 +138,10 @@ app.post("/login", (req, res) => {
 })
 
 app.post("/regist", (req, res) => {
+  const { content } = req.body
+
   // 로그인 되어있는지 확인
-  const cookieUserCode = req.cookies?.userCode
-  if(!cookieUserCode) {
+  if(!req.user) {
     // unauthorized
     res.status(401).json({
       message: "글을 작성하려면 로그인 하세요"
@@ -161,66 +149,53 @@ app.post("/regist", (req, res) => {
     return
   }
 
-  // 사용자 이름 뽑기af
-  if(!fs.existsSync(path.join(__dirname, "datas", "users.json"))) {
-    fs.writeFileSync(path.join(__dirname, "datas", "users.json"), "[]")
+  const name = req.user.userName
+  if(addLog({ 
+    logTime: currTime(), 
+    name: name, 
+    content: content })) {
+    res.status(200).json({
+      message: "변경 성공"
+    })
+    return
   }
-  let userData = JSON.parse(fs.readFileSync(path.join(__dirname, "datas", "users.json"), "utf-8")).find(({ userCode }) => String(userCode) === cookieUserCode)
-  const name = userData.userName
-
-  // const name = req.body.name
-  const content = req.body.content
-  const now = currTime()
-  const contentToWrite = [now, name, content].join(",") + "\n"
-  console.log(contentToWrite)
-  fs.appendFileSync(path.join(__dirname, "datas", "registLog.csv"), contentToWrite, "utf-8")
-  res.status(200).json({
-    message: "변경 성공"
+  res.status(400).json({
+    message: "작성 실패"
   })
+
 })
 
+// 사용자 회원가입
 app.put("/user", (req, res) => {
-  console.log(req.cookies)
-  console.log(req.body)
   const { id, name, password } = req.body
   
   // 아이디 중첩은 409
-  if(!fs.existsSync(path.join(__dirname, "datas", "users.json"))) {
-    fs.writeFileSync(path.join(__dirname, "datas", "users.json"), "[]")
-  }
-  let userData = JSON.parse(fs.readFileSync(path.join(__dirname, "datas", "users.json"), "utf-8"))
-  
-  if(userData.some(({ userId }) => userId === id)) {
+  if(getUserDataByUserId(id)) {
     res.status(409).json({
       "message": "중복된 아이디"
     })
     return
   }
 
-  // 추가해주기
-  const userCode = userData.length === 0 
-                  ? 1
-                  : Math.max(...userData.map((user) => user.userCode))+1
-  userData.push({
-    userCode,
-    userId: id,
+  const userCode = addUser({
     userName: name,
-    password
+    userId: id,
+    password: password
   })
 
-  fs.writeFileSync(
-    path.join(__dirname, "datas", "users.json"),
-    JSON.stringify(userData, null, 2),
-    "utf-8"
-  )
-  
+  // 추가해주기
+  if (!!userCode) {
+    // 성공하면 ok
+    return res.status(201).json({
+      "message": "회원가입 성공",
+      userCode
+    })
+  }
 
-  // 성공하면 ok
-  return res.status(201).json({
-    "message": "회원가입 성공",
-    userCode
-  })
   // 실패하면 400
+  return res.status(400).json({
+    message: "회원 생성에 실패하였습니다."
+  })
 })
 
 app.listen(8090, () => {

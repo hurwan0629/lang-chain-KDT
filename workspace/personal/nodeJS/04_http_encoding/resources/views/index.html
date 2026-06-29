@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index</title>
+</head>
+<body>
+  <h1>안녕하세요!</h1>
+  <form id="urlencodedForm">
+    <input type="text" name="content" placeholder="보낼 내용을 입력하세요"> 
+    <button id="formButton" type="submit">보내보기</button>
+  </form>
+
+  <script>
+    document.getElementById("urlencodedForm").addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      const form = e.currentTarget
+      console.log("form:", e.currentTarget)
+
+      const formData = new FormData(form)
+      console.log("formData.data:", formData.data)
+
+      const body = new URLSearchParams(formData)
+      console.log("body:", body)
+
+      console.log("fetch 보내기")
+      fetch("/urlencoded", {
+        // headers: {
+        //   "Content-Type": "text/plain "
+        // },
+        method: "POST",
+        body
+      }).then(res => {
+        if(!res.ok) {
+          console.log(res.status)
+        }
+      }).then((data) => {
+        console.log("결과:", data)
+      }).catch((err) => {
+        console.log("err:", err)
+      })
+    })
+  </script>
+</body>
+</html>
