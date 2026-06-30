@@ -3,7 +3,7 @@ const fs = require("fs")
 const path = require("path")
 
 const app = express()
-const PORT = 3000
+const PORT = 8091
 
 app.set("view engine", "ejs")
 app.set("views", path.join(__dirname, "view"))
@@ -40,6 +40,15 @@ app.get("/posts", (req, res) => {
         }
         res.render("posts", {posts: data})
     })
+})
+
+// 경로 변수
+app.get("/user/:id", (req, res) => {
+  console.log(req.params)
+  const body = "<h1>" + JSON.stringify(req.params) + "</h1>"
+  console.log(body)
+  res.type("text/html")
+  res.send(body)
 })
 
 app.listen(PORT, () => {

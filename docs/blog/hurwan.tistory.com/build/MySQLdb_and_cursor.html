@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MySQLdb 라이브러리</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * {
+  box-sizing: border-box;
+}
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #fff 0%, #fbfffd 48%, #fff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.source-toggle {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+}
+
+.source-toggle summary {
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.source-box,
+.code-box {
+  overflow-x: auto;
+  margin: 14px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.source-box code,
+.code-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.toc-title {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post p code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+  font-weight: 500;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 26px 14px 60px;
+  }
+
+  .post-hero {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+
+  .toc-list {
+    grid-template-columns: 1fr;
+  }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">Database · Python · MySQL</p>
+        <h1 class="post-title">MySQLdb 라이브러리</h1>
+        <p class="post-subtitle">이번 수업에서는 MySQLdb라는 이름의 데이터베이스 접속 드라이버 라이브러리를 알게 되었다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># MySQLdb 라이브러리
+이번 수업에서는 `MySQLdb`라는 이름의 데이터베이스 접속 드라이버 라이브러리를 알게 되었다.
+
+기본적인 설치 방법은 타 라이브러리와 다르지 않게 `pip install mysqlclient`를 통해 받을 수 있었으며, 유사 라이브러리로는 `PyMySQL`이라는 개발자들이 주도적으로 제작한 비공식 커뮤니티 버전 MySQL 라이브러리가 있습니다. 하지만 `MySQLclient`가 C언어를 통해 작성되어 있기 때문에 속도 면에서는 이점이 있습니다. (운영체제에 따라 컴파일 설치가 필요할 수 있습니다.)
+
+기본적인 흐름은 `JDBC Driver`와 비슷하게 직접 데이터소스 지정 (url과 사용자, 비밀번호) 후 연결 및 해제, 커밋 등을 직접 수행하는 방식입니다.
+
+기본적인 사용 예시를 작성해보면
+```python
+import MySQLdb
+
+conn: Connection = MySQLdb.connect(
+  host="접속 서버 주소",
+  user="사용자명",
+  passwd="비밀번호",
+  db="스키마 명"
+  # , charset="utf8mb4"
+)
+
+# 인자를 통한 출력 형태를 dict로 변경 가능합니다.
+# cursor = conn.cursor(MySQLdb.cursors.DictCursor)
+cursor: BaseCursor = conn.cursor()
+
+# 탐색
+cursor.execute("SELECT * FROM member")
+
+row: tuple | None = cursor.fetchone()
+rows: tuple[tuple] = cursor.fetchall()
+
+# 삽입
+sql = """
+INSERT INTO member(userid, userpw, name, hp, email, ssn1, ssn2, gender)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+"""
+
+data = ("kim01","1234","김철수","010-1111-2222","kim01@example.com","990101","1234567","남")
+
+cursor.execute(sql, data)
+
+conn.commit()
+
+# 커넥션 닫아서 자원 소모 없애주기
+conn.close()
+```
+와 같이 사용할 수 있습니다.
+
+## cursor
+`cursor`은 데이터베이스에 SQL을 보내고 결과를 받아오는 객체입니다.
+
+기존 자바에서는 `Prepared statement` 작업물을 준비한 뒤, `executeQuery()` 등을 통해 `ResultSet`이라는 결과물을 받아오는 형식이 일반적이었다면, `cursor`은 상대적으로 더 간단하게 쿼리의 수행 요청을 할 수 있습니다.
+
+`cursor`가 `execute`를 하는 경우에는 즉시 결과를 반환하지 않으며, 이는 DB에 해당 쿼리를 실행해달라는 요청만 하는 상태가 됩니다. 이때 반환값은 결과 또는 변경된 행의 개수를 반환합니다.
+
+여기에서 반환값을 가져오기 위해서는 `fetchone()`, `fetchmany(N)`, `fetchall()` 메서드를 이용해 주어야 합니다.
+
+`cursor`은 이터레이터와 닮아 한 칸씩 이동하며 데이터를 가져오게 됩니다.
+
+구체적인 동작 순서를 알아보면, `cursor.execute(query)`를 하게 된다면, 해당 요청은 바로 `connection`을 통해 MySQL 서버에 전달되게 됩니다. 하지만 `commit()`을 하기 전에는 현재 `connection`(세션)에서만 보이게 되며, 다른 `connection`에서는 보이지 않을 수 있는 상태가 됩니다. 이것은 데이터베이스의 가시성과 격리 수준 설정에 따라 차이를 보이게 됩니다. 일반적으로 `READ COMMITTED` 또는 `REPEATABLE READ` 등을 사용합니다. 
+
+`SELECT`를 하는 경우에는 겉모습만 보면 `JPA`의 영속성 컨텍스트 또는 `LAZY LOADING`과 비슷하게 느껴질 수 있는데 `MySQLdb`는 위의 개념과 전혀 관계없이 `SELECT` 한 결과를 그대로 가지고 있으며 `fetch`를 한다고 `LAZY LOADING` 문제와 같이 `N+1` 문제를 고려하지 않아도 됩니다.
+
+&gt; MySQLdb는 SQL ORM이 아니기 때문에 대체로 일반 SQL을 사용하는 감각과 동일하게 사용이 가능합니다.</code></pre>
+    </details>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span><span>MySQLdb 라이브러리</span></a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span><span>cursor</span></a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">MySQLdb 라이브러리</h2>
+      <div class="post-card">
+        <p>이번 수업에서는 <code>MySQLdb</code>라는 이름의 데이터베이스 접속 드라이버 라이브러리를 알게 되었다.</p>
+        <p>기본적인 설치 방법은 타 라이브러리와 다르지 않게 <code>pip install mysqlclient</code>를 통해 받을 수 있었으며, 유사 라이브러리로는 <code>PyMySQL</code>이라는 개발자들이 주도적으로 제작한 비공식 커뮤니티 버전 MySQL 라이브러리가 있습니다. 하지만 <code>MySQLclient</code>가 C언어를 통해 작성되어 있기 때문에 속도 면에서는 이점이 있습니다. (운영체제에 따라 컴파일 설치가 필요할 수 있습니다.)</p>
+        <p>기본적인 흐름은 <code>JDBC Driver</code>와 비슷하게 직접 데이터소스 지정 (url과 사용자, 비밀번호) 후 연결 및 해제, 커밋 등을 직접 수행하는 방식입니다.</p>
+        <p>기본적인 사용 예시를 작성해보면</p>
+        <pre class="code-box"><code>import MySQLdb
+
+conn: Connection = MySQLdb.connect(
+  host="접속 서버 주소",
+  user="사용자명",
+  passwd="비밀번호",
+  db="스키마 명"
+  # , charset="utf8mb4"
+)
+
+# 인자를 통한 출력 형태를 dict로 변경 가능합니다.
+# cursor = conn.cursor(MySQLdb.cursors.DictCursor)
+cursor: BaseCursor = conn.cursor()
+
+# 탐색
+cursor.execute("SELECT * FROM member")
+
+row: tuple | None = cursor.fetchone()
+rows: tuple[tuple] = cursor.fetchall()
+
+# 삽입
+sql = """
+INSERT INTO member(userid, userpw, name, hp, email, ssn1, ssn2, gender)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+"""
+
+data = ("kim01","1234","김철수","010-1111-2222","kim01@example.com","990101","1234567","남")
+
+cursor.execute(sql, data)
+
+conn.commit()
+
+# 커넥션 닫아서 자원 소모 없애주기
+conn.close()</code></pre>
+        <p>와 같이 사용할 수 있습니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">cursor</h2>
+      <div class="post-card">
+        <p><code>cursor</code>은 데이터베이스에 SQL을 보내고 결과를 받아오는 객체입니다.</p>
+        <p>기존 자바에서는 <code>Prepared statement</code> 작업물을 준비한 뒤, <code>executeQuery()</code> 등을 통해 <code>ResultSet</code>이라는 결과물을 받아오는 형식이 일반적이었다면, <code>cursor</code>은 상대적으로 더 간단하게 쿼리의 수행 요청을 할 수 있습니다.</p>
+        <p><code>cursor</code>가 <code>execute</code>를 하는 경우에는 즉시 결과를 반환하지 않으며, 이는 DB에 해당 쿼리를 실행해달라는 요청만 하는 상태가 됩니다. 이때 반환값은 결과 또는 변경된 행의 개수를 반환합니다.</p>
+        <p>여기에서 반환값을 가져오기 위해서는 <code>fetchone()</code>, <code>fetchmany(N)</code>, <code>fetchall()</code> 메서드를 이용해 주어야 합니다.</p>
+        <p><code>cursor</code>은 이터레이터와 닮아 한 칸씩 이동하며 데이터를 가져오게 됩니다.</p>
+        <p>구체적인 동작 순서를 알아보면, <code>cursor.execute(query)</code>를 하게 된다면, 해당 요청은 바로 <code>connection</code>을 통해 MySQL 서버에 전달되게 됩니다. 하지만 <code>commit()</code>을 하기 전에는 현재 <code>connection</code>(세션)에서만 보이게 되며, 다른 <code>connection</code>에서는 보이지 않을 수 있는 상태가 됩니다. 이것은 데이터베이스의 가시성과 격리 수준 설정에 따라 차이를 보이게 됩니다. 일반적으로 <code>READ COMMITTED</code> 또는 <code>REPEATABLE READ</code> 등을 사용합니다.</p>
+        <p><code>SELECT</code>를 하는 경우에는 겉모습만 보면 <code>JPA</code>의 영속성 컨텍스트 또는 <code>LAZY LOADING</code>과 비슷하게 느껴질 수 있는데 <code>MySQLdb</code>는 위의 개념과 전혀 관계없이 <code>SELECT</code> 한 결과를 그대로 가지고 있으며 <code>fetch</code>를 한다고 <code>LAZY LOADING</code> 문제와 같이 <code>N+1</code> 문제를 고려하지 않아도 됩니다.</p>
+      </div>
+      <div class="post-note">MySQLdb는 SQL ORM이 아니기 때문에 대체로 일반 SQL을 사용하는 감각과 동일하게 사용이 가능합니다.</div>
+    </section>
+  </article>
+</body>
+</html>

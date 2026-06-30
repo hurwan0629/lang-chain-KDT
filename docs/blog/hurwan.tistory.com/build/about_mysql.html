@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MySQL 기본 개념 정리</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --line: #e5e7eb;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * {
+  box-sizing: border-box;
+}
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #fff 0%, #fbfffd 48%, #fff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.toc-title {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.toc-list a:hover {
+  border-color: rgba(25, 185, 124, 0.36);
+  background: rgba(240, 253, 247, 0.92);
+}
+
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-title {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.post-card ul {
+  margin: 12px 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.post-card li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-card li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.code-block {
+  overflow-x: auto;
+  margin: 14px 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.code-block code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+}
+
+.post-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 18px 0;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 26px 14px 60px;
+  }
+
+  .post-hero {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+
+  .toc-list {
+    grid-template-columns: 1fr;
+  }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">Database · MySQL 8.4</p>
+        <h1 class="post-title">MySQL 기본 개념 정리</h1>
+        <p class="post-subtitle">뷰, DDL, 사용자와 권한, 테이블 제약 조건, DML과 저장 엔진의 핵심 개념을 정리했습니다.</p>
+      </div>
+    </header>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-view"><span class="toc-index">01</span><span>뷰</span></a></li>
+        <li><a href="#section-ddl"><span class="toc-index">02</span><span>DDL과 데이터베이스</span></a></li>
+        <li><a href="#section-user"><span class="toc-index">03</span><span>사용자와 권한</span></a></li>
+        <li><a href="#section-table"><span class="toc-index">04</span><span>테이블과 제약 조건</span></a></li>
+        <li><a href="#section-alter-dml"><span class="toc-index">05</span><span>ALTER와 DML</span></a></li>
+        <li><a href="#section-engine"><span class="toc-index">06</span><span>저장 엔진</span></a></li>
+      </ol>
+    </nav>
+
+    <section id="section-view" class="post-section">
+      <h2 class="section-title">뷰</h2>
+      <div class="post-card">
+        <p>뷰(<code>VIEW</code>)는 <code>SELECT</code> 문의 결과를 테이블처럼 조회할 수 있게 만든 데이터베이스 객체입니다.</p>
+        <pre class="code-block"><code>CREATE VIEW member_view AS
+SELECT
+    member_pk AS pk,
+    member_id AS id,
+    member_hobby AS hobby
+FROM member;</code></pre>
+        <p>뷰는 일반적으로 조회 결과 자체를 별도로 저장하지 않고, 저장된 <code>SELECT</code> 문을 실행해 원본 테이블의 현재 데이터를 보여 줍니다. 따라서 원본 테이블의 <strong>데이터가 변경되면</strong> 뷰의 조회 결과에도 반영됩니다.</p>
+        <p>다만 원본 테이블에 새로운 컬럼을 추가한다고 해서 기존 뷰에 그 컬럼이 자동으로 추가되는 것은 아닙니다. 뷰가 참조하는 컬럼이나 테이블을 삭제하거나 이름을 변경하면 조회 오류가 발생할 수 있습니다.</p>
+        <ul>
+          <li>복잡한 쿼리를 단순한 인터페이스로 제공할 수 있습니다.</li>
+          <li>자주 사용하는 쿼리를 재사용할 수 있습니다.</li>
+          <li>필요한 컬럼만 노출하고 뷰에 별도의 권한을 부여하여 접근 범위를 제한할 수 있습니다.</li>
+        </ul>
+      </div>
+      <div class="post-note">컬럼 별칭(<code>alias</code>)은 이름을 바꾸어 보여 주는 기능일 뿐, 그 자체로 보안을 제공하지는 않습니다. 원본 테이블의 권한을 제한하고 뷰에 적절한 권한을 부여해야 합니다.</div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-ddl" class="post-section">
+      <h2 class="section-title">DDL과 데이터베이스</h2>
+      <div class="post-card">
+        <h3 class="card-title">DDL</h3>
+        <p>DDL(<code>Data Definition Language</code>)은 데이터베이스의 구조와 객체를 생성하거나 변경하고 삭제하는 명령어입니다. 대표적으로 <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>이 있습니다.</p>
+        <p>DDL은 테이블과 데이터베이스 구조에 큰 영향을 줄 수 있으므로, 운영 환경에서는 영향 범위와 잠금 발생 여부 등을 확인한 뒤 실행해야 합니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">CREATE DATABASE</h3>
+        <pre class="code-block"><code>CREATE DATABASE testdb
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_0900_ai_ci;</code></pre>
+        <p>문자 집합(<code>CHARACTER SET</code>)은 문자를 저장하는 인코딩 방식을 지정하고, 콜레이션(<code>COLLATE</code>)은 문자열을 비교하고 정렬하는 규칙을 지정합니다.</p>
+        <p><code>utf8mb4</code>는 문자 하나를 최대 4바이트로 표현할 수 있는 UTF-8 문자 집합입니다. MySQL의 <code>utf8</code>은 최대 3바이트만 사용하는 <code>utf8mb3</code>의 사용 중단 예정 별칭이므로 새로운 시스템에서는 <code>utf8mb4</code>를 사용하는 것이 좋습니다.</p>
+        <ul>
+          <li><code>utf8mb4</code>: 문자 집합</li>
+          <li><code>0900</code>: Unicode Collation Algorithm 9.0.0 기반</li>
+          <li><code>ai</code>: 악센트를 구분하지 않음</li>
+          <li><code>ci</code>: 대소문자를 구분하지 않음</li>
+        </ul>
+        <pre class="code-block"><code>SHOW VARIABLES LIKE 'character_set%';
+SHOW VARIABLES LIKE 'collation%';</code></pre>
+      </div>
+      <div class="post-note">MySQL 8.4의 기본 문자 집합과 콜레이션은 <code>utf8mb4</code>와 <code>utf8mb4_0900_ai_ci</code>입니다. Docker 사용 여부가 문자 집합을 결정하는 것은 아니며, 버전과 이미지, 서버 및 클라이언트 설정에 따라 실제 값이 달라질 수 있습니다.</div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-user" class="post-section">
+      <h2 class="section-title">사용자와 권한</h2>
+      <div class="post-card">
+        <h3 class="card-title">CREATE USER</h3>
+        <p>MySQL 계정은 사용자 이름과 접속 호스트의 조합인 <code>'사용자명'@'호스트'</code>로 식별합니다.</p>
+        <pre class="code-block"><code>CREATE USER 'app_user'@'localhost'
+IDENTIFIED BY 'strong_password';</code></pre>
+        <p><code>'app_user'@'localhost'</code>와 <code>'app_user'@'10.0.0.10'</code>은 서로 다른 계정입니다.</p>
+        <pre class="code-block"><code>CREATE USER 'app_user'@'192.168.%'
+IDENTIFIED BY 'strong_password';</code></pre>
+        <p>호스트 와일드카드는 <code>LIKE</code> 패턴처럼 일치하는 호스트를 허용하지만, MySQL 8.0.35부터 이 방식은 사용 중단 예정입니다. 최신 버전에서는 명시적인 호스트나 네트워크 범위 지정 방식을 검토하는 것이 좋습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">권한 부여와 회수</h3>
+        <pre class="code-block"><code>GRANT SELECT, INSERT, UPDATE
+ON testdb.member
+TO 'app_user'@'localhost';
+
+GRANT SELECT
+ON testdb.*
+TO 'app_user'@'localhost';</code></pre>
+        <p>데이터베이스의 모든 테이블은 <code>testdb.*</code>, 서버의 모든 데이터베이스에 대한 전역 권한은 <code>*.*</code>으로 표현합니다. <code>ALL PRIVILEGES</code>에는 <code>GRANT OPTION</code>이 포함되지 않습니다.</p>
+        <pre class="code-block"><code>REVOKE SELECT, INSERT, UPDATE
+ON testdb.member
+FROM 'app_user'@'localhost';
+
+DROP USER 'app_user'@'localhost';</code></pre>
+        <p>권한을 확인할 때는 시스템 테이블을 직접 수정하지 말고 <code>SHOW GRANTS</code>를 사용하는 것이 좋습니다.</p>
+        <pre class="code-block"><code>SHOW GRANTS FOR 'app_user'@'localhost';</code></pre>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">mysql 시스템 스키마</h3>
+        <p>MySQL은 계정과 권한 정보를 <code>mysql</code> 시스템 스키마에 저장합니다. <code>mysql.user</code>에는 일부 전역 권한 정보가 있지만, 데이터베이스 및 테이블 단위 권한, 역할, 동적 권한 등은 다른 시스템 테이블에도 저장됩니다.</p>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/ee9d64120cf67632d3c4c6a8dac02b0950606f54/docs/blog/hurwan.tistory.com/build/about_mysql-user-table.png" alt="mysql.user 테이블 조회 결과" loading="lazy">
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/ee9d64120cf67632d3c4c6a8dac02b0950606f54/docs/blog/hurwan.tistory.com/build/about_mysql-user-privileges.png" alt="MySQL 권한 관련 컬럼" loading="lazy">
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-table" class="post-section">
+      <h2 class="section-title">테이블과 제약 조건</h2>
+      <div class="post-card">
+        <h3 class="card-title">CREATE TABLE</h3>
+        <pre class="code-block"><code>CREATE TABLE member (
+    member_id BIGINT AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL,
+    nickname VARCHAR(50) NOT NULL,
+    balance DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (member_id),
+    UNIQUE KEY uk_member_email (email),
+    CHECK (balance &gt;= 0)
+);</code></pre>
+        <ul>
+          <li><code>INT</code>, <code>BIGINT</code>: 정수</li>
+          <li><code>DECIMAL(M, D)</code>: 정확한 고정 소수점 수</li>
+          <li><code>CHAR(N)</code>: 고정 길이 문자열</li>
+          <li><code>VARCHAR(N)</code>: 가변 길이 문자열</li>
+          <li><code>TEXT</code>: 큰 문자열</li>
+          <li><code>BLOB</code>: 큰 이진 데이터</li>
+          <li><code>DATE</code>, <code>DATETIME</code>: 날짜와 시간</li>
+          <li><code>JSON</code>: JSON 문서</li>
+        </ul>
+        <p><code>DECIMAL(M, D)</code>에서 <code>M</code>은 전체 자릿수이고 <code>D</code>는 소수점 이하 자릿수입니다. MySQL에는 PostgreSQL의 <code>JSONB</code> 타입이나 표준 SQL 계열의 <code>CLOB</code> 타입이 없습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">주요 제약 조건</h3>
+        <ul>
+          <li><code>PRIMARY KEY</code>: 각 행을 고유하게 식별</li>
+          <li><code>AUTO_INCREMENT</code>: 숫자 값을 자동 증가</li>
+          <li><code>NOT NULL</code>: <code>NULL</code> 저장 금지</li>
+          <li><code>UNIQUE</code>: 중복 값 제한</li>
+          <li><code>DEFAULT</code>: 값이 생략됐을 때 사용할 기본값</li>
+          <li><code>CHECK</code>: 저장할 값이 조건을 만족하는지 검사</li>
+          <li><code>FOREIGN KEY</code>: 관계와 참조 무결성을 정의</li>
+        </ul>
+        <p>MySQL 8.0.16 이상에서는 <code>CHECK</code> 제약 조건이 실제로 적용됩니다. 그보다 오래된 버전에서는 문법을 허용하더라도 조건을 검사하지 않을 수 있습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">외래 키</h3>
+        <pre class="code-block"><code>CREATE TABLE orders (
+    order_id BIGINT AUTO_INCREMENT,
+    member_id BIGINT NOT NULL,
+    PRIMARY KEY (order_id),
+    CONSTRAINT fk_orders_member
+        FOREIGN KEY (member_id)
+        REFERENCES member (member_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);</code></pre>
+        <p><code>CONSTRAINT fk_orders_member</code>는 제약 조건의 이름이고, <code>FOREIGN KEY (member_id)</code>는 현재 테이블에서 외래 키로 사용할 컬럼을 뜻합니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-alter-dml" class="post-section">
+      <h2 class="section-title">ALTER와 DML</h2>
+      <div class="post-card">
+        <h3 class="card-title">ALTER TABLE</h3>
+        <pre class="code-block"><code>ALTER TABLE member
+ADD COLUMN last_login_at DATETIME NULL;
+
+ALTER TABLE member
+MODIFY COLUMN nickname VARCHAR(100) NOT NULL;</code></pre>
+        <p>운영 중인 큰 테이블을 변경하면 긴 실행 시간, 잠금, 추가 저장 공간 사용 또는 애플리케이션 호환성 문제가 발생할 수 있습니다. 실행 전에 DDL 알고리즘과 잠금 수준, 롤백 및 배포 계획을 확인해야 합니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">DML</h3>
+        <p>DML(<code>Data Manipulation Language</code>)은 테이블의 데이터를 조회하거나 변경하는 명령어입니다.</p>
+        <ul>
+          <li><code>INSERT</code>: 행 추가</li>
+          <li><code>SELECT</code>: 데이터 조회</li>
+          <li><code>UPDATE</code>: 행 수정</li>
+          <li><code>DELETE</code>: 행 삭제</li>
+        </ul>
+        <p>서비스에 따라 데이터를 즉시 삭제하지 않고 <code>deleted_at</code>이나 삭제 여부 컬럼을 변경하는 논리적 삭제를 사용하기도 합니다. 데이터 보존 정책과 개인정보 삭제 요건 등을 고려해 선택해야 합니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section id="section-engine" class="post-section">
+      <h2 class="section-title">저장 엔진</h2>
+      <div class="post-card">
+        <p>MySQL은 플러그형 저장 엔진 구조를 사용합니다. MySQL 8.4에서 새 테이블의 기본 저장 엔진은 <code>InnoDB</code>이지만, MySQL이 내부적으로 오직 <code>InnoDB</code>만 사용하는 것은 아닙니다.</p>
+        <pre class="code-block"><code>SHOW ENGINES;</code></pre>
+        <p><code>InnoDB</code>는 트랜잭션, 행 수준 잠금, 외래 키 및 장애 복구 기능 등을 지원하는 범용 저장 엔진입니다. 특별한 요구 사항이 없다면 일반적인 애플리케이션 테이블에는 <code>InnoDB</code>를 사용하는 것이 권장됩니다.</p>
+      </div>
+    </section>
+  </article>
+</body>
+</html>
