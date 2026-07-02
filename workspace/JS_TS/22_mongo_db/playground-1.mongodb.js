@@ -35,3 +35,35 @@ db.students.find({})
     - 각 문서에 _id 필드를 기본적으로 생성하며, 특별히 지정하지 않으면 자동으로 ObjectId 형태로 생성
 */
 
+db.students.find({ name: "김사과" })
+// 점수가 80점 이상인 학생 조회
+use("AIdb")
+db.students.find({ score: { $gte: 60 }})
+
+use("AIdb")
+db.students.find({ age: { $gt: 20 }})
+
+use("AIdb")
+db.students.find({}, { name: 1, age: 1, _id: 0 })
+
+use("AIdb")
+db.students.find({}).sort({ score: 1 })
+
+// 개수 세기
+use("AIdb")
+db.students.countDocuments({ score: { $gte: 90 }})
+
+use("AIdb")
+db.students.updateOne(
+  { name: "김사과" },
+  { $set: { score: 95 }}
+)
+
+use("AIdb")
+db.students.updateMany(
+  { major: "AI" },
+  { $set: { major: "Artificial intelligence" }}
+)
+
+use("AIdb")
+db.students.find({})

@@ -36,9 +36,9 @@ from .config import ALADIN_URL, EXT_MAP
 # keywords = "안녕하세요"
 # pages = 20
 def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | None]:
-  print(" =============================== ")
-  print(" ======= 알라딘 크롤링 시작 ====== ")
-  print(" =============================== ")
+  print("================================")
+  print("[시작] 알라딘 크롤링")
+  print("================================")
 
   # # # # # # # # # # # # # # # # # # # # 설정 # # # # # # # # # # # # # # # # # # # # 
 
@@ -53,12 +53,12 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
 
   # # # # # # # # # # # # # # # # # # # 작업 시작 [페이지 순회 전 작업] # # # # # # # # # # # # # # # # # # # 
 
-  print("     검색 설정중...    ")
+  print("[준비] 알라딘 검색 설정 중...")
 
   # url 들어가기
   driver.get(ALADIN_URL)
 
-
+  print("[준비] 알라딘 검색 중...")
   # input 입력창 선택하기
   search_bar = wait.until(
     EC.element_to_be_clickable(
@@ -85,10 +85,11 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
   except NoSuchElementException as e:
     pass
   if not search_success:
-    print("교보 검색결과 없음")
+    print("[경고] 알라딘 검색 결과 없음")
     # input("교보 브레이커")
     return None
-
+  
+  print("[알람] 알라딘 탐색 시작")
   # # # # # # # # # # # # # # # # # # # 페이지 순회 시작 # # # # # # # # # # # # # # # # # # # 
   # 페이지개수만큼 돌아주기.
   # 도는 조건은 (다음 `(>)` 버튼이 존재하면 계속 가주기)
@@ -100,7 +101,7 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
 
     time.sleep(2)
     # 현재 크롤링 페이지 출력
-    print(f"\n --- 알라딘 {i+1}페이지 --- \n")
+    print(f"\n[페이지] 알라딘 | {i+1}페이지\n")
     # 페이지 전체 긁어주기 도서 정보들
     book_lists = wait.until(
       EC.presence_of_all_elements_located(
@@ -121,7 +122,7 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
       try:
         title = book.find_element(By.CSS_SELECTOR, ".ss_book_list a.bo3").text.strip()
       except NoSuchElementException as e:
-        print("제목 없음")
+        # print("제목 정보 없음")
         pass
       # print(title)
       
@@ -131,44 +132,42 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
       try:
         price = book.find_element(By.CSS_SELECTOR, ".ss_book_list span.ss_p2 em").text.strip().replace(",", "").replace(" ", "").replace("원", "")
       except NoSuchElementException as e:
-        print("가격 없음")
+        # print("가격 정보 없음")
         pass
       # print(price)
       
       # 저자 출판사 출판일
       # li 1번에 span.ss_ht1 가 있으면 3번쨰로, 없으면 2번째로
-      auth_str = ""
-      try:
-        book.find_element(By.CSS_SELECTOR, ".ss_book_list > ul > li > span.ss_ht1")
-        auth_str = book.find_element(By.CSS_SELECTOR, ".ss_book_list > ul > li:nth-child(3)").text.strip()
-      except NoSuchElementException as e:
-        try:
-          auth_str = book.find_element(By.CSS_SELECTOR, ".ss_book_list > ul > li:nth-child(2)").text.strip()
-        except NoSuchElementException as e:
-          print("저자 출판사 출판일 정보 없음")
-      # print(auth_str)
+            # 저자·출판사·출판일 후보를 2번째, 3번째 li에서 모두 확인
       pattern = r"^\s*(?P<author>.*?)\s*\|\s*(?P<publisher>.*?)\s*\|\s*(?P<pub_date>\d{4}년\s*\d{1,2}월)\s*$"
-
-      match = re.search(pattern, auth_str)
-
+      auth_candidates = []
+      for selector in (
+        ".ss_book_list > ul > li:nth-child(2)",
+        ".ss_book_list > ul > li:nth-child(3)",
+      ):
+        elements = book.find_elements(By.CSS_SELECTOR, selector)
+        if elements:
+          auth_candidates.append(elements[0].text.strip())
+      # 정규식에 맞는 첫 번째 후보 선택
+      auth_str = next(
+        (
+          candidate
+          for candidate in auth_candidates
+          if re.fullmatch(pattern, candidate)
+        ),
+        "",
+      )
+      match = re.fullmatch(pattern, auth_str)
       author = ""
       publisher = ""
       pub_date = ""
       if match:
-          author = match.group("author")
-          publisher = match.group("publisher")
-          pub_date = match.group("pub_date")
-
-          # 저자 뒤의 역할 문구 제거: (지은이), (옮긴이), (감수), (엮은이) 등
-          # author = re.sub(r"\s*\((지은이|옮긴이|감수|엮은이)\)", "", author).strip()
-
-          # print(author)
-          # print(publisher)
-          # print(pub_date)
+        author = match.group("author")
+        publisher = match.group("publisher")
+        pub_date = match.group("pub_date")
       else:
-          author = ""
-          publisher = ""
-          pub_date = ""
+        # print("저자·출판사·출판일 정보 없음")
+        pass
 
 
       # 이미지 뽑기 테스트
@@ -190,14 +189,14 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
         try:
           img = book.find_element(By.CSS_SELECTOR, ".cover_area img.front_cover")
           image_link = img.get_attribute("data-original") or img.get_attribute("src")
-          print(image_link)
+          # print(image_link)
         except Exception as e:
           try:
             img = book.find_element(By.CSS_SELECTOR, ".cover_area_other > a > img:first-of-type")
             image_link = img.get_attribute("data-original") or img.get_attribute("src")
-            print(image_link)
+            # print(image_link)
           except Exception as e:
-            print("이미지 없음")
+            print("[이미지] 없음")
         # print(image_link)
         # 이미지 저장
 
@@ -216,11 +215,11 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
             book_num+=1
             with open(image_link, "wb") as f:
               f.write(res.content)
-            print(f"[이미지 저장] [{title}] 저장 완료!")
+            print(f"[이미지] 저장 완료 | {title}")
           else:
-            print(f"[이미지 저장] [{title}] 이미지 없음!")
+            print(f"[이미지] 없음 | {title}")
       except NoSuchElementException as e:
-        print("이미지 없음")
+        print("[이미지] 없음")
       
       # 데이터 book_datas 에 append 해주기
       book_datas.append({
@@ -231,7 +230,7 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
         "pub_date": pub_date,
         "image_link": str(image_link),
       })
-      print(f"{len(book_datas)}번째 데이터 추가 완료: {title}\n")
+      print(f"[완료] {len(book_datas)}번째 도서 | {title}\n")
     
     # # # # # # # # # # # # # # # # # # # 한페이지 순회 종료 # # # # # # # # # # # # # # # # # # # 
     # 다음 페이지 있으면 다음 페이지 가주기
@@ -258,10 +257,10 @@ def aladin_crawl(keywords: str, pages: int, ALADIN_IMG_DIR) -> Optional[list | N
     
     # input("알라딘 브레이커")
     if pgn_btn_to_click is None:
-      print("\n --- 예스 24 크롤링 종료 (페이지 끝) --- \n")
+      print("\n[종료] 알라딘 크롤링 | 마지막 페이지 도달\n")
       return book_datas
     else:
       pgn_btn_to_click.click()
-
+  print("\n[종료] 알라딘 크롤링\n")
   return book_datas
     

@@ -25,9 +25,9 @@ from .config import KYOBO_URL, EXT_MAP
 
 
 def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | None]:
-  print(" =============================== ")
-  print(" ======= 교보 크롤링 시작 ====== ")
-  print(" =============================== ")
+  print("================================")
+  print("[시작] 교보 크롤링")
+  print("================================")
 
   # # # # # # # # # # # # # # # # # # # # 설정 # # # # # # # # # # # # # # # # # # # # 
 
@@ -44,10 +44,11 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
 
   # # # # # # # # # # # # # # # # # # # 작업 시작 [페이지 순회 전 작업] # # # # # # # # # # # # # # # # # # # 
 
-  print("     검색 설정중...    ")
+  print("[준비] 교보 검색 설정 중...")
 
   # url 들어가기
   driver.get(KYOBO_URL)
+  print("[준비] 교보 검색 중...")
   # input 입력창 선택하기
   search_bar = wait.until(
     EC.element_to_be_clickable(
@@ -79,10 +80,11 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
   except NoSuchElementException as e:
     pass
   if not search_success:
-    print("교보 검색결과 없음")
+    print("[경고] 교보 검색 결과 없음")
     # input("교보 브레이커")
     return None
 
+  print("[알람] 교보 탐색 시작")
   # # # # # # # # # # # # # # # # # # # 페이지 순회 시작 # # # # # # # # # # # # # # # # # # # 
   # 페이지개수만큼 돌아주기.
   # 도는 조건은 (다음 `(>)` 버튼이 존재하면 계속 가주기)
@@ -99,7 +101,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
 
     time.sleep(2)
     # 현재 크롤링 페이지 출력
-    print(f"\n --- 교보24 {i+1}페이지 --- \n")
+    print(f"\n[페이지] 교보 | {i+1}페이지\n")
     # 페이지 전체 긁어주기 도서 정보들
     book_lists = wait.until(
       EC.presence_of_all_elements_located(
@@ -124,7 +126,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
       try:
         title = book.find_element(By.CSS_SELECTOR, ".prod_name_group a.prod_info span[id^='cmdtName_']").text.strip()
       except NoSuchElementException as e:
-        print("제목 없음")
+        # print("제목 정보 없음")
         pass
       # print(title)
       
@@ -134,7 +136,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
         author = book.find_element(By.CSS_SELECTOR, ".prod_author_info a.author").text.strip()
       except NoSuchElementException as e:
         pass
-        print("제목 없음")
+        # print("저자 정보 없음")
       # print(author)
       
       # 가격
@@ -145,9 +147,9 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
         try:
           price = book.find_element(By.CSS_SELECTOR, ".prod_coupon_info .price .val").text.strip().replace(",", "")
         except NoSuchElementException as e:
-          print(book.get_attribute("innerHTML"))
-          print("가격 없음")
-        pass
+          # print(book.get_attribute("innerHTML"))
+          # print("가격 정보 없음")
+          pass
       # print(price)
       
       # 출판사
@@ -156,7 +158,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
       try:
         publisher = book.find_element(By.CSS_SELECTOR, ".prod_publish a.text").text.strip()
       except NoSuchElementException as e:
-        print("작가 없음 없음")
+        # print("출판사 정보 없음")
         pass
       # print(publisher)
       
@@ -165,7 +167,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
       try:
         pub_date = book.find_element(By.CSS_SELECTOR, ".prod_publish .date").text.strip()
       except NoSuchElementException as e:
-        print("출판일 없음")
+        # print("출판일 정보 없음")
         pass
       # print(pub_date)
       
@@ -188,18 +190,18 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
           # print(f"응답 확장자: {ext}")
 
           # 응답이 잘 오면 이미지 저장해주기
-          if res.ok and ext is not None:
+          if res.ok and ext is not None:    
             ext = EXT_MAP.get(ext, ".jpg")
             image_link = KYOBO_IMG_DIR / (str(uuid.uuid4()) + ext)
             # image_link = KYOBO_IMG_DIR / (str(book_num) + ext)
             book_num+=1
             with open(image_link, "wb") as f:
               f.write(res.content)
-            print(f"[이미지 저장] [{title}] 저장 완료!")
+            print(f"[이미지] 저장 완료 | {title}")
           else:
-            print(f"[이미지 저장] [{title}] 이미지 없음!")
+            print(f"[이미지] 없음 | {title}")
       except NoSuchElementException as e:
-        print("이미지 없음")
+        print("[이미지] 없음")
       
       # 데이터 book_datas 에 append 해주기
       book_datas.append({
@@ -210,7 +212,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
         "pub_date": pub_date,
         "image_link": str(image_link),
       })
-      print(f"{len(book_datas)}번째 데이터 추가 완료: {title}\n")
+      print(f"[완료] {len(book_datas)}번째 도서 | {title}\n")
     
     # 
       
@@ -240,7 +242,7 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
     )
     print()
 
-    print("[이전]  ", end="")
+    print("[페이지 이동] 교보 | [이전]  ", end="")
     for p in pages_nums:
       if 'active' in str(p.get_attribute("class")).split(" "):
         print(f"<{p.text}>  ", end="")
@@ -249,13 +251,13 @@ def kyobo_crawl(keywords: str, pages: int, KYOBO_IMG_DIR) -> Optional[list | Non
     print("[다음]")
 
     if pages_next.get_attribute("disabled") == "true":
-      print("\n --- 교보 크롤링 종료 (페이지 끝 도달) --- \n")
+      print("\n[종료] 교보 크롤링 | 마지막 페이지 도달\n")
       return book_datas
     else:
-      print("버튼 눌러보기")
+      print("[페이지 이동] 교보 | 다음 페이지")
       driver.execute_script("arguments[0].click();", pages_next)
       # actions.move_to_element(pages_next).click().perform()
       # pages_next.click()
     # print(f"[이전]  " + "  ".join([f"[{p_num.text if "active" in str(p_num.get_attribute("class")).split(" ") else ("{" + p_num.text + "}")}]" for p_num in pages_nums]) + f"  [다음]")\
-  print("\n --- 교보 크롤링 종료 --- \n")
+  print("\n[종료] 교보 크롤링\n")
   return book_datas

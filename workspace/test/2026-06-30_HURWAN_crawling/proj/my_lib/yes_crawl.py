@@ -36,9 +36,9 @@ from .config import YES_URL, EXT_MAP
 # keywords = "안녕하세요"
 # pages = 20
 def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
-  print(" =============================== ")
-  print(" ======= 예스24 크롤링 시작 ====== ")
-  print(" =============================== ")
+  print("================================")
+  print("[시작] YES24 크롤링")
+  print("================================")
 
   # # # # # # # # # # # # # # # # # # # # 설정 # # # # # # # # # # # # # # # # # # # # 
 
@@ -53,10 +53,11 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
 
   # # # # # # # # # # # # # # # # # # # 작업 시작 [페이지 순회 전 작업] # # # # # # # # # # # # # # # # # # # 
 
-  print("     검색 설정중...    ")
+  print("[준비] YES24 검색 설정 중...")
 
   # url 들어가기
   driver.get(YES_URL)
+  print("[준비] YES24 검색 중...")
 
   # input 입력창 선택하기
   search_bar = wait.until(
@@ -80,12 +81,13 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
   except NoSuchElementException as e:
     pass
   if not search_success:
-    print("예스24 검색결과 없음")
+    print("[경고] YES24 검색 결과 없음")
     # input("예스24 스톱")
     return None
 
 
   # 도서 정보만 뽑기 위해 "국내도서" 버튼 찾아서 눌러주기
+  print("[준비] YES24 국내도서 선택 중...")
   wait.until(
     EC.element_to_be_clickable(
       (By.XPATH, "//a[.//span[contains(text(), '국내도서')]]")
@@ -93,6 +95,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
   ).click()
 
   # 도서명,저자/역자,출판사 조건 걸고 AI 활용 끄기
+  print("[준비] YES24 검색조건 도서명 선택 중...")
   try:
     wait.until(
       EC.element_to_be_clickable(
@@ -105,6 +108,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
 
   time.sleep(3)
 
+  print("[준비] YES24 검색조건 저자/역자 선택 중...")
   try:
     wait.until(
       EC.element_to_be_clickable(
@@ -116,6 +120,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
     pass
   time.sleep(3)
 
+  print("[준비] YES24 검색조건 출판사 선택 중...")
   try:
     wait.until(
       EC.element_to_be_clickable(
@@ -128,6 +133,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
 
   time.sleep(3)
 
+  print("[준비] YES24 AI 활용 콘텐츠 제외 중...")
   try:
     wait.until(
       EC.element_to_be_clickable(
@@ -138,7 +144,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
     # 치명적인 에러가 아니기 때문에 계속 진행
     pass
 
-
+  print("[알람] YES24 탐색 시작")
   # # # # # # # # # # # # # # # # # # # 페이지 순회 시작 # # # # # # # # # # # # # # # # # # # 
   # 페이지개수만큼 돌아주기.
   # 도는 조건은 (다음 `(>)` 버튼이 존재하면 계속 가주기)
@@ -151,7 +157,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
 
     time.sleep(2)
     # 현재 크롤링 페이지 출력
-    print(f"\n --- 예스24 {i+1}페이지 --- \n")
+    print(f"\n[페이지] YES24 | {i+1}페이지\n")
     # 페이지 전체 긁어주기 도서 정보들
     book_lists = wait.until(
       EC.presence_of_all_elements_located(
@@ -236,11 +242,11 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
             book_num+=1
             with open(image_link, "wb") as f:
               f.write(res.content)
-            print(f"[이미지 저장] [{title}] 저장 완료!")
+            print(f"[이미지] 저장 완료 | {title}")
           else:
-            print(f"[이미지 저장] [{title}] 이미지 없음!")
+            print(f"[이미지] 없음 | {title}")
       except NoSuchElementException as e:
-        print("이미지 없음")
+        print("[이미지] 없음")
       
       # 데이터 book_datas 에 append 해주기
       book_datas.append({
@@ -251,7 +257,7 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
         "pub_date": pub_date,
         "image_link": str(image_link),
       })
-      print(f"{len(book_datas)}번째 데이터 추가 완료: {title}\n")
+      print(f"[완료] {len(book_datas)}번째 도서 | {title}\n")
   
     # 
       
@@ -280,14 +286,14 @@ def yes_crawl(keywords: str, pages: int, YES_IMG_DIR) -> Optional[list | None]:
         pgn_status += p.text + "[활성화]  "
     
     print()
-    print(f"현재 상태: {pgn_status}")
+    print(f"[페이지 이동] YES24 | 현재 상태: {pgn_status}")
     if pgn_btn_to_click is not None:
-      print(pgn_btn_to_click.text + " 클릭")
+      print(pgn_btn_to_click.text + "페이지로 이동")
       time.sleep(1)
       pgn_btn_to_click.click()
     else:
-      print("\n --- 예스 24 크롤링 종료 --- \n")
+      print("\n[종료] YES24 크롤링\n")
       return book_datas
     
-  print("\n --- 예스 24 크롤링 종료 --- \n")
+  print("\n[종료] YES24 크롤링\n")
   return book_datas

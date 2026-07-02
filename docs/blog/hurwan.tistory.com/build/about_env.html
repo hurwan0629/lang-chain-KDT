@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>환경변수에 대해서</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --muted: #64748b;
+  --line: #e5e7eb;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+
+.tech-post * { box-sizing: border-box; }
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.13);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(120, 255, 196, 0.24), transparent 28%),
+    radial-gradient(circle at 84% 15%, rgba(186, 156, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(130, 210, 255, 0.13), transparent 36%),
+    #fff;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+}
+
+.source-toggle {
+  margin-top: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.source-toggle summary {
+  padding: 13px 16px;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.source-box {
+  overflow-x: auto;
+  margin: 0;
+  padding: 0 16px 16px;
+  white-space: pre-wrap;
+  color: #475569;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.post-toc {
+  margin: 28px 0 0;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #f8fafc;
+}
+
+.toc-title { color: #111827; }
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list a {
+  color: #334155;
+  text-decoration: none;
+}
+
+.toc-index {
+  margin-right: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.post-section { margin-top: 46px; }
+.section-title {
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 25px;
+  letter-spacing: -0.025em;
+}
+
+.post-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+}
+
+.post-card p { margin: 0; }
+.post-card p + p { margin-top: 16px; }
+
+.post-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.image-caption {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.post-note {
+  margin-top: 18px;
+  padding: 15px 17px;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(25, 185, 124, 0.06);
+  color: #334155;
+}
+
+code {
+  padding: 0.12em 0.38em;
+  border-radius: 5px;
+  background: #f1f5f9;
+  color: #0f766e;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.9em;
+}
+
+.post-divider {
+  margin: 46px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .tech-post { padding: 24px 14px 56px; }
+  .post-hero { padding: 30px 22px; border-radius: 22px; }
+  .post-title { font-size: 28px; }
+  .toc-list { grid-template-columns: 1fr; }
+  .post-section { margin-top: 38px; }
+  .section-title { font-size: 22px; }
+  .post-card { padding: 20px; }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <p class="post-kicker">SYSTEM · ENVIRONMENT</p>
+      <h1 class="post-title">환경변수에 대해서</h1>
+      <p class="post-subtitle">프로세스가 환경변수를 사용하는 방식부터 <code>.env</code> 파일과 PowerShell에서의 확인 방법까지 정리합니다.</p>
+    </header>
+
+    <details class="source-toggle">
+      <summary>디자인 적용 전 원문</summary>
+      <pre class="source-box"><code># 환경변수에 대해서
+환경변수는 기본적으로 프로세스가 돌아갈 때 할당되는 메모리 안에 환경변수 블록을 생성하여 필요할 때마다 해당 변수를 읽는 방식을 사용합니다.
+
+또한 윈도우에 존재하는 환경변수의 경우에는 모든 프로세스가 실행 될때마다 해당 데이터들을 복사하여 실행하게 됩니다.
+
+![윈도우 환경변수](image.png)
+
+이 때문에 자바를 깔았을 때 프로세스가 `%JAVA_HOME%`를 사용할 수 있게 이곳에 등록하는 이유가 됩니다. 항상 동일하게 접근하기 위해. 파이썬과 여러 프로그램의 경우에도 동일한 경우가 많습니다.
+
+## `.env`
+일반적으로 프로그램(프로세스)를 실행할 때 환경 변수가 필요한 경우에는 `*.env*` 형태의 파일을 사용합니다. 여기에서 해당 파일은 존재 자체로는 특별한 역할을 하지 못하며 그냥 데이터가 새겨진 파일일 뿐이 됩니다.
+
+대표적으로 js의 `dotenv` 라이브러리가 존재합니다.
+
+보통 `dotenv`의 `default export`인 `dotenv` 객체의 `.config()` 메서드를 작성하게 된다면 `dotenv`가 현재(루트 아님) 폴더의 `.env` 파일을 읽은 뒤 `process.env`에 변수를 넣어주게 됩니다. 예를 들어 `SECRET=12345`였다면 `process.env.SECRET`를 통해 접근이 가능하게 되며 해당 값이 존재하지 않으면 `undefined`, `.env` 이외의 파일은 `.config({ path: '.env.local'})`과 같은 다른 파일의 경로를 직접 지정이 가능하게 됩니다.
+
+자바의 경우에는 보통 `System.getenc()` 또는 `System.getProperty()`(환경변수와 JVM 시스템 속성)이 존재하며 스프링을 사용할 경우에는 `Spring Enviroment`라는 객체를 통해 관리하게 됩니다.
+
+## Powershell
+종종 `Powershell`에서 특정 프로그램, 예를 들면 `python main.py`를 실행했을 때 실행되지 않는 경우가 있는데 이는 대체로 `python.exe`의 경로가 지정되지 않은 것이며 `$env:python`을 통해 확인 가능합니다. 임시로 설정하려면 `$env:python = [경로]`와 같이 설정도 가능합니다.</code></pre>
+    </details>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#environment"><span class="toc-index">01</span>환경변수의 동작</a></li>
+        <li><a href="#dotenv"><span class="toc-index">02</span>.env 파일</a></li>
+        <li><a href="#powershell"><span class="toc-index">03</span>PowerShell</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="environment">
+      <h2 class="section-title">환경변수의 동작</h2>
+      <div class="post-card">
+        <p>환경변수는 프로세스가 실행될 때 할당되는 메모리 안에 환경변수 블록을 만들고, 필요할 때 해당 값을 읽는 방식으로 사용됩니다.</p>
+        <p>Windows에서는 새 프로세스가 시작될 때 부모 프로세스의 환경변수 블록을 복사해 전달합니다. 시스템이나 사용자 환경변수를 변경하더라도 이미 실행 중인 프로세스에는 곧바로 반영되지 않는 이유입니다.</p>
+        <img class="post-image" src="https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/37087a68317b65d069015e6684637a91bd0657da/workspace/personal/dummy/image.png" alt="Windows 환경변수 설정 화면">
+        <p class="image-caption">Windows 환경변수 설정</p>
+        <p>Java 설치 후 <code>JAVA_HOME</code>을 환경변수로 등록하는 것도 여러 프로세스가 Java 설치 경로를 일관된 이름으로 참조할 수 있게 하기 위해서입니다. Python을 비롯한 여러 프로그램도 같은 방식을 사용합니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="dotenv">
+      <h2 class="section-title"><code>.env</code> 파일</h2>
+      <div class="post-card">
+        <p>프로그램을 실행할 때 환경변수가 필요하면 흔히 <code>.env</code> 형식의 파일에 값을 기록합니다. 파일 자체에 특별한 기능이 있는 것은 아니며, 프로그램이나 라이브러리가 파일을 읽어 환경변수로 로드해야 합니다.</p>
+        <p>JavaScript에서는 대표적으로 <code>dotenv</code> 라이브러리를 사용합니다. <code>dotenv.config()</code>를 호출하면 기본적으로 현재 작업 디렉터리의 <code>.env</code> 파일을 읽어 <code>process.env</code>에 값을 추가합니다.</p>
+        <p>예를 들어 파일에 <code>SECRET=12345</code>가 있다면 <code>process.env.SECRET</code>으로 접근할 수 있습니다. 값이 없으면 <code>undefined</code>가 반환되며, 다른 파일을 사용하려면 <code>dotenv.config({ path: ".env.local" })</code>처럼 경로를 지정할 수 있습니다.</p>
+        <p>Java에서는 환경변수를 <code>System.getenv()</code>로, JVM 시스템 속성을 <code>System.getProperty()</code>로 읽습니다. Spring에서는 <code>Environment</code> 객체를 통해 이 값들을 통합해서 다룰 수 있습니다.</p>
+        <div class="post-note"><code>.env</code>에는 비밀번호나 API 키가 들어갈 수 있으므로 일반적으로 버전 관리 대상에서 제외합니다.</div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="powershell">
+      <h2 class="section-title">PowerShell에서 확인하기</h2>
+      <div class="post-card">
+        <p>PowerShell에서 <code>python main.py</code>가 실행되지 않는다면 대개 <code>python.exe</code>가 있는 디렉터리가 <code>Path</code> 환경변수에 포함되어 있지 않기 때문입니다.</p>
+        <p>현재 세션의 경로 목록은 <code>$env:Path</code>로 확인합니다. 임시로 경로를 추가하려면 <code>$env:Path = "C:\Python312;$env:Path"</code>처럼 설정할 수 있으며, 이 변경은 현재 PowerShell 프로세스와 그 자식 프로세스에만 적용됩니다.</p>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>데이터베이스 물리 JOIN의 종류</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --line: #e5e7eb;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * { box-sizing: border-box; }
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #fff 0%, #fbfffd 48%, #fff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner { position: relative; z-index: 1; }
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.source-toggle {
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.source-toggle summary {
+  padding: 14px 18px;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.source-box {
+  overflow-x: auto;
+  margin: 0;
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.toc-title {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #e8eee9;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.toc-list a:hover {
+  border-color: rgba(25, 185, 124, 0.5);
+  transform: translateY(-1px);
+}
+
+.toc-index {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(25, 185, 124, 0.1);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.post-intro {
+  margin: 26px 0 0;
+  padding: 0 4px;
+}
+
+.post-intro p,
+.post-card p,
+.post-section > p {
+  margin: 0;
+  color: #334155;
+  font-weight: 500;
+}
+
+.post-intro p + p,
+.post-card p + p { margin-top: 14px; }
+
+.join-list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.join-list li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 20px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.join-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.post-section {
+  margin-top: 46px;
+  scroll-margin-top: 24px;
+}
+
+.section-title {
+  position: relative;
+  margin: 0 0 18px;
+  padding-left: 18px;
+  color: #111827;
+  font-size: 25px;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.section-title::before {
+  content: "";
+  position: absolute;
+  top: 0.18em;
+  bottom: 0.18em;
+  left: 0;
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #37d899, var(--accent-dark));
+}
+
+.post-card {
+  border: 1px solid #e7ece9;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.045);
+}
+
+.post-card.stack { padding: 24px; }
+
+.post-note {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.18);
+  border-left: 4px solid var(--accent);
+  border-radius: 14px;
+  background: rgba(25, 185, 124, 0.055);
+  color: #28594a;
+  font-weight: 600;
+}
+
+.code-box {
+  overflow-x: auto;
+  margin: 18px 0 0;
+  padding: 20px;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.code-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.tech-post :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #0f766e;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.9em;
+  font-weight: 650;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 44px 0 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, #dfe9e4 15%, #dfe9e4 85%, transparent);
+}
+
+@media (max-width: 640px) {
+  .tech-post { padding: 24px 14px 56px; }
+  .post-hero { padding: 30px 22px; border-radius: 22px; }
+  .post-title { font-size: 28px; }
+  .toc-list { grid-template-columns: 1fr; }
+  .post-section { margin-top: 38px; }
+  .section-title { font-size: 22px; }
+  .post-card.stack { padding: 20px; }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">DATABASE · JOIN</p>
+        <h1 class="post-title">데이터베이스 물리 JOIN의 종류</h1>
+        <p class="post-subtitle">데이터베이스에는 <code>INNER</code>, <code>OUTER</code>, <code>CROSS</code> 외에도 물리적인, 실제로 조건에 맞는 행을 어떤 방식으로 고를지에 대한 실행 계획의 <code>JOIN</code>이 존재합니다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># 데이터베이스 물리 JOIN의 종류
+데이터베이스에는 `INNER`, `OUTER`, `CROSS` 외에도 물리적인, 실제로 조건에 맞는 행을 어떤 방식으로 고를지에 대한 실행 계획의 `JOIN`이 존재합니다.
+
+먼저 나열하고 시작하면 이번 글에서는 아래의 개념에 대해 다룹니다.
+- `NESTED LOOP JOIN`
+- `INDEX NESTED LOOP JOIN`
+- `BLOCK NESTED LOOP JOIN`
+- `HASH JOIN`
+- `SORT MERGE JOIN`
+
+## NESTED LOOP JOIN
+가장 단순한 방식으로 만약 `A_TABLE.id` 와 `B_TABLE.a_id`를 통해 `JOIN`을 실행할 시, 인덱스 없이 `A_TABLE`의 모든 행의 개수에 `B_TABLE`의 모든 행의 개수를 곱한만큼 루프를 돌리는 방식입니다. 각각 1,000개의 행이 존재한다 하면 총 1,000,000번 순회한다고 볼 수 있습니다.
+
+작은 테이블과 큰 테이블을 조인할 때는 나쁘지 않을 수 있지만 규모가 커질수록 성능이 좋아질 수 없는 방식입니다.
+
+## INDEX NESTED LOOP JOIN
+`FROM A JOIN B ON a.id = b.a_id`를 할 때 안쪽 테이블을 보통 `b`라고 가정합니다. 여기에서 바깥쪽 테이블(`A`)를 모두 순회하며 안쪽 테이블(`B`)에서 인덱스를 통해 바깥쪽 테이블과 맞는 행을 빠르게 찾는 방식입니다. 의사 코드로 표현하면 다음과 같습니다.
+```python 
+result = []
+for a_id in A:
+  result += B[B["a_id"].joinable_with(a_id)]
+```
+
+&gt; 보통 실무에서 흔하게 사용되며 PK, FK, WHERE, JOIN 조건에 인덱스가 있으면 자주 쓰이게 됩니다.
+
+## BLOCKED NESTED LOOP JOIN
+위에서 `NESTED LOOP`는 모두 순회하였을 때 안쪽 테이블을 굉장히 많이 순회하기 때문에 (N중 반복문 순회 수만큼) 바깥 테이블의 여러 행을 메모리 버퍼에 담아서 안쪽 테이블과 비교할 수 있습니다. 이를 통해서 안쪽 테이블의 탐색 횟수를 버퍼의 크기와 비례하게 줄일 수 있습니다.
+
+## HASH JOIN
+JOIN 조건 컬럼을 기준으로 해시 테이블을 만들어서 찾는 방식입니다.
+
+예를 들어서 `FROM A JOIN B ON A.id = B.a_id`에서 `A`가 더 작은 테이블이라 판단할 시 `A` 테이블을 `{ A.id: A.find_by_id[id] }`와 같이 키와 행을 한쌍으로 갖는 해시테이블을 생성합니다. 이후 `B`를 읽어가면서 `A 해시테이블`의 키값을 넣어주면서 결과를 생성해 나가는 방식입니다.
+
+이 방식은 `EQUAL JOIN`만 가능하기 때문에 범위 탐색에서 처리할 수 없습니다. 예를 들어 `ON A.id &gt; B.a_id`같은 조건입니다.
+
+## SORT MERGE JOIN
+두 `JOIN 컬럼`을 기준으로 정렬하여 앞에서부터 두 포인터가 작은 것부터 앞으로 오며 매칭해 나가는 방식입니다.
+
+이 방식은 `정렬 비용이 든다`는 특징이 존재하지만 범위 비교가 가능하기 때문에 정렬되어있는 테이블들의 범위 JOIN에 유용하게 쓰일 수 있습니다.</code></pre>
+    </details>
+
+    <div class="post-intro">
+      <p>먼저 나열하고 시작하면 이번 글에서는 아래의 개념에 대해 다룹니다.</p>
+      <ul class="join-list">
+        <li><code>NESTED LOOP JOIN</code></li>
+        <li><code>INDEX NESTED LOOP JOIN</code></li>
+        <li><code>BLOCK NESTED LOOP JOIN</code></li>
+        <li><code>HASH JOIN</code></li>
+        <li><code>SORT MERGE JOIN</code></li>
+      </ul>
+    </div>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span>NESTED LOOP JOIN</a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span>INDEX NESTED LOOP JOIN</a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span>BLOCKED NESTED LOOP JOIN</a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span>HASH JOIN</a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span>SORT MERGE JOIN</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">NESTED LOOP JOIN</h2>
+      <div class="post-card stack">
+        <p>가장 단순한 방식으로 만약 <code>A_TABLE.id</code> 와 <code>B_TABLE.a_id</code>를 통해 <code>JOIN</code>을 실행할 시, 인덱스 없이 <code>A_TABLE</code>의 모든 행의 개수에 <code>B_TABLE</code>의 모든 행의 개수를 곱한만큼 루프를 돌리는 방식입니다. 각각 1,000개의 행이 존재한다 하면 총 1,000,000번 순회한다고 볼 수 있습니다.</p>
+        <p>작은 테이블과 큰 테이블을 조인할 때는 나쁘지 않을 수 있지만 규모가 커질수록 성능이 좋아질 수 없는 방식입니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">INDEX NESTED LOOP JOIN</h2>
+      <div class="post-card stack">
+        <p><code>FROM A JOIN B ON a.id = b.a_id</code>를 할 때 안쪽 테이블을 보통 <code>b</code>라고 가정합니다. 여기에서 바깥쪽 테이블(<code>A</code>)를 모두 순회하며 안쪽 테이블(<code>B</code>)에서 인덱스를 통해 바깥쪽 테이블과 맞는 행을 빠르게 찾는 방식입니다. 의사 코드로 표현하면 다음과 같습니다.</p>
+        <pre class="code-box"><code>result = []
+for a_id in A:
+  result += B[B["a_id"].joinable_with(a_id)]</code></pre>
+        <div class="post-note">보통 실무에서 흔하게 사용되며 PK, FK, WHERE, JOIN 조건에 인덱스가 있으면 자주 쓰이게 됩니다.</div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-03">
+      <h2 class="section-title">BLOCKED NESTED LOOP JOIN</h2>
+      <div class="post-card stack">
+        <p>위에서 <code>NESTED LOOP</code>는 모두 순회하였을 때 안쪽 테이블을 굉장히 많이 순회하기 때문에 (N중 반복문 순회 수만큼) 바깥 테이블의 여러 행을 메모리 버퍼에 담아서 안쪽 테이블과 비교할 수 있습니다. 이를 통해서 안쪽 테이블의 탐색 횟수를 버퍼의 크기와 비례하게 줄일 수 있습니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-04">
+      <h2 class="section-title">HASH JOIN</h2>
+      <div class="post-card stack">
+        <p>JOIN 조건 컬럼을 기준으로 해시 테이블을 만들어서 찾는 방식입니다.</p>
+        <p>예를 들어서 <code>FROM A JOIN B ON A.id = B.a_id</code>에서 <code>A</code>가 더 작은 테이블이라 판단할 시 <code>A</code> 테이블을 <code>{ A.id: A.find_by_id[id] }</code>와 같이 키와 행을 한쌍으로 갖는 해시테이블을 생성합니다. 이후 <code>B</code>를 읽어가면서 <code>A 해시테이블</code>의 키값을 넣어주면서 결과를 생성해 나가는 방식입니다.</p>
+        <p>이 방식은 <code>EQUAL JOIN</code>만 가능하기 때문에 범위 탐색에서 처리할 수 없습니다. 예를 들어 <code>ON A.id &gt; B.a_id</code>같은 조건입니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-05">
+      <h2 class="section-title">SORT MERGE JOIN</h2>
+      <div class="post-card stack">
+        <p>두 <code>JOIN 컬럼</code>을 기준으로 정렬하여 앞에서부터 두 포인터가 작은 것부터 앞으로 오며 매칭해 나가는 방식입니다.</p>
+        <p>이 방식은 <code>정렬 비용이 든다</code>는 특징이 존재하지만 범위 비교가 가능하기 때문에 정렬되어있는 테이블들의 범위 JOIN에 유용하게 쓰일 수 있습니다.</p>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

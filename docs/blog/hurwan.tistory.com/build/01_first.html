@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>인증/인가</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --text: #1f2937;
+  --muted: #64748b;
+  --line: #e5e7eb;
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+.tech-post * { box-sizing: border-box; }
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.13);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(120, 255, 196, 0.24), transparent 28%),
+    radial-gradient(circle at 84% 15%, rgba(186, 156, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(130, 210, 255, 0.13), transparent 36%),
+    #fff;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+}
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+}
+.source-toggle {
+  margin-top: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+.source-toggle summary {
+  padding: 13px 16px;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+.source-box {
+  overflow-x: auto;
+  margin: 0;
+  padding: 0 16px 16px;
+  white-space: pre-wrap;
+  color: #475569;
+  font-family: inherit;
+  font-size: 13px;
+}
+.source-box code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+.post-toc {
+  margin: 28px 0 0;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #f8fafc;
+}
+.toc-title { color: #111827; }
+.toc-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.toc-list a { color: #334155; text-decoration: none; }
+.toc-index {
+  margin-right: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+.post-section { margin-top: 46px; }
+.section-title {
+  position: relative;
+  margin: 0 0 18px;
+  padding-left: 16px;
+  color: #111827;
+  font-size: 25px;
+  letter-spacing: -0.025em;
+}
+.section-title::before {
+  position: absolute;
+  top: 0.24em;
+  bottom: 0.24em;
+  left: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  content: "";
+}
+.post-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+}
+.post-card + .post-card { margin-top: 16px; }
+.post-card p { margin: 0; color: #334155; font-weight: 500; }
+.post-card p + p, .post-card p + blockquote, .post-card blockquote + p { margin-top: 16px; }
+.card-title { margin: 0 0 12px; color: #111827; font-size: 18px; }
+.post-note {
+  margin-top: 18px;
+  padding: 15px 17px;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(25, 185, 124, 0.06);
+  color: #334155;
+}
+.post-note + .post-note { margin-top: 10px; }
+.inline-example {
+  overflow-x: auto;
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  white-space: nowrap;
+}
+.step-list { margin: 0; padding-left: 24px; color: #334155; font-weight: 500; }
+.step-list li + li { margin-top: 8px; }
+code {
+  padding: 0.12em 0.38em;
+  border-radius: 5px;
+  background: #f1f5f9;
+  color: #0f766e;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.9em;
+}
+.inline-example code { padding: 0; background: transparent; color: inherit; font-size: inherit; }
+.post-divider {
+  margin: 46px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 640px) {
+  .tech-post { padding: 24px 14px 56px; }
+  .post-hero { padding: 30px 22px; border-radius: 22px; }
+  .post-title { font-size: 28px; }
+  .toc-list { grid-template-columns: 1fr; }
+  .post-section { margin-top: 38px; }
+  .section-title { font-size: 22px; }
+  .post-card { padding: 20px; }
+}
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <p class="post-kicker">WEB · SECURITY</p>
+      <h1 class="post-title">인증/인가</h1>
+      <p class="post-subtitle">인터넷에서 사용자를 인증하는 기술은 굉장히 많습니다.</p>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># 인증/인가
+인터넷에서 사용자를 인증하는 기술은 굉장히 많습니다.
+
+기본적으로 쿠키 방식이 존재하여 `sameSite`, `httpOnly`, `secure` 설정과 함께 인코딩 문자열을 넣음으로써 사용자의 정보를 확인할 수 있습니다. (`cors`: 다른 사이트에서 쿠키를 통해 데이터를 읽는 것을 브라우저가 막는 것, `csrf`: 다른 사이트가 쿠키를 사용하는 것을 서버에서 받아주지 않는 것의 설정 또한 중요합니다.)
+
+이에 따라 서버에서는 미들웨어에서 `csrf` 설정, 쿠키 속 문자열 값 등을 확인한 후 사용자에게 올바른 서비스 또는 `401`/`403` 응답을 제공해주기도 합니다.
+
+### Basic
+`Basic` 방식은 굉장히 단순하고 쉽게 구현할 수 있는 방식입니다.
+
+그냥 요청 헤더를 `Authorization: Basic Base64(user_id:password)`로 설정하여 발송하는 방식으로 보안에 취약하여 보통 사용하지 않습니다.
+
+### Digest Authentication
+`Digest` 인증 방식은 오래된 방식으로 권한이 필요한 접근의 경우, 서버가 클라이언트에 인증을 요청하게 됩니다. 이때 클라이언트는 HTTP 메시지의 헤더 속성 중 하나인 `Authorization`에 비밀번호를 알아야 만들 수 있는 해시값을 만들어 보내게 됩니다. 이 방식을 통해 서버가 해당 자원을 적절히 제공해주는 방식입니다.
+
+예를 들어 다음과 같은 값이 들어가게 됩니다.
+`Authorization: Digest username="hurwan", realm="my-site", nonce="abc123", uri="/admin", response="만들어진 해시값"`
+
+&gt; 하지만 해당 기술은 현재는 많이 사용되는 기술이 아닙니다. (구현이 복잡하고 HTTPS 없이는 안전하지 않아서)
+
+### Bearer
+`Bearer` 방식 또한 위와 비슷하게 `Authorization` 헤더에 토큰을 실어서 보내는 인증 방식입니다.
+
+`Authorization: Bearer e3Gdewaafg4e35` 등과 같이 전달되게 됩니다.
+
+`Bearer`는 *소유자*라는 뜻으로 해당 토큰을 가지고 온 요청은 인증된 사용자로 인정하겠다는 의미를 가지게 됩니다.
+
+이는 `Digest`보다 간결하게 첫 로그인 이후 서버가 클라이언트에게 토큰을 발급해주면 이후에는 로그인 없이 요청마다 `Bearer` 토큰을 포함하여 요청을 보내게 되는 방식입니다.
+
+&gt; Bearer 또한 토큰이 탈취에 매우 취약하기 때문에 `HTTPS` 사용, `maxAge` 처리, 중요 작업 재인증 등의 기술을 사용합니다.
+&gt; Bearer는 토큰을 사용하는 특성상 JWT와 함께 사용되는 경우가 많습니다.
+
+### JWT 토큰
+JWT 토큰은 토큰에 사용자 정보와 검증용 서명이 들어있는 인증 토큰 형식을 말합니다.
+
+이는 `JSON Web Token`의 약자로 `[Header].[Payload].[Signature]`과 같은 형태로 나누어져 있습니다.
+
+- Header
+&gt; 헤더에는 해당 토큰의 서명 방식을 말합니다. `{ "alg": "HS256", "typ": "JWT" }`와 같은 형태를 취합니다. `alg`는 서명 알고리즘이며 `typ`는 토큰 타입을 의미합니다.
+- Payload
+&gt; Payload는 실제로 개발자가 직접 설정하여 넣을 정보가 들어갑니다. 보통 사용자의 주요 정보는 들어가지 않으며 사용자의 ID, 역할, 만료 시간(`exp`), 발급자(`iss`), 발급 시간(`iat`), 토큰 주체(`sub`라는 고유 사용자 값. 보통 userId를 넣어서 만드는 것이 RFC 7519 표준)가 들어갑니다. 이러한 정보들은 보통 `claim`이라고 부릅니다.
+- Signature
+&gt; Signature는 헤더와 페이로드를 비밀 키를 통해 해싱하는 방식입니다. 이를 통해서 공격자가 토큰을 위조하였는지 확인하는 CRC와 같은 역할을 하게 됩니다.
+
+##### JWT의 특징
+`JWT` 기술은 보통 `Stateless` 방식을 통해 서버에서 사용자의 상태(로그인 상태 등)를 알 필요가 없다고 합니다. 이를 통해 보통 `Stateless`라고 한다면 `JWT`가 주로 언급됩니다.
+
+하지만 `Stateless`라고 해도 결국 로그아웃, 블랙리스트, `Refresh` 등을 위해서 캐시 서버 등에 저장하는 경우가 많기 때문에 이와 구별하여 판단할 필요가 있습니다.
+
+**JWT의 Header와 Payload는 보통 Base64URL 인코딩이기 때문에 중요한 정보를 제공하면 안 되며 보통 해당 쿠키의 탈취에는 책임을 지지 않기도 합니다(서비스에서). 또는 HTTPS와 함께 잘 사용해야 합니다.**
+
+### Authentication Header와 Cookie
+위에서 설명한 `JWT`는 2가지 방식으로 클라이언트에서 저장 및 전송이 가능합니다.
+1. 처음에 설명한 `Bearer`, `Basic`, `Digest` 등과 같은 `Authentication Header` 방식
+2. `Cookie`를 통한 `key-value` 방식
+
+이 중 `Authentication Header` 방식은 항상 클라이언트 측에서 명시적으로 헤더에 추가를 할 필요가 있어 보안 및 `CSRF` 공격을 방지할 수 있습니다. 하지만 이는 자바스크립트를 통해 접근이 가능한 점에 의한 `XSS` 공격이 가능한 점을 인지해야 합니다(공격자가 URL 등을 통해 악성 `js`를 심는 방식을 통해 이루어질 수 있습니다). `Cookie`의 경우에는 보안 옵션을 통해 `XSS`를 방지할 수 있지만 반대로 `CSRF`의 위험이 존재합니다(`SameSite`를 활성화하더라도 리다이렉트, GET 요청, 서브도메인 등에 의해 발생할 수 있는 취약점이 존재합니다).
+
+### 세션 ID
+세션 ID 방식은 사용자가 로그인하면 일정 시간 동안 사용자가 로그인했다는 정보를 서버에 저장해놓은 뒤, 사용자에게 세션 ID를 토큰처럼 발급해주는 방식입니다. 예를 들어 `java Tomcat`의 경우에는 `JSESSIONID`를 주는 것을 확인할 수 있습니다.
+
+여기에서 발전될 수 있는 게 스프링 시큐리티와 같은 시큐리티 컨텍스트를 통한 사용자 권한 등의 관리 방식입니다. 이는 사용자의 세션 스토어에 시큐리티 컨텍스트(저장소), 권한 정보, 인증/인가 방식, 기타 정보 등을 저장해놓아 미들웨어처럼 사용할 수 있게 해줍니다.
+
+# OAUTH2
+OAuth2는 외부 서비스의 인증 절차를 위임받아 사용하기 위한 표준 방식입니다.
+
+`Google`, `Naver`, `Kakao`와 같은 신뢰도 있는 기업 및 서비스 등을 개발자가 만드는 서비스에 넣어 사용할 수 있는 기술을 의미합니다.
+
+해당 방식은 앞의 방식들보다 상대적으로 복잡한 절차를 가지게 됩니다.
+1. 사용자가 특정 사이트에서 `Google` 로그인 `URL`로 이동 (구글 OAuth에서 등록한 경로여야 합니다.)
+2. 사용자가 GOOGLE 인증을 확인
+3. 구글에서 리다이렉트 URL을 통해 나의 도메인으로 다시 이동
+4. 구글에서 `authorization code` 발급
+5. 내 서버가 `code`를 통해 `access token`으로 교환 (요청/응답)
+6. 다음부터 해당 사용자에 대한 권한을 `access token`을 통해 호출
+7. `scope`에 따른 사용자 정보 제공받기
+
+위 방식을 통해 사용자의 인증을 다른 서비스를 통해 더 신빙성 있게 제공받을 수 있습니다.</code></pre>
+    </details>
+
+    <nav class="post-toc" aria-label="목차">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-index">01</span>인증/인가</a></li>
+        <li><a href="#section-02"><span class="toc-index">02</span>Basic</a></li>
+        <li><a href="#section-03"><span class="toc-index">03</span>Digest Authentication</a></li>
+        <li><a href="#section-04"><span class="toc-index">04</span>Bearer</a></li>
+        <li><a href="#section-05"><span class="toc-index">05</span>JWT 토큰</a></li>
+        <li><a href="#section-06"><span class="toc-index">06</span>Authentication Header와 Cookie</a></li>
+        <li><a href="#section-07"><span class="toc-index">07</span>세션 ID</a></li>
+        <li><a href="#section-08"><span class="toc-index">08</span>OAUTH2</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="section-01">
+      <h2 class="section-title">인증/인가</h2>
+      <div class="post-card">
+        <p>인터넷에서 사용자를 인증하는 기술은 굉장히 많습니다.</p>
+        <p>기본적으로 쿠키 방식이 존재하여 <code>sameSite</code>, <code>httpOnly</code>, <code>secure</code> 설정과 함께 인코딩 문자열을 넣음으로써 사용자의 정보를 확인할 수 있습니다. (<code>cors</code>: 다른 사이트에서 쿠키를 통해 데이터를 읽는 것을 브라우저가 막는 것, <code>csrf</code>: 다른 사이트가 쿠키를 사용하는 것을 서버에서 받아주지 않는 것의 설정 또한 중요합니다.)</p>
+        <p>이에 따라 서버에서는 미들웨어에서 <code>csrf</code> 설정, 쿠키 속 문자열 값 등을 확인한 후 사용자에게 올바른 서비스 또는 <code>401</code>/<code>403</code> 응답을 제공해주기도 합니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-02">
+      <h2 class="section-title">Basic</h2>
+      <div class="post-card">
+        <p><code>Basic</code> 방식은 굉장히 단순하고 쉽게 구현할 수 있는 방식입니다.</p>
+        <p>그냥 요청 헤더를 <code>Authorization: Basic Base64(user_id:password)</code>로 설정하여 발송하는 방식으로 보안에 취약하여 보통 사용하지 않습니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-03">
+      <h2 class="section-title">Digest Authentication</h2>
+      <div class="post-card">
+        <p><code>Digest</code> 인증 방식은 오래된 방식으로 권한이 필요한 접근의 경우, 서버가 클라이언트에 인증을 요청하게 됩니다. 이때 클라이언트는 HTTP 메시지의 헤더 속성 중 하나인 <code>Authorization</code>에 비밀번호를 알아야 만들 수 있는 해시값을 만들어 보내게 됩니다. 이 방식을 통해 서버가 해당 자원을 적절히 제공해주는 방식입니다.</p>
+        <p>예를 들어 다음과 같은 값이 들어가게 됩니다.</p>
+        <div class="inline-example"><code>Authorization: Digest username="hurwan", realm="my-site", nonce="abc123", uri="/admin", response="만들어진 해시값"</code></div>
+        <div class="post-note">하지만 해당 기술은 현재는 많이 사용되는 기술이 아닙니다. (구현이 복잡하고 HTTPS 없이는 안전하지 않아서)</div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-04">
+      <h2 class="section-title">Bearer</h2>
+      <div class="post-card">
+        <p><code>Bearer</code> 방식 또한 위와 비슷하게 <code>Authorization</code> 헤더에 토큰을 실어서 보내는 인증 방식입니다.</p>
+        <div class="inline-example"><code>Authorization: Bearer e3Gdewaafg4e35</code></div>
+        <p><code>Bearer</code>는 <em>소유자</em>라는 뜻으로 해당 토큰을 가지고 온 요청은 인증된 사용자로 인정하겠다는 의미를 가지게 됩니다.</p>
+        <p>이는 <code>Digest</code>보다 간결하게 첫 로그인 이후 서버가 클라이언트에게 토큰을 발급해주면 이후에는 로그인 없이 요청마다 <code>Bearer</code> 토큰을 포함하여 요청을 보내게 되는 방식입니다.</p>
+        <div class="post-note">Bearer 또한 토큰이 탈취에 매우 취약하기 때문에 <code>HTTPS</code> 사용, <code>maxAge</code> 처리, 중요 작업 재인증 등의 기술을 사용합니다.</div>
+        <div class="post-note">Bearer는 토큰을 사용하는 특성상 JWT와 함께 사용되는 경우가 많습니다.</div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-05">
+      <h2 class="section-title">JWT 토큰</h2>
+      <div class="post-card">
+        <p>JWT 토큰은 토큰에 사용자 정보와 검증용 서명이 들어있는 인증 토큰 형식을 말합니다.</p>
+        <p>이는 <code>JSON Web Token</code>의 약자로 <code>[Header].[Payload].[Signature]</code>과 같은 형태로 나누어져 있습니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">Header</h3>
+        <p>헤더에는 해당 토큰의 서명 방식을 말합니다. <code>{ "alg": "HS256", "typ": "JWT" }</code>와 같은 형태를 취합니다. <code>alg</code>는 서명 알고리즘이며 <code>typ</code>는 토큰 타입을 의미합니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">Payload</h3>
+        <p>Payload는 실제로 개발자가 직접 설정하여 넣을 정보가 들어갑니다. 보통 사용자의 주요 정보는 들어가지 않으며 사용자의 ID, 역할, 만료 시간(<code>exp</code>), 발급자(<code>iss</code>), 발급 시간(<code>iat</code>), 토큰 주체(<code>sub</code>라는 고유 사용자 값. 보통 userId를 넣어서 만드는 것이 RFC 7519 표준)가 들어갑니다. 이러한 정보들은 보통 <code>claim</code>이라고 부릅니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">Signature</h3>
+        <p>Signature는 헤더와 페이로드를 비밀 키를 통해 해싱하는 방식입니다. 이를 통해서 공격자가 토큰을 위조하였는지 확인하는 CRC와 같은 역할을 하게 됩니다.</p>
+      </div>
+      <div class="post-card">
+        <h3 class="card-title">JWT의 특징</h3>
+        <p><code>JWT</code> 기술은 보통 <code>Stateless</code> 방식을 통해 서버에서 사용자의 상태(로그인 상태 등)를 알 필요가 없다고 합니다. 이를 통해 보통 <code>Stateless</code>라고 한다면 <code>JWT</code>가 주로 언급됩니다.</p>
+        <p>하지만 <code>Stateless</code>라고 해도 결국 로그아웃, 블랙리스트, <code>Refresh</code> 등을 위해서 캐시 서버 등에 저장하는 경우가 많기 때문에 이와 구별하여 판단할 필요가 있습니다.</p>
+        <div class="post-note"><strong>JWT의 Header와 Payload는 보통 Base64URL 인코딩이기 때문에 중요한 정보를 제공하면 안 되며 보통 해당 쿠키의 탈취에는 책임을 지지 않기도 합니다(서비스에서). 또는 HTTPS와 함께 잘 사용해야 합니다.</strong></div>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-06">
+      <h2 class="section-title">Authentication Header와 Cookie</h2>
+      <div class="post-card">
+        <p>위에서 설명한 <code>JWT</code>는 2가지 방식으로 클라이언트에서 저장 및 전송이 가능합니다.</p>
+        <ol class="step-list">
+          <li>처음에 설명한 <code>Bearer</code>, <code>Basic</code>, <code>Digest</code> 등과 같은 <code>Authentication Header</code> 방식</li>
+          <li><code>Cookie</code>를 통한 <code>key-value</code> 방식</li>
+        </ol>
+        <p>이 중 <code>Authentication Header</code> 방식은 항상 클라이언트 측에서 명시적으로 헤더에 추가를 할 필요가 있어 보안 및 <code>CSRF</code> 공격을 방지할 수 있습니다. 하지만 이는 자바스크립트를 통해 접근이 가능한 점에 의한 <code>XSS</code> 공격이 가능한 점을 인지해야 합니다(공격자가 URL 등을 통해 악성 <code>js</code>를 심는 방식을 통해 이루어질 수 있습니다). <code>Cookie</code>의 경우에는 보안 옵션을 통해 <code>XSS</code>를 방지할 수 있지만 반대로 <code>CSRF</code>의 위험이 존재합니다(<code>SameSite</code>를 활성화하더라도 리다이렉트, GET 요청, 서브도메인 등에 의해 발생할 수 있는 취약점이 존재합니다).</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-07">
+      <h2 class="section-title">세션 ID</h2>
+      <div class="post-card">
+        <p>세션 ID 방식은 사용자가 로그인하면 일정 시간 동안 사용자가 로그인했다는 정보를 서버에 저장해놓은 뒤, 사용자에게 세션 ID를 토큰처럼 발급해주는 방식입니다. 예를 들어 <code>java Tomcat</code>의 경우에는 <code>JSESSIONID</code>를 주는 것을 확인할 수 있습니다.</p>
+        <p>여기에서 발전될 수 있는 게 스프링 시큐리티와 같은 시큐리티 컨텍스트를 통한 사용자 권한 등의 관리 방식입니다. 이는 사용자의 세션 스토어에 시큐리티 컨텍스트(저장소), 권한 정보, 인증/인가 방식, 기타 정보 등을 저장해놓아 미들웨어처럼 사용할 수 있게 해줍니다.</p>
+      </div>
+    </section>
+
+    <hr class="post-divider">
+
+    <section class="post-section" id="section-08">
+      <h2 class="section-title">OAUTH2</h2>
+      <div class="post-card">
+        <p>OAuth2는 외부 서비스의 인증 절차를 위임받아 사용하기 위한 표준 방식입니다.</p>
+        <p><code>Google</code>, <code>Naver</code>, <code>Kakao</code>와 같은 신뢰도 있는 기업 및 서비스 등을 개발자가 만드는 서비스에 넣어 사용할 수 있는 기술을 의미합니다.</p>
+        <p>해당 방식은 앞의 방식들보다 상대적으로 복잡한 절차를 가지게 됩니다.</p>
+        <ol class="step-list">
+          <li>사용자가 특정 사이트에서 <code>Google</code> 로그인 <code>URL</code>로 이동 (구글 OAuth에서 등록한 경로여야 합니다.)</li>
+          <li>사용자가 GOOGLE 인증을 확인</li>
+          <li>구글에서 리다이렉트 URL을 통해 나의 도메인으로 다시 이동</li>
+          <li>구글에서 <code>authorization code</code> 발급</li>
+          <li>내 서버가 <code>code</code>를 통해 <code>access token</code>으로 교환 (요청/응답)</li>
+          <li>다음부터 해당 사용자에 대한 권한을 <code>access token</code>을 통해 호출</li>
+          <li><code>scope</code>에 따른 사용자 정보 제공받기</li>
+        </ol>
+        <p>위 방식을 통해 사용자의 인증을 다른 서비스를 통해 더 신빙성 있게 제공받을 수 있습니다.</p>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

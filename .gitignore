@@ -8,6 +8,7 @@
 **/.vscode/**
 
 **/datasets/**
+**/datas/**
 
 **/__pycache__/**
 
@@ -20,3 +21,6 @@ dist/
 
 # nginx 폴더
 **/nginx-*/**
+
+**/*.env**/**
+!**/*.env.example/**
