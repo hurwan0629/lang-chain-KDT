@@ -1,0 +1,7 @@
+- [x] [국민 건강보험공단 사업장 관리 현황](./01_NHIS_Status_of_Managed_Workplaces.ipynb)
+- [x] [기상청_단기예보 조회서비스](./02_VilageFcstInfoService_2.0.ipynb)
+- [x] [보건복지부_독거노인 수_연령별_시도별](./03_MOHW_Number_of_elderly_living_alone_by_age_shido.ipynb)
+- [] [질병관리청_온열질환 감시 데이터](https://www.data.go.kr/data/15149889/fileData.do?recommendDataYn=Y)
+- [] [전국무더위쉼터표준데이터](https://www.data.go.kr/data/15013199/standard.do)
+- [] [국립중앙의료원_전국 응급의료기관 정보 조회 서비스](https://www.data.go.kr/data/15000563/openapi.do?)
+- [] [국토교통부_폭염 취약계층 및 지원 우선 지역 분석_의료기관 지원대책](https://www.data.go.kr/data/15147787/fileData.do?recommendDataYn=Y)
