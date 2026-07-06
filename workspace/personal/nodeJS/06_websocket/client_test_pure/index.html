@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기본 페이지</title>
+</head>
+<body>
+  index.html입니다.<br>
+  <input type="text" id="clientMessage" placeholder="서버에 보낼 메시지를 입력하세요">
+  <button id="sendMessageButton" onclick="sendMessageToServer()">보내기</button>
+
+
+  <!-- <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script> -->
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js" integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0" crossorigin="anonymous"></script>
+  <script>
+    // 이건 포트 3000에서 사용할 예정이기 때문에 직접 서버 PORT를 명시해주어야함
+    const clientSocket = io("http://localhost:8091")
+
+    const clientMessage = document.getElementById("clientMessage")
+
+    function sendMessageToServer() {
+      const message = clientMessage.value
+
+      // 유효성검사
+      if(!message.trim()) {
+        alert("메시지를 작성해주세요")
+        return
+      }
+
+      clientSocket.emit("client-says", { message })
+
+      clientMessage.value = ""
+    }
+
+    // 유틸성으로 Enter 치면 바로 전송되게 하기
+    document.getElementById("clientMessage").addEventListener("keydown", (e) => {
+      if(e.key === "Enter") {
+        document.getElementById("sendMessageButton").click()
+      }
+    })
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./chat_index.css" />
+</head>
+<body>
+  <form id="loginForm">
+    <h2>채팅방 입장</h2>
+    <input type="text" id="nickname" placeholder="닉네임을 입력하세요">
+    <select id="channel">
+      <option value="lobby">대기실</option>
+      <option value="sports">스포츠</option>
+      <option value="programming">프로그래밍</option>
+      <option value="music">음악</option>
+    </select>
+    <button type="submit">입장</button>
+  </form>
+  <script>
+    document.getElementById("loginForm").onsubmit = (e) => {
+      e.preventDefault()
+      const nickname = document.getElementById("nickname").value.trim()
+
+      const channel = document.getElementById("channel").value
+
+      if(!nickname) {
+        return alert("닉네임을 입력하세요")
+      }
+
+      localStorage.setItem("nickname", nickname)
+      localStorage.setItem("channel", channel)
+
+      location.href = "chat_room.html"
+
+
+    }
+  </script>
+</body>
+</html>

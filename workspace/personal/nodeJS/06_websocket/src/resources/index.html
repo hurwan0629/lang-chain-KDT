@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기본 페이지</title>
+</head>
+<body>
+  index.html입니다.<br>
+  <input type="text" id="clientMessage" placeholder="서버에 보낼 메시지를 입력하세요">
+  <button id="sendMessageButton" onclick="sendMessageToServer()">보내기</button>
+
+  <br><hr><br>
+
+  <button id="getMyHandshake" onclick="getMyHandshake()">핸드셰이크 받기</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // ssr 방식이기 때문에 io() 그대로 사용해도 댐
+    const clientSocket = io()
+
+    const clientMessage = document.getElementById("clientMessage")
+
+    function sendMessageToServer() {
+      const message = clientMessage.value
+
+      // 유효성검사
+      if(!message.trim()) {
+        alert("메시지를 작성해주세요")
+        return
+      }
+
+      clientSocket.emit("client-says", { message })
+
+      clientMessage.value = ""
+    }
+
+    // 유틸성으로 Enter 치면 바로 전송되게 하기
+    document.getElementById("clientMessage").addEventListener("keydown", (e) => {
+      if(e.key === "Enter") {
+        document.getElementById("sendMessageButton").click()
+      }
+    })
+
+    // 나의 소켓 핸드셰이크 정보 확인해보기
+    function getMyHandshake() {
+      clientSocket.emit("my-handshake") // 요청만 하면 그대로 `your-handshake`로 문자열 줌
+    }
+
+    // your-handshake 받는 소켓 이벤트 등록
+    clientSocket.on("your-handshake", (data) => {
+      console.log(data)
+    })
+
+  </script>
+</body>
+</html>

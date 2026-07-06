@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>채팅방</title>
+  <link rel="stylesheet" href="./chat_room.css" />
+</head>
+<body>
+  <div id="chat">
+    <h3 id="channelName"></h3>
+    <div class="chat-container">
+      <div class="chat-main">
+        <div id="messages"></div>
+        <div>
+          <input type="text" id="to" placeholder="귓속말 대상(없으면 전체)">
+          <input type="text" id="message" placeholder="메시지를 입력하세요">
+          <select id="channelSelector">
+            <option value="lobby">대기실</option>
+            <option value="sports">스포츠</option>
+            <option value="programming">프로그래밍</option>
+            <option value="music">음악</option>
+          </select>
+          <button id="emoji">⭐</button>
+          <button id="send">전송</button>
+        </div>
+      </div>
+      <div id="users">
+        <h4>접속자 목록</h4>
+        <div id="userCounts"></div>
+        <div id="userList"></div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io()
+
+      console.log("클라이언트 소캣 생성 성공")
+      // console.log(socket)
+
+      const nickname = localStorage.getItem("nickname")
+      let currentChannel = localStorage.getItem("channel")
+
+      if(!nickname || !currentChannel) {
+        alert("닉네임 또는 채널 정보가 존재하지 않습니다.")
+        location.href = "chat_index.html"
+      }
+
+      // 상단에 현재 접속 채널 제목 표기
+      const channelName = document.getElementById("channelName")
+      channelName.textContent = `[채널: ${currentChannel}]`
+
+      // 하단에 현재 접속 채널 표기
+      const channelSelector = document.getElementById("channelSelector")
+      channelSelector.value = currentChannel
+
+      // join 이벤트 발생시키기 (서버로)
+      socket.emit("join", { nickname, channel: currentChannel})
+
+      const messageInput = document.getElementById("message")
+      // 귓속말 할 대상
+      const toInput = document.getElementById("to")
+
+      messageInput.addEventListener("keydown", (e) => {
+        if(e.key === "Enter") sendMessage()
+      })
+    
+      document.getElementById("send").onclick = sendMessage
+
+      function sendMessage() {
+        console.log(messageInput.value)
+        const text = messageInput.value.trim()
+        const to = toInput.value.trim()
+
+        if(text) {
+          //chat 이벤트를 서버로 발생
+          socket.emit("chat", { text, to: to || null })
+          messageInput.value = ""
+        }
+      }
+
+      channelSelector.onchange = () => {
+        const newChannel = channelSelector.value
+        if(newChannel !== currentChannel) {
+          socket.emit("changeChannel", { newChannel })
+          currentChannel = newChannel
+          channelName.textContent = `[채널: ${currentChannel}]`
+          messages.innerHTML = ""
+          localStorage.setItem("channel", currentChannel)
+        }
+      }
+
+      // 서버에서 message 이벤트가 왔다면
+      socket.on("message", ({ user, text}) => {
+        console.log(" === 서버로부터 message 이벤트 호출 === ")
+        console.log("user:", user)
+        console.log("text:", text)
+
+        const div = document.createElement("div")
+        div.textContent = `[${user}] ${text}`
+        if (user === "system") div.classNAme = "system-msg"
+
+        messages.appendChild(div)
+        messages.scrollTop = messages.scrollHeight
+      })
+
+      // 서버에서 whisper 이벤트가 왔다면
+      socket.on("whisper", ({ user, text }) => {
+        console.log(" === 서버로부터 whisper 이벤트 호출 === ")
+        console.log("user:", user)
+        console.log("text:", text)
+
+        const div = document.createElement("div")
+        div.textContent = `[귓속말] [${user}] ${text}`
+        
+        div.style.color = "deeppink"
+
+        messages.appendChild(div)
+        messages.scrollTop = messages.scrollHeight
+      })
+    </script>
+  </div>
+</body>
+</html>
