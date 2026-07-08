@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SFU 연결 테스트</title>
+</head>
+<body>
+  <h1>SFU Test</h1>
+
+  <input id="userName" type="text" placeholder="등록될 이름을 입력하세요">
+  <button onclick="startRtpReady()">연결 정보 받기 시작하기</button>
+
+  <button onclick="socketDisconnect()">소켓 연결 끊기</button>
+
+  <br><hr><br>
+
+  <pre id="log" style="font: bold"></pre>
+
+
+  <!-- 이름 입력하기 -->
+  <!-- 접속할 채널 입력하기 -->
+  <!-- 영상 매채 등 보여줄건지 등 미리 받아놓고 연결까지 한 다음에 다음페이지 보여주기 -->
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // 로그용 함수 미리 만들어두기
+    const logBox = document.getElementById("log")
+    function log(message, data) { 
+      console.log("[log]", message, data ?? "")
+
+      logBox.textContent += message + "\n"
+      if (data) {
+        logBox.textContent += JSON.stringify(data, null, 2) + "\n"
+      }
+    }
+
+    let socket;
+
+    function startRtpReady() {
+      if(socket) {
+        alert("이미 연결되어있습니다!")
+        return
+      }
+
+      // userName 검사하기
+      const userName = document.getElementById("userName").value
+
+      if(!userName.trim()) {
+        alert("사용자의 이름을 입력해주세요!")
+        return
+      }
+
+      socket = io({ autoConnect: false })
+  
+      socket.on("connect", async () => {
+        log("socket connected: " + socket.id)
+  
+        const joinResult = await socket.emitWithAck("join-room", {
+          roomName: "test-room",
+          userName // : "user-" + socket.id.slice(0, 4) // 중복될 수 있지만 사용자 이름일 뿐이기 때문에 큰 상관 없음 (지금은 고유하지 않아도 됨)
+        })
+  
+        log("join-room result", joinResult)
+  
+        // 나 그룹에 넣어주세요 하면 들어가있는 router 확인한다음에 
+        // worker에서 제공해주는 router을 이용하여 mediaCodec에 등록되어있는 것중에서 가능한 객체들 (router.rtpCapabilities 넣어주기)
+        const rtpResult = await socket.emitWithAck("get-router-rtp-capabilities", {})
+  
+        // 그렇게 온 사용 가능한 rtpCapabilities 확인하기
+        log("router rtpCapabilities", rtpResult)
+  
+      })
+  
+      socket.connect()
+    }
+
+    function socketDisconnect() {
+      if(!socket) {
+        alert("소켓 연결이 이미 존재하지 않습니다!")
+      }
+      try{
+        socket.disconnect()
+        socket = undefined
+      }
+      catch(err) {
+        log("socket disconnect error:", err?.message)
+      }
+    }
+
+  </script>
+</body>
+</html>

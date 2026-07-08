@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- <video src="../resources/13822273_3840_2160_25fps.mp4" width="400px" autoplay></video> -->
+
+  <div id="log-box">
+    
+  </div>
+  <script>
+    main()
+
+    function log(message) {
+      const logBox = document.getElementById("log-box")
+      logBox.innerHTML += "<h4>" + message + "</h4>"
+    }
+
+    async function enumerateDevicesLog() {
+      console.log((await navigator.mediaDevices.enumerateDevices()))
+    }
+
+    async function getUserMediaTest() {
+      log()
+      console.log(await navigator.mediaDevices.getUserMedia({ video: true, audio: true }))
+    }
+
+    async function main() {
+      // console.log(await navigator.mediaDevices.enumerateDevices())
+      // console.log(await navigator.mediaDevices.getSupportedConstraints())
+      // console.log(await navigator.mediaDevices.getDisplayMedia())
+      console.log(await navigator.mediaDevices.getSupportedConstraints())
+    }
+  </script>
+</body>
+</html>

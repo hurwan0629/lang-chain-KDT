@@ -46,7 +46,7 @@
         border-left: 1px solid #ccc;
         padding: 0.5rem;
       }
-      #emojiBox {
+      #emojiBox { /* 이모지 창 */
         display: none;
         border: 1px solid #ccc;
         padding: 0.5rem;

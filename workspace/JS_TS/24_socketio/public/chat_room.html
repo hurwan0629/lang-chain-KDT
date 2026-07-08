@@ -22,6 +22,18 @@
             <option value="music">음악</option>
           </select>
           <button id="emoji">⭐</button>
+          <div id="emojiBox">
+            <span>😁</span>
+            <span>😂</span>
+            <span>🤣</span>
+            <span>😃</span>
+            <span>😆</span>
+            <span>😎</span>
+            <span>😐</span>
+            <span>😑</span>
+            <span>🙄</span>
+            <span>😣</span>
+          </div>
           <button id="send">전송</button>
         </div>
       </div>
@@ -58,9 +70,14 @@
       // join 이벤트 발생시키기 (서버로)
       socket.emit("join", { nickname, channel: currentChannel})
 
-      const messageInput = document.getElementById("message")
       // 귓속말 할 대상
       const toInput = document.getElementById("to")
+      // 메시지 입력창
+      const messageInput = document.getElementById("message")
+      // emoji 팝업 버튼
+      const emojiPopUpButton = document.getElementById("emoji")
+      // emojiBox 팝업 창
+      const emojiPopUpBox = document.getElementById("emojiBox")
 
       messageInput.addEventListener("keydown", (e) => {
         if(e.key === "Enter") sendMessage()
@@ -74,6 +91,7 @@
         const to = toInput.value.trim()
 
         if(text) {
+          console.log("sendMessage: ", text, to)
           //chat 이벤트를 서버로 발생
           socket.emit("chat", { text, to: to || null })
           messageInput.value = ""
@@ -119,6 +137,68 @@
         messages.appendChild(div)
         messages.scrollTop = messages.scrollHeight
       })
+    
+      // 버튼 눌리면 display 나오게 설정하기 (위치는 css로 설정하기)
+      let emojiPopUpVisible = false
+      emojiPopUpButton.addEventListener("click", (e) => {
+        // 보이거나 보이지 않음을 설정해주기 (토글)
+        console.log(emojiPopUpBox.style.display)
+        emojiPopUpBox.style.display = emojiPopUpVisible ? "none" : "block"
+        emojiPopUpVisible = !emojiPopUpVisible
+
+        // 버튼의 크기 객체
+        const rect = emojiPopUpButton.getBoundingClientRect();
+        const boxRect = emojiPopUpBox.getBoundingClientRect()
+        console.log(rect)
+        const moveX = boxRect.width / 2
+
+        // 위치 조절해주기
+        emojiPopUpBox.style.position = "absolute"
+        emojiPopUpBox.style.left = `${rect.left - moveX}px`
+        emojiPopUpBox.style.top = `${rect.y - boxRect.height - 8}px`
+      })
+    
+      emojiPopUpBox.addEventListener("click", (e) => {
+        if(e.target.tagName === "SPAN") {
+          // console.log(event.target.textContent)
+          messageInput.value += event.target.textContent
+        }
+      })
+    
+
+      const userCounts = document.getElementById("userCounts")
+      const userList = document.getElementById("userList")
+      socket.on("userList", (list) => {
+        console.log(list)
+
+        // 채널별 접속자 수 
+        const channelMap = {}
+        list.forEach(({ nickname, channel }) => {
+          if(!channelMap[channel]) channelMap[channel] = 0
+          channelMap[channel]++
+        })
+
+        userCounts.innerHTML = "<strong>채널별 접속자 수</strong>" 
+                + Object.entries(channelMap).map(([ch, count]) => `${ch}: ${count}명`).join("<br>")
+        
+        // 접속자 명단
+        // 본인의 채널만 뽑아서 보여주기
+        const currentChannelUsers = []
+        list.forEach(({ nickname, channel }) => {
+          console.log("currentChannel", currentChannel)
+          console.log("channel", channel)
+          if(currentChannel === channel) {
+            currentChannelUsers.push(`<div onclick="whispherTo('${nickname}')"><span class="online-dot"></span>` + nickname + "</div>")
+          }
+        })
+
+        userList.innerHTML = `<strong>${currentChannel} 접속자 명단</strong><br>` + currentChannelUsers
+
+      })
+
+      function whispherTo(nickname) {
+        toInput.value = nickname
+      }
     </script>
   </div>
 </body>

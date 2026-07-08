@@ -9,6 +9,10 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/chat_index.html"))
+})
+
 const server = createServer(app)
 const io =  new Server(server)
 
@@ -34,6 +38,8 @@ io.on("connection", (socket) => {
     io.to(channel).emit("message", msg)
     // io.emit("message", msg)
     console.log("[서버]: 클라이언트에 message 이벤트 호출:", msg)
+
+    updateUserList()
   })
 
   socket.on("chat", ({ text, to }) => {
@@ -49,16 +55,22 @@ io.on("connection", (socket) => {
       const receiverSocket = Object.entries(users).find(([id, u]) => (u.nickname === to))?.[0]
 
       if(receiverSocket) {
+        console.log(receiverSocket)
         payload.user = `${payload.user} -> ${to}`
         io.to(receiverSocket).emit("whisper", payload)
-        socket.emit("whisper", payload)
-        console.log(`[서버]: {${sender.nickname}}님의 "whisper"이벤트 요청: {${users[receiverSocket.id].nickname}}에게 [${text}] | payload: [${payload}]`)
+        // socket.emit("whisper", payload)
+        console.log(`[서버]: {${sender.nickname}}님의 "whisper"이벤트 요청: {${users[receiverSocket.id]?.nickname}}에게 [${text}] | payload: [${payload}]`)
       }
       else {
         io.to(sender.channel).emit("message", payload)
         console.log(`[서버] [${sender.channel} 채널]: {${sender.nickname}}님의 "chat"이벤트 요청: ${text} | payload: [${payload}]`)
-        io.emit("message", payload)
+        // io.emit("message", payload)
       }
+    }
+    else {
+      // io.to(sender.channel).emit("message", payload)
+      console.log(`[서버] [${sender.channel} 채널]: {${sender.nickname}}님의 "chat"이벤트 요청: ${text} | payload: [${payload}]`)
+      io.emit("message", payload)
     }
 
   })
@@ -80,13 +92,31 @@ io.on("connection", (socket) => {
       user: "system",
       text: `${nickname}님이 입장했습니다.`
     })
-
+    updateUserList()
     
   })
 
   socket.on("disconnect", () => {
-    console.log("사용자가 연결을 끊었습니다.")
+    // console.log("사용자가 연결을 끊었습니다.")
+    const msg = { 
+      user: "system",
+      text: `${users[socket.id]?.nickname}님이 접속을 끊었습니다.`
+    }
+    io.to(users[socket.id].channel).emit("message", msg)
+    
+    users[socket.id] = undefined
+
+    
+    updateUserList()
   })
+
+  function updateUserList() {
+    
+    const userList = Object.values(users)
+    // console.log(`현재 접속자 명단: ${JSON.stringify(userList)}`)
+
+    io.emit("userList", userList)
+  }
 })
 
 server.listen(PORT, "0.0.0.0", () => {
