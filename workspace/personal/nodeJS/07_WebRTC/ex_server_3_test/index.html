@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediaTrackTest</title>
+</head>
+<body>
+  <h2>미디어트랙 어떤식으로 나오는지 분해해서 보기</h2>
+  <script>
+    test() 
+    
+    async function test() {
+      // getUserMedia()는 카메라/마이크 권한을 요구하는 API
+      // 브라우저에서 보안 컨텍스트에서만 동작
+      const media = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      })
+      console.log(media)  
+      console.log("--- --- --- ")
+      console.log(media.getTracks())
+    }
+
+
+  </script>
+</body>
+</html>

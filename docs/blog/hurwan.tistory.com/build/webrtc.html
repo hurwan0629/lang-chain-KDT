@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Socket.io, mediasoup, Device, 미디어 스트림 (트랙), transport 등에 대해서 쭉 정리해보기</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --bg: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --card: rgba(255, 255, 255, 0.94);
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * {
+  box-sizing: border-box;
+}
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-title,
+.post-card h3 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post p code,
+.tech-post li code,
+.post-note code,
+.read-table code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+  line-height: 1.55;
+  vertical-align: baseline;
+}
+
+.post-list,
+.post-card ul {
+  margin: 12px 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.post-list li,
+.post-card li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-list li::before,
+.post-card li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.numbered-list {
+  margin: 12px 0 0;
+  padding-left: 24px;
+}
+
+.numbered-list li {
+  margin: 8px 0;
+  padding-left: 4px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-card .numbered-list li::before {
+  display: none;
+  content: none;
+}
+
+.post-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+}
+
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+}
+
+.source-toggle {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+}
+
+.source-toggle summary {
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.source-box {
+  overflow-x: auto;
+  margin: 14px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.source-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.toc-title,
+.post-toc strong {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.toc-list,
+.post-toc ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list li,
+.post-toc ol li {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.toc-list a,
+.post-toc ol a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.toc-list a:hover,
+.post-toc ol a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(25, 185, 124, 0.36);
+  background: rgba(240, 253, 247, 0.92);
+  color: #1d4ed8;
+}
+
+.toc-main {
+  flex: 1 1 auto;
+}
+
+.toc-commit {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  white-space: nowrap;
+}
+
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+
+.study-timeline {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  margin: 18px 0 0;
+  padding-left: 36px;
+}
+
+.study-timeline::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.18);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 18px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green-soft), transparent 34%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: -35px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(25, 185, 124, 0.24), 0 0 16px rgba(25, 185, 124, 0.2);
+}
+
+.timeline-meta {
+  margin: 0 0 6px;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.timeline-title {
+  margin: 10px 0 0;
+  color: #111827;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+}
+
+.timeline-title a {
+  color: #111827;
+  text-decoration: none;
+}
+
+.timeline-title a:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+.timeline-item p {
+  margin: 0;
+}
+
+.commit-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 12px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.commit-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.commit-link::after {
+  content: ">";
+  margin-left: 6px;
+  font-size: 13px;
+}
+
+.read-table {
+  width: 100%;
+  margin: 12px 0 18px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.read-table th,
+.read-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  color: #334155;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: top;
+}
+
+.read-table th {
+  background: rgba(25, 185, 124, 0.08);
+  color: #111827;
+  font-weight: 800;
+}
+
+.read-table tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 26px 14px 60px;
+  }
+
+  .post-hero {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+
+  .toc-list,
+  .post-toc ol {
+    grid-template-columns: 1fr;
+  }
+
+  .toc-list li,
+  .post-toc ol li {
+    flex-direction: column;
+  }
+
+  .toc-commit {
+    width: fit-content;
+  }
+
+  .study-timeline {
+    padding-left: 32px;
+  }
+
+  .timeline-item::before {
+    left: -31px;
+  }
+
+  .read-table th,
+  .read-table td {
+    display: block;
+    width: 100%;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">WebRTC Study</p>
+        <h1 class="post-title">Socket.io, mediasoup, Device, 미디어 스트림 (트랙), transport 등에 대해서 쭉 정리해보기</h1>
+        <p class="post-subtitle">Socket.io와 mediasoup에서 Device, Transport, Producer/Consumer가 어떻게 이어지는지 정리한 메모입니다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>오타 수정 후 Markdown 원본</summary>
+      <pre class="source-box"><code># Socket.io, mediasoup, Device, 미디어 스트림 (트랙), transport 등에 대해서 쭉 정리해보기
+
+일단 이번에 약 2일 동안 소화를 못하고 있는 내용이 웹 소켓이다. 스트림, 소켓, 포트 등의 이야기는 이미 알고 있었지만 트랙 등의 개념도 처음이고, 웹소켓이 소켓 통신과 다른 걸 몰랐었어서 또 새로웠다. 거기에 여러 프레임워크나 라이브러리 등의 사용법, 이벤트 기반의 서버 프로그래밍 등에 대해서 익숙하지 않아서 현재 [RTCPeerConnection](./ex_server/), [mediasoup](./ex_server_2/)에 대해서 작업을 해보긴 했는데 아직 2,3회독으로는 부족한 감이 있고 한 번에 코드를 치면서 이해하다보니까 또 머리가 복잡해져서 정리를 한 번 하고 가려고 한다.
+
+---
+
+SFU 방식에서 router는 보통 mediasoup의 createWorker를 통한 하위 프로세스 생성 후 `createRouter({ 코덱 설정 })`을 통해 이루어지게 된다. 여기에서 클라이언트에서 소켓 연결 이후 하게 되는 작업이 `new Device()`를 통한 객체 생성이다. 여기에서 `Device`는 mediasoup 서버와 직접 통신하는 객체는 아니며 브라우저 쪽에서 mediasoup의 `RTP`/`코덱`/`Transport`의 처리를 도와주는 `mediasoup-client` 패키지의 객체입니다.
+
+&gt; `mediasoup-client`는 TypeScript로 작성되어 JavaScript + CommonJS 형태로 변환되어 있다고 나와 있습니다. 여기에서 CDN의 경우 `src`를 통해 받아오는 방법이 존재하며 `ES Module` 방식으로 `import`를 통해 가져오는 방식이 있습니다. 이는 파일마다 독립된 스코프를 가지며 전역 `window`에 자동 등록되지 않습니다. 또한 브라우저는 전통적으로 `CommonJS`를 사용하지 않기 때문에 이를 `esm.sh`와 같은 ESM CDN이 `CommonJS` 같은 구조를 브라우저에서 `type=&quot;module&quot;` 방식으로 읽을 수 있게 `ESM` 모듈 방식으로 바꿔주는 방식입니다.
+
+### [클라이언트] 서버에 소켓 연결
+클라이언트가 생성됨과 동시에 `Socket.io`의 `io()`를 통해 즉시 소켓이 만들어지게 됩니다. (지연시킬 수 있지만 일단 패스) 이후 `socket.emitWithAck`를 통해 서버 채널에 대한 `rtp 규격`을 요청하게 된다면 이에 대해서 해당 요청 이벤트를 버퍼(이벤트 큐)에 등록한 후 소켓 연결이 확립됨과 동시에 서버에 보내게 됩니다.
+
+### [서버] mediasoup, Worker, router 생성 및 rtpCapabilities 응답 준비
+서버 쪽 잠깐 보고 가면 mediasoup을 통해 worker를 만든 후에, 거기 안에서 worker가 특정 규격의 router(room 또는 채널이라고도 부름)를 만들어서 거기에 대해서 코덱을 설정이 되어 있음과 동시에 이미 시작되는 순간에 등록되어 개발자가 작성한 `get-channel-rtp-capabilities` 같은 이벤트에 대해서 등록되게 됩니다. 현재까지의 `mediasoup`의 주요 객체는 router, worker 정도입니다.(transport, producer, consumer 제외)
+
+&gt; 계층적으로 하나의 worker 안에 여러 router가 존재하며 그 router 안에 여러 transport, transport 하위의 producer와 consumer가 존재합니다.
+
+### [클라이언트] 서버의 규격에 대해서 스스로 확인하기
+위와 같은 `rtpCapabilities`를 받게 된다면 클라이언트는 `mediasoup-client`에 존재하는 `Device` 객체를 이용하여 가능한 RTP 규격을 스스로 설정하게 됩니다. 여기에서 사용되는 메서드가 `[Device객체].load({ routerRtpCapabilities })`입니다.
+
+&gt; 여기에서 `Device` 객체는 실제로 연결을 담당하는 객체가 아닌 `RTP`, `코덱`, `Transport` 등을 관리해주는 객체입니다. 다른 속성으로는 `canProduce`, `rtpCapabilities`, `sendRtpCapabilities` 등이 존재합니다.
+
+&gt; `rtpCapabilities`의 경우에는 `JSON` 형태로 이루어져 있기 때문에 구조가 다른 경우 오류가 나기 쉽지만 이 또한 `mediasoup`에서 정한 `RtpCapabilities` 타입이기 때문에 서버에서 주는 그대로 사용이 가능합니다. (모두 `mediasoup.RtpCapabilities` 타입이어서) 전체적인 구조는 `codecs 배열`, `headersExtensions`로 이루어져 있으며 `codecs`에는 `kind`, `mimeType`, `시간간격`, `기타 파라미터 또는 채널 등`이 존재하며 `headersExtensions`에는 RTP 패킷에 붙는 추가 정보로 대상, 식별자, 암호화, 사용 방향 등에 대한 추가 확장자를 설정하게 됩니다.
+
+### [클라이언트] 서버에 연결 준비 요청하기
+클라이언트가 서버와 연결되기 위해선 몇 가지 조건이 존재합니다.
+- 클라이언트의 발송/수신용 연결
+- 서버의 해당 클라이언트에 대한 발송/수신용 연결
+- 해당 연결이 들어갈 `router`
+- 해당 연결을 문제 없이 하기 위한 연결 정보
+
+여기에서 연결의 시작은 보통 클라이언트의 이벤트 생산을 통해 시작되며 해당 요청을 통해 서버는 `createWebRtcTransport(router)`을 통해 통신 창구를 하나 만들어주게 되며 이의 반환 값으로 연결 객체인 `WebRtcTransport객체`를 반환하게 되는데 이곳에는 향후 클라이언트와 핸드셰이크를 위해 필요한 `id`, `iceParameters`, `iceCandidates`, `dtlsParameters`와 같은 `ice` 정보와 암호화 정보가 존재하여 이를 클라이언트에게 제공함으로써 클라이언트가 이것을 최종 연결에 사용이 가능하게 됩니다.
+
+용어에 대해 설명을 간단히 하면
+- ICE: 상호 연결 확립의 약자로 외부와 자신이 통신할 수 있는 경로(IP, 포트, 프로토콜, 경로)를 아는 절차(프로토콜 또는 프레임워크 정도).
+- `iceCandidates`: 연결할 후보 주소 목록
+- `iceParameters`: ICE 연결 과정에서 서로를 인증하고 매칭하기 위한 정보. (사용자 이름, 비밀번호, 더 가볍게 연결 검사를 하는 ICE lite 방식 여부)
+- `dtlsParameters`: 말했듯 인증서가 맞는지 확인하기 위한 알고리즘과 키의 목록들
+- `WebRtcTransport객체`: ICE와 DTLS 절차로 협상된 경로. 향후 클라이언트의 `transport` 객체와 미리 확립한 ICE/DTLS를 통해 연결하게 됩니다. 이렇게 연결에 필요한 데이터들을 미리 교환해두며 실제 `produce/consume` 순간에 연결 검사를 진행하여 최종 경로를 확정하게 됩니다.
+
+### [클라이언트] 자신이 보낼 transport를 생성함
+위에서 서버가 연결할 경로에 대한 준비를 마쳤다면 이제 클라이언트는 위에서 받은 `WebRtcTransport객체`에 대한 id, 파라미터 등을 받게 됩니다. 이를 기반으로 `Device.createSendTransport({ id, iceCandidates, iceParameters, dtlsParameters })`를 생성하게 됩니다. 해당 값의 반환값은 `Transport`객체를 구현한 `mediasoup-client.SendTransport`입니다. 해당 객체를 만들려면 그에 대응하는 서버의 `WebRtcTransport`가 존재해야 합니다. `Transport` 객체는 내부적으로 `RTCPeerConnection`을 다룹니다.
+
+`SendTransport`객체의 속성은 대략 다음과 같습니다.
+- `.id`
+- `.closed`
+- `.connectionState`
+- `.on(&quot;이벤트&quot;, ...)`
+- `.produce({ 트랙 })`
+
+여기에서 주목할 점은 `createSendTransport()` 순간에 연결되는 것이 아닌 먼저 `connect`와 `produce`에 대한 이벤트를 구독한 후 최초로 `SendTransport.produce()`를 하는 순간에 연결이 시작됩니다. (이미 되어 있으면 패스) 이렇게 되면 `mediasoup-client`에서 `SendTransport`의 `&quot;connect&quot;` 이벤트와 함께 내부적으로 만든 `dtls` 데이터를 인자로 넣어주게 됩니다. 
+
+이때 `SendTransport`의 `connect` 이벤트 발생 시 서버로 자신의 `SendTransport.id`와 `dtlsParameters`를 보냄으로써 자신이 어떤 경로로 어떤 암호를 통해 연결할 것인지를 알려주게 됩니다. 여기서 포인트는 `SendTransport.id`와 서버의 `WebRtcTransport.id`가 동일하여 둘이 한 쌍으로 같은 연결을 바라보는 서로 다른 객체라고 해석할 수 있습니다.
+
+이렇게 연결된 `WebRtcTransport`를 기반으로 해당 암호화/경로 등을 사용하는 `Producer`를 만들어 사용하며 `Consumer`의 경우에도 동일한 원리로 동작합니다.
+
+### [서버] WebRtcTransport에 대한 producer 생성
+클라이언트의 `SendTransport`와 `WebRtcTransport`가 연결되었다면 클라이언트의 제공한다는 요청을 통해 서버의 `WebRtcTransport`가 `Producer객체`를 메서드를 통해 생성할 수 있습니다. `WebRtcTransport.produce({ kind, rtpParameters, paused?: false, appData?: [식별자 또는 객체] })`
+
+또한 해당 반환값 `Producer`객체의 `id`를 반드시 클라이언트에게 응답으로 주어야 하며, 클라이언트는 `on(&quot;produce&quot;, ..., callback)` 의 `callback{ id: producerId }`를 실행해주어 서버의 `Producer`로 연결하는 과정을 가져야합니다.
+
+### [클라이언트] 자신의 미디어 트랙들을 서버에 전송
+일반적으로 브라우저에는 `navigator.mediaDevices`라는 미디어 관련 메서드를 가지고 있는 속성이 존재하며 그중 `.getUserMedia()`를 통해 내부에 `MediaStreamTrack`을 가지고 있는 `MediaStream`객체를 받을 수 있습니다.
+
+여기에서 클라이언트는 해당 트랙을 `produce`하기 위해선 `SendTransport.on(&quot;produce&quot;)`가 등록되어 있어야 하며, `SendTransport.produce({ track })`가 이루어질 시 `track`이 `{ kind, rtpParameters }`로 반환되어 `&quot;produce&quot;` 이벤트를 발생시킵니다. 이는 곧 서버에 `sendTransport.id`와 함께 전송하게 되며, 서버는 해당 `WebRtcTransport.id`를 통해 `transport.produce({ kind, rtpParameters })`를 통해 `Transport`하위의 `Producer` 객체를 만들어주게 됩니다. 또한 클라이언트에게 다시 `Producer.id`를 주어 클라이언트의 `callback({ id })`로 최종적으로 `Device`에 등록해주게 됩니다.
+
+이렇게 등록된 `Producer`는 향후 `router.canConsume( producer, rtpCapabilities )`를 통해 확인 후 `WebRtcTransport.consume({ producerId, rtpCapabilities, paused })`을 통해 `Consumer`가 생성될 수 있습니다.
+
+최종적으로 `MediaStreamTrack`을 `recvTransport.consume({ id, producerId, kind, rtpParameters })`를 통해 받아온 `new MediaTrack(consumer.track)`로 만들어 영상/음향에 등록해줄 수 있습니다.
+
+## [TIP] 알아야하는 객체들의 구조
+해당 구성도에서 **브라우저**는 `socket.io`, `mediasoup-client Device`, `send/recvTransport`, `Producer/Consumer wrapper`, `MediaStream/MediaStreamTrack`로 이루어져 있으며 브라우저의 내부 `WebRTC` 엔진에는 `RTCPeerConnection`, `ICE`, `DTLS`, `SRTP`, `RTP/RTCP 패킷 처리 기능`, `UDP/TCP 네트워크 소켓 기능` 등이 존재합니다.
+
+**Node.js** 서버 프로세스의 경우에는 `Socket.io`, `mediasoup Worker`, `Router`, `Transport`, `Producer`, `Consumer`와 관리를 위한 `Map`객체 등이 존재합니다. 
+
+**mediasoup-worker** 프로세스의 경우에는 실제 미디어 처리를 위한 `ICE 처리`, `DTLS 처리`, `RTP/RTCP 송수신`, `Router 내부 RTP 라우팅`, `Producer/Consumer의 실제 패킷 처리`, `UDP/TCP 포트 listen` 기능을 담당하게 됩니다.
+
+여기에서 `Node.js`의 경우에는 미디어 데이터의 송수신은 담당하지 않으며 `mediasoup-worker`이 담당하게 됩니다.
+
+**WebRtcTransport**의 경우에는 소켓 등과 같은 특정 스트림을 읽는 객체보다는 클라이언트 브라우저(WebRTC 브라우저)부터 `mediasoup`의 라우터까지 연결해주는 객체입니다. 여기에서는 ICE 상태, DTLS 상태, 선택된 ICE tuple, RTP/RTCP 송수신 경로, 위에 붙어있는 Producer/Consumer 객체를 관리하는 객체입니다. 또한 사용하는 포트의 경우 일반적으로 하나의 포트에 하나의 Transport가 할당되며, 경우에 따라 하나의 포트를 통해 여러 생산/구독자를 처리할 수 있습니다. 
+
+**Producer/Consumer**의 경우에는 해당 객체들이 포함되어 있는 `WebRtcTransport`의 경로를 공유하게 됩니다. 또한 식별의 경우에는 내부적으로 통신에 쓰이는 안내서 역할인 `rtpParameters`에 존재하는 포맷 및 식별자 등을 활용하여 어떤 객체에 데이터 흐름을 붙여줄지 판단하게 됩니다.
+
+
+
+</code></pre>
+    </details>
+
+    <nav class="post-toc">
+      <strong>목차</strong>
+      <ol>
+        <li><a href="#section-01">[클라이언트] 서버에 소켓 연결</a></li>
+        <li><a href="#section-02">[서버] mediasoup, Worker, router 생성 및 rtpCapabilities 응답 준비</a></li>
+        <li><a href="#section-03">[클라이언트] 서버의 규격에 대해서 스스로 확인하기</a></li>
+        <li><a href="#section-04">[클라이언트] 서버에 연결 준비 요청하기</a></li>
+        <li><a href="#section-05">[클라이언트] 자신이 보낼 transport를 생성함</a></li>
+        <li><a href="#section-06">[서버] WebRtcTransport에 대한 producer 생성</a></li>
+        <li><a href="#section-07">[클라이언트] 자신의 미디어 트랙들을 서버에 전송</a></li>
+        <li><a href="#section-08">[TIP] 알아야하는 객체들의 구조</a></li>
+      </ol>
+    </nav>
+
+    <section class="post-section" id="intro">
+
+      <h2 class="section-title">정리 배경</h2>
+
+      <div class="post-card stack">
+
+        <p>일단 이번에 약 2일 동안 소화를 못하고 있는 내용이 웹 소켓이다. 스트림, 소켓, 포트 등의 이야기는 이미 알고 있었지만 트랙 등의 개념도 처음이고, 웹소켓이 소켓 통신과 다른 걸 몰랐었어서 또 새로웠다. 거기에 여러 프레임워크나 라이브러리 등의 사용법, 이벤트 기반의 서버 프로그래밍 등에 대해서 익숙하지 않아서 현재 <a href="./ex_server/">RTCPeerConnection</a>, <a href="./ex_server_2/">mediasoup</a>에 대해서 작업을 해보긴 했는데 아직 2,3회독으로는 부족한 감이 있고 한 번에 코드를 치면서 이해하다보니까 또 머리가 복잡해져서 정리를 한 번 하고 가려고 한다.</p>
+        <p>SFU 방식에서 router는 보통 mediasoup의 createWorker를 통한 하위 프로세스 생성 후 <code>createRouter({ 코덱 설정 })</code>을 통해 이루어지게 된다. 여기에서 클라이언트에서 소켓 연결 이후 하게 되는 작업이 <code>new Device()</code>를 통한 객체 생성이다. 여기에서 <code>Device</code>는 mediasoup 서버와 직접 통신하는 객체는 아니며 브라우저 쪽에서 mediasoup의 <code>RTP</code>/<code>코덱</code>/<code>Transport</code>의 처리를 도와주는 <code>mediasoup-client</code> 패키지의 객체입니다.</p>
+        <div class="post-note"><p><code>mediasoup-client</code>는 TypeScript로 작성되어 JavaScript + CommonJS 형태로 변환되어 있다고 나와 있습니다. 여기에서 CDN의 경우 <code>src</code>를 통해 받아오는 방법이 존재하며 <code>ES Module</code> 방식으로 <code>import</code>를 통해 가져오는 방식이 있습니다. 이는 파일마다 독립된 스코프를 가지며 전역 <code>window</code>에 자동 등록되지 않습니다. 또한 브라우저는 전통적으로 <code>CommonJS</code>를 사용하지 않기 때문에 이를 <code>esm.sh</code>와 같은 ESM CDN이 <code>CommonJS</code>같은 구조를 브라우저에서 <code>type=&quot;module&quot;</code> 방식으로 읽을 수 있게 <code>ESM</code> 모듈 방식으로 바꿔주는 방식입니다.</p></div>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-01">
+
+      <h2 class="section-title">[클라이언트] 서버에 소켓 연결</h2>
+
+      <div class="post-card stack">
+
+        <p>클라이언트가 생성됨과 동시에 <code>Socket.io</code>의 <code>io()</code>를 통해 즉시 소켓이 만들어지게 됩니다. (지연시킬 수 있지만 일단 패스) 이후 <code>socket.emitWithAck</code>를 통해 서버 채널에 대한 <code>rtp 규격</code>을 요청하게 된다면 이에 대해서 해당 요청 이벤트를 버퍼(이벤트 큐)에 등록한 후 소켓 연결이 확립됨과 동시에 서버에 보내게 됩니다.</p>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-02">
+
+      <h2 class="section-title">[서버] mediasoup, Worker, router 생성 및 rtpCapabilities 응답 준비</h2>
+
+      <div class="post-card stack">
+
+        <p>서버 쪽 잠깐 보고 가면 mediasoup을 통해 worker를 만든 후에, 거기 안에서 worker가 특정 규격의 router(room 또는 채널이라고도 부름)를 만들어서 거기에 대해서 코덱을 설정이 되어 있음과 동시에 이미 시작되는 순간에 등록되어 개발자가 작성한 <code>get-channel-rtp-capabilities</code> 같은 이벤트에 대해서 등록되게 됩니다. 현재까지의 <code>mediasoup</code>의 주요 객체는 router, worker 정도입니다.(transport, producer, consumer 제외)</p>
+        <div class="post-note"><p>계층적으로 하나의 worker 안에 여러 router가 존재하며 그 router 안에 여러 transport, transport 하위의 producer와 consumer가 존재합니다.</p></div>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-03">
+
+      <h2 class="section-title">[클라이언트] 서버의 규격에 대해서 스스로 확인하기</h2>
+
+      <div class="post-card stack">
+
+        <p>위와 같은 <code>rtpCapabilities</code>를 받게 된다면 클라이언트는 <code>mediasoup-client</code>에 존재하는 <code>Device</code> 객체를 이용하여 가능한 RTP 규격을 스스로 설정하게 됩니다. 여기에서 사용되는 메서드가 <code>[Device객체].load({ routerRtpCapabilities })</code>입니다.</p>
+        <div class="post-note"><p>여기에서 <code>Device</code> 객체는 실제로 연결을 담당하는 객체가 아닌 <code>RTP</code>, <code>코덱</code>, <code>Transport</code> 등을 관리해주는 객체입니다. 다른 속성으로는 <code>canProduce</code>, <code>rtpCapabilities</code>, <code>sendRtpCapabilities</code> 등이 존재합니다.</p></div>
+        <div class="post-note"><p><code>rtpCapabilities</code>의 경우에는 <code>JSON</code>형태로 이루어져 있기 때문에 구조가 다른 경우 오류가 나기 쉽지만 이 또한 <code>mediasoup</code>에서 정한 <code>RtpCapabilities</code> 타입이기 때문에 서버에서 주는 그대로 사용이 가능합니다. (모두 <code>mediasoup.RtpCapabilities</code>타입이어서) 전체적인 구조는 <code>codecs 배열</code>, <code>headersExtensions</code>로 이루어져 있으며 <code>codecs</code>에는 <code>kind</code>, <code>mimeType</code>, <code>시간간격</code>, <code>기타 파라미터 또는 채널 등</code>이 존재하며 <code>headersExtensions</code>에는 RTP 패킷에 붙는 추가 정보로 대상, 식별자, 암호화, 사용 방향 등에 대한 추가 확장자를 설정하게 됩니다.</p></div>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-04">
+
+      <h2 class="section-title">[클라이언트] 서버에 연결 준비 요청하기</h2>
+
+      <div class="post-card stack">
+
+        <p>클라이언트가 서버와 연결되기 위해선 몇 가지 조건이 존재합니다.</p>
+        <ul class="post-list">
+          <li>클라이언트의 발송/수신용 연결</li>
+          <li>서버의 해당 클라이언트에 대한 발송/수신용 연결</li>
+          <li>해당 연결이 들어갈 <code>router</code></li>
+          <li>해당 연결을 문제 없이 하기 위한 연결 정보</li>
+        </ul>
+        <p>여기에서 연결의 시작은 보통 클라이언트의 이벤트 생산을 통해 시작되며 해당 요청을 통해 서버는 <code>createWebRtcTransport(router)</code>을 통해 통신 창구를 하나 만들어주게 되며 이의 반환 값으로 연결 객체인 <code>WebRtcTransport객체</code>를 반환하게 되는데 이곳에는 향후 클라이언트와 핸드셰이크를 위해 필요한 <code>id</code>, <code>iceParameters</code>, <code>iceCandidates</code>, <code>dtlsParameters</code>와 같은 <code>ice</code> 정보와 암호화 정보가 존재하여 이를 클라이언트에게 제공함으로써 클라이언트가 이것을 최종 연결에 사용이 가능하게 됩니다.</p>
+        <p>용어에 대해 설명을 간단히 하면</p>
+        <ul class="post-list">
+          <li>ICE: 상호 연결 확립의 약자로 외부와 자신이 통신할 수 있는 경로(IP, 포트, 프로토콜, 경로)를 아는 절차(프로토콜 또는 프레임워크 정도).</li>
+          <li><code>iceCandidates</code>: 연결할 후보 주소 목록</li>
+          <li><code>iceParameters</code>: ICE 연결 과정에서 서로를 인증하고 매칭하기 위한 정보. (사용자 이름, 비밀번호, 더 가볍게 연결 검사를 하는 ICE lite 방식 여부)</li>
+          <li><code>dtlsParameters</code>: 말했듯 인증서가 맞는지 확인하기 위한 알고리즘과 키의 목록들</li>
+          <li><code>WebRtcTransport객체</code>: ICE와 DTLS 절차로 협상된 경로. 향후 클라이언트의 <code>transport</code> 객체와 미리 확립한 ICE/DTLS를 통해 연결하게 됩니다. 이렇게 연결에 필요한 데이터들을 미리 교환해두며 실제 <code>produce/consume</code> 순간에 연결 검사를 진행하여 최종 경로를 확정하게 됩니다.</li>
+        </ul>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-05">
+
+      <h2 class="section-title">[클라이언트] 자신이 보낼 transport를 생성함</h2>
+
+      <div class="post-card stack">
+
+        <p>위에서 서버가 연결할 경로에 대한 준비를 마쳤다면 이제 클라이언트는 위에서 받은 <code>WebRtcTransport객체</code>에 대한 id, 파라미터 등을 받게 됩니다. 이를 기반으로 <code>Device.createSendTransport({ id, iceCandidates, iceParameters, dtlsParameters })</code>를 생성하게 됩니다. 해당 값의 반환값은 <code>Transport</code>객체를 구현한 <code>mediasoup-client.SendTransport</code>입니다. 해당 객체를 만들려면 그에 대응하는 서버의 <code>WebRtcTransport</code>가 존재해야 합니다. <code>Transport</code> 객체는 내부적으로 <code>RTCPeerConnection</code>을 다룹니다.</p>
+        <p><code>SendTransport</code>객체의 속성은 대략 다음과 같습니다.</p>
+        <ul class="post-list">
+          <li><code>.id</code></li>
+          <li><code>.closed</code></li>
+          <li><code>.connectionState</code></li>
+          <li><code>.on(&quot;이벤트&quot;, ...)</code></li>
+          <li><code>.produce({ 트랙 })</code></li>
+        </ul>
+        <p>여기에서 주목할 점은 <code>createSendTransport()</code> 순간에 연결되는 것이 아닌 먼저 <code>connect</code>와 <code>produce</code>에 대한 이벤트를 구독한 후 최초로 <code>SendTransport.produce()</code>를 하는 순간에 연결이 시작됩니다. (이미 되어 있으면 패스) 이렇게 되면 <code>mediasoup-client</code>에서 <code>SendTransport</code>의 <code>&quot;connect&quot;</code> 이벤트와 함께 내부적으로 만든 <code>dtls</code> 데이터를 인자로 넣어주게 됩니다.</p>
+        <p>이때 <code>SendTransport</code>의 <code>connect</code> 이벤트 발생 시 서버로 자신의 <code>SendTransport.id</code>와 <code>dtlsParameters</code>를 보냄으로써 자신이 어떤 경로로 어떤 암호를 통해 연결할 것인지를 알려주게 됩니다. 여기서 포인트는 <code>SendTransport.id</code>와 서버의 <code>WebRtcTransport.id</code>가 동일하여 둘이 한 쌍으로 같은 연결을 바라보는 서로 다른 객체라고 해석할 수 있습니다.</p>
+        <p>이렇게 연결된 <code>WebRtcTransport</code>를 기반으로 해당 암호화/경로 등을 사용하는 <code>Producer</code>를 만들어 사용하며 <code>Consumer</code>의 경우에도 동일한 원리로 동작합니다.</p>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-06">
+
+      <h2 class="section-title">[서버] WebRtcTransport에 대한 producer 생성</h2>
+
+      <div class="post-card stack">
+
+        <p>클라이언트의 <code>SendTransport</code>와 <code>WebRtcTransport</code>가 연결되었다면 클라이언트의 제공한다는 요청을 통해 서버의 <code>WebRtcTransport</code>가 <code>Producer객체</code>를 메서드를 통해 생성할 수 있습니다. <code>WebRtcTransport.produce({ kind, rtpParameters, paused?: false, appData?: [식별자 또는 객체] })</code></p>
+        <p>또한 해당 반환값 <code>Producer</code>객체의 <code>id</code>를 반드시 클라이언트에게 응답으로 주어야 하며, 클라이언트는 <code>on(&quot;produce&quot;, ..., callback)</code> 의 <code>callback{ id: producerId }</code>를 실행해주어 서버의 <code>Producer</code>로 연결하는 과정을 가져야합니다.</p>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-07">
+
+      <h2 class="section-title">[클라이언트] 자신의 미디어 트랙들을 서버에 전송</h2>
+
+      <div class="post-card stack">
+
+        <p>일반적으로 브라우저에는 <code>navigator.mediaDevices</code>라는 미디어 관련 메서드를 가지고 있는 속성이 존재하며 그중 <code>.getUserMedia()</code>를 통해 내부에 <code>MediaStreamTrack</code>을 가지고 있는 <code>MediaStream</code>객체를 받을 수 있습니다.</p>
+        <p>여기에서 클라이언트는 해당 트랙을 <code>produce</code>하기 위해선 <code>SendTransport.on(&quot;produce&quot;)</code>가 등록되어 있어야 하며, <code>SendTransport.produce({ track })</code>가 이루어질 시 <code>track</code>이 <code>{ kind, rtpParameters }</code>로 반환되어 <code>&quot;produce&quot;</code> 이벤트를 발생시킵니다. 이는 곧 서버에 <code>sendTransport.id</code>와 함께 전송하게 되며, 서버는 해당 <code>WebRtcTransport.id</code>를 통해 <code>transport.produce({ kind, rtpParameters })</code>를 통해 <code>Transport</code>하위의 <code>Producer</code> 객체를 만들어주게 됩니다. 또한 클라이언트에게 다시 <code>Producer.id</code>를 주어 클라이언트의 <code>callback({ id })</code>로 최종적으로 <code>Device</code>에 등록해주게 됩니다.</p>
+        <p>이렇게 등록된 <code>Producer</code>는 향후 <code>router.canConsume( producer, rtpCapabilities )</code>를 통해 확인 후 <code>WebRtcTransport.consume({ producerId, rtpCapabilities, paused })</code>을 통해 <code>Consumer</code>가 생성될 수 있습니다.</p>
+        <p>최종적으로 <code>MediaStreamTrack</code>을 <code>recvTransport.consume({ id, producerId, kind, rtpParameters })</code>를 통해 받아온 <code>new MediaTrack(consumer.track)</code>로 만들어 영상/음향에 등록해줄 수 있습니다.</p>
+
+      </div>
+
+    </section>
+
+    <section class="post-section" id="section-08">
+
+      <h2 class="section-title">[TIP] 알아야하는 객체들의 구조</h2>
+
+      <div class="post-card stack">
+
+        <p>해당 구성도에서 <strong>브라우저</strong>는 <code>socket.io</code>, <code>mediasoup-client Device</code>, <code>send/recvTransport</code>, <code>Producer/Consumer wrapper</code>, <code>MediaStream/MediaStreamTrack</code>로 이루어져 있으며 브라우저의 내부 <code>WebRTC</code> 엔진에는 <code>RTCPeerConnection</code>, <code>ICE</code>, <code>DTLS</code>, <code>SRTP</code>, <code>RTP/RTCP 패킷 처리 기능</code>, <code>UDP/TCP 네트워크 소켓 기능</code> 등이 존재합니다.</p>
+        <p><strong>Node.js</strong> 서버 프로세스의 경우에는 <code>Socket.io</code>, <code>mediasoup Worker</code>, <code>Router</code>, <code>Transport</code>, <code>Producer</code>, <code>Consumer</code>와 관리를 위한 <code>Map</code>객체 등이 존재합니다.</p>
+        <p><strong>mediasoup-worker</strong> 프로세스의 경우에는 실제 미디어 처리를 위한 <code>ICE 처리</code>, <code>DTLS 처리</code>, <code>RTP/RTCP 송수신</code>, <code>Router 내부 RTP 라우팅</code>, <code>Producer/Consumer의 실제 패킷 처리</code>, <code>UDP/TCP 포트 listen</code> 기능을 담당하게 됩니다.</p>
+        <p>여기에서 <code>Node.js</code>의 경우에는 미디어 데이터의 송수신은 담당하지 않으며 <code>mediasoup-worker</code>이 담당하게 됩니다.</p>
+        <p><strong>WebRtcTransport</strong>의 경우에는 소켓 등과 같은 특정 스트림을 읽는 객체보다는 클라이언트 브라우저(WebRTC 브라우저)부터 <code>mediasoup</code>의 라우터까지 연결해주는 객체입니다. 여기에서는 ICE 상태, DTLS 상태, 선택된 ICE tuple, RTP/RTCP 송수신 경로, 위에 붙어있는 Producer/Consumer 객체를 관리하는 객체입니다. 또한 사용하는 포트의 경우 일반적으로 하나의 포트에 하나의 Transport가 할당되며, 경우에 따라 하나의 포트를 통해 여러 생산/구독자를 처리할 수 있습니다.</p>
+        <p><strong>Producer/Consumer</strong>의 경우에는 해당 객체들이 포함되어 있는 <code>WebRtcTransport</code>의 경로를 공유하게 됩니다. 또한 식별의 경우에는 내부적으로 통신에 쓰이는 안내서 역할인 <code>rtpParameters</code>에 존재하는 포맷 및 식별자 등을 활용하여 어떤 객체에 데이터 흐름을 붙여줄지 판단하게 됩니다.</p>
+
+      </div>
+
+    </section>
+  </article>
+</body>
+</html>

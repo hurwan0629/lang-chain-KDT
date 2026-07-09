@@ -15,7 +15,7 @@
 
   <br><hr><br>
 
-  <pre id="log" style="font: bold"></pre>
+  <pre id="log" style="font-weight: bold"></pre>
 
 
   <!-- 이름 입력하기 -->
@@ -23,20 +23,29 @@
   <!-- 영상 매채 등 보여줄건지 등 미리 받아놓고 연결까지 한 다음에 다음페이지 보여주기 -->
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
+  <!-- mediasoup-client를 번들링 해주는 툴이 없기 때문에 CDN으로 받아오기 - [mediasoupClient 라는 객체를 사용 가능하게 됨] -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/mediasoup-client@3/lib/index.min.js"></script> -->
+   <!--  -->
+  <script type="module">
+    import { Device } from "https://esm.sh/mediasoup-client@3"
+
     // 로그용 함수 미리 만들어두기
     const logBox = document.getElementById("log")
     function log(message, data) { 
       console.log("[log]", message, data ?? "")
 
-      logBox.textContent += message + "\n"
+      logBox.textContent += "\n\n" + message + "\n"
       if (data) {
         logBox.textContent += JSON.stringify(data, null, 2) + "\n"
       }
     }
 
     let socket;
+    let device;
+    let recvTransport;
+    const remoteStreams = new Map()
 
+    window.startRtpReady = startRtpReady
     function startRtpReady() {
       if(socket) {
         alert("이미 연결되어있습니다!")
@@ -53,12 +62,18 @@
 
       socket = io({ autoConnect: false })
   
+      // 모든건 소켓에 연결되었다는 가정 하에 이루어짐.
       socket.on("connect", async () => {
         log("socket connected: " + socket.id)
   
         const joinResult = await socket.emitWithAck("join-room", {
           roomName: "test-room",
           userName // : "user-" + socket.id.slice(0, 4) // 중복될 수 있지만 사용자 이름일 뿐이기 때문에 큰 상관 없음 (지금은 고유하지 않아도 됨)
+        })
+
+        socket.on("new-producer", async (producerInfo) => {
+          log("new producer received", producerInfo)
+          await consumeProducer(producerInfo)
         })
   
         log("join-room result", joinResult)
@@ -68,11 +83,243 @@
         const rtpResult = await socket.emitWithAck("get-router-rtp-capabilities", {})
   
         // 그렇게 온 사용 가능한 rtpCapabilities 확인하기
-        log("router rtpCapabilities", rtpResult)
-  
+        log("router rtpCapabilities loaded", Object.keys(rtpResult))
+
+        // 클라이언트 측 mediasoup용 RTCPeerConnection 만들기
+        device = new Device()
+
+        // 그리고 그 클라이언트에 대해서 서버에서 허용하는 규격을 자기 설정으로 적용하기
+        await device.load({
+          routerRtpCapabilities: rtpResult.rtpCapabilities
+        }) 
+
+        log("mediasoup Device loaded", {
+          loaded: device.loaded,
+          rtpCapabilities: Object.keys(device.rtpCapabilities)
+        })
+
+        // 서버에 자기 produce 또는 consume 할 WebRtcTransport 하나 만들어달라 요청
+        // 응답으로는 아래와 같은 transportParams가 옴.
+        // {
+        //   id,
+        //   iceParameters, // ice 연결용 파라미터
+        //   iceCandidates, // 외부에서 보이는 주소 목록
+        //   dtlsParameters // 서버에서 사용할 tls 암호화 후보 목록
+        // }
+        const transportParams = await socket.emitWithAck("create-webrtc-transport", {
+          direction: "send"
+        })
+
+        if(!transportParams.ok) {
+          log("create send transport failed", transportParams)
+          return 
+        }
+        log("[create-webrtc-transport result] transportParams:", { ok: transportParams.ok, paramKeys: Object.keys(transportParams.params) } )
+        
+        const sendTransport = device.createSendTransport(transportParams.params)
+
+        log("send transport created", {
+          id: sendTransport.id
+        })
+
+        sendTransport.on("connect", async({ dtlsParameters }, callback, errback) => {
+          try {
+            const result = await socket.emitWithAck("connect-transport", {
+              transportId: sendTransport.id,
+              dtlsParameters
+            })
+
+            if(!result.ok) {
+              throw new Error(result.error)
+            }
+
+            log("send transport connected")
+
+            // 서버 연결 성공을 mediasoup-client에게 알려주는 함수
+            callback()
+          } catch(err) {
+            errback(err)
+          }
+        })
+
+        sendTransport.on("produce", async ({ kind, rtpParameters }, callback, errback) => {
+          try {
+            const result = await socket.emitWithAck("produce", {
+              transportId: sendTransport.id,
+              kind,
+              rtpParameters
+            })
+
+            if(!result.ok) {
+              throw new Error(result.error)
+            }
+
+            log("producer registered on server", {
+              producerId: result.producerId,
+              kind
+            })
+
+            callback({
+              id: result.producerId
+            })
+          } catch (error) {
+            errback(error)
+          }
+        })
+        // sendTransport.on("produce", async() => ...) 종료
+
+        // 브라우저로부터 video/audio 사용 가능한거 뽑아오기 (MediaStream[MediaStreamTrack, ...] Promise객체로)
+        const localStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        })
+
+        log("local media stream created", {
+          videoTracks: localStream.getVideoTracks().length,
+          audioTracks: localStream.getAudioTracks().length
+        })
+
+        
+
+        // 나의 WebRtcConnection
+        const videoTrack = localStream.getVideoTracks()[0]
+
+        if (videoTrack) {
+          const videoProducer = await sendTransport.produce({
+            track: videoTrack
+          })
+          
+          log("video producer created", {
+            id: videoProducer.id,
+            kind: videoProducer.kind
+          })
+        }
+
+        const audioTrack = localStream.getAudioTracks()[0]
+
+        if (audioTrack) {
+          const audioProducer = await sendTransport.produce({
+            track: audioTrack
+          })
+
+          log("audio producer created", {
+            id: audioProducer.id,
+            kind: audioProducer.kind
+          })
+        }
+
+        // producer을 확립하고 나서 consumer 준비하기
+        
+        const producersResult = await socket.emitWithAck("get-producers", {})
+
+        if (producersResult.ok) {
+          for (const producerInfo of producersResult.producers) {
+            await consumeProducer(producerInfo)
+          }
+        }
       })
+      // socket.on("connect", async() => {}) 종료
   
       socket.connect()
+    }
+
+    async function getOrCreateRecvTransport() {
+      // 이미 디바이스에 받는 연결점이 있으면 패스하기
+      if(recvTransport) {
+        return recvTransport
+      }
+
+      const transportResult = await socket.emitWithAck("create-webrtc-transport", {
+        direction: "recv"
+      })
+
+      if (!transportResult.ok) {
+        throw new Error(transportResult.error)
+      }
+
+      recvTransport = device.createRecvTransport(transportResult.params)
+
+      recvTransport.on("connect", async ({ dtlsParameters }, callback, errback) => {
+        try {
+          const result = await socket.emitWithAck("connect-transport", {
+            transportId: recvTransport.id,
+            dtlsParameters
+          })
+
+          if (!result.ok) {
+            throw new Error(result.error)
+          }
+
+          log("recv transport connected")
+
+          callback()
+        } catch (error) {
+          errback(error)
+        }
+      })
+
+      log("recv transport created", {
+        id: recvTransport
+      })
+
+      return recvTransport
+    }
+
+    async function consumeProducer({ producerId, socketId, kind }) {
+      // 사용 구독 통신 만들거나 가져오기
+      const transport = await getOrCreateRecvTransport()
+
+      // 서버에서 준 producerId와 socketId로 연결 요청하기
+      const consumeResult = await socket.emitWithAck("consume", {
+        transportId: transport.id,
+        producerId,
+        rtpCapabilities: device.rtpCapabilities
+      })
+
+      if(!consumeResult.ok) {
+        log("consume failed", consumeResult)
+        return 
+      }
+      
+      const consumer = await transport.consume(consumeResult.params)
+
+      const streamKey = socketId + ":" + kind
+      const stream = new MediaStream([consumer.track])
+      remoteStreams.set(streamKey, stream)
+
+      if (kind === "video") {
+        const video = document.createElement("video")
+        video.autoplay = true
+        video.playsInline = true
+        video.srcObject = stream
+        video.style.width = "300px"
+        video.style.background = "black"
+        video.style.margin = "10px"
+        video.muted = true
+
+        document.body.appendChild(video)
+      }
+      if (kind === "audio") {
+        const audio = document.createElement("audio")
+        audio.autoplay = true
+        audio.srcObject = stream
+
+        document.body.appendChild(audio)
+      }
+
+      const resumeResult = await socket.emitWithAck("resume-consumer", {
+        consumerId: consumer.id
+      })
+
+      if(!resumeResult.ok) {
+        log("resume consumer failed", {})
+      }
+
+      log("consumer created", {
+        consumerId: consumer.id,
+        producerId,
+        kind
+      })
     }
 
     function socketDisconnect() {

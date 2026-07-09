@@ -1,6 +1,7 @@
 // 브라우저와 주고받는 signaling 이벤트 처리
 // 워커의 생성을 담당하며 
 // 라우터를 생성해준다.
+// 워커 및 라우터(room)의 생성과 연결 (consume, produce, transport)을 관리해준다.
 
 import mediasoup from "mediasoup"
 
@@ -10,7 +11,7 @@ const mediaCodecs = [
   {
     kind: "audio",
     mimeType: "audio/opus", //인코딩/디코딩을 모두 합친 용어인 Codec를 의미하는 단어로 mime 타입을 알려주는 것
-    clockRate: 48000, // 1초를 48000등분하여 계산한다는 의미 (계산하는 시간의 단위를 맞추는 형태. 48프레임이면 1000단위로 계산하는 형태)
+    clockRate: 48000, // 1초를 48000등분하여 계산한다는 의미 (계산하는 시간의 단위를 맞추는 형태. 48000이면 초당 48000샘플 계산하는 형태)
     channels: 2
     // 1: mono 오디오
     // 2: stereo 오디오
@@ -19,7 +20,7 @@ const mediaCodecs = [
   {
     kind: "video",
     mimeType: "video/VP8",
-    clockRate: 90000,
+    clockRate: 90000, // 90kHz RTP timestamp
     parameters: {
       "x-google-start-bitrate": 1000 // 시작 비트레이트 힌트를 1000kbps정도로 준다는 뜻
       // 비트레이트가 높을수록 화질이 좋고 네트워크 부담이 됨
@@ -29,6 +30,7 @@ const mediaCodecs = [
 ]
 
 export async function createMediasoupWorker() {
+  console.log("mediasoup 워커 생성 시작.")
   // 해당 파일의 전역 변수인 worker에 Worker 객체 만들어서 넣어주기.
   // 해당 워커는 4만대 포트 번호에 RTC 연결을 관리할 수 있음
   worker = await mediasoup.createWorker({
@@ -36,7 +38,7 @@ export async function createMediasoupWorker() {
     rtcMaxPort: 49999
   })
 
-  console.log("mediasoup 워커 생성. worker.pid:", worker.pid)
+  console.log("mediasoup 워커 생성 완료. worker.pid:", worker.pid)
 
   worker.on("died", () => {
     console.error("mediasoup worker died")
@@ -57,4 +59,22 @@ export async function createRouter() {
   console.log("[/mediasoup.js createRouter] mediasoup router created:", router.id)
   
   return router
+}
+
+export async function createWebRtcTransport(router) {
+  const transport = await router.createWebRtcTransport({
+    listenIps: [
+      {
+        ip: "127.0.0.1",
+        announcedIp: null
+      }
+    ],
+    enableUdp: true,
+    enableTcp: true,
+    preferUdp: true
+  })
+
+  console.log("transport created:", transport.id)
+
+  return transport
 }

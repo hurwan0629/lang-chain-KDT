@@ -81,7 +81,7 @@
                           .getUserMedia({ // 사용자의 video, audio (카메라와 음성인식) 권한을 요청하고 반환하는 메서드
                             video: true,  // 반환값은 `MediaStream` 임
                             audio: true
-                          });
+                        });
       // console.log(await navigator.mediaDevices.enumerateDevices())
 
       // MediaStream 객체를 받은 뒤 이를 localVideo의 .srcObject 속성에 넣어주기 
@@ -106,7 +106,6 @@
             urls: "stun:stun.l.google.com:19302"
           }
         ]
-        
       });
 
       log("3. ICE Candidate 서로 전달 설정");

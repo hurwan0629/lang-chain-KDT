@@ -41,9 +41,26 @@ export function addPeerToRoom(room, socket, userName) {
     consumers: new Map()  // 클라이언트에게 줄 통로
   })
 
+  socket.join(room.name)
+
   console.log("peer joined", socket.id, userName)
 }
 
 export function getRoom(roomName) {
   return rooms.get(roomName)
+}
+
+// 방 이름과 생산자ID를 통해 생산자 객체 찾아주기
+// 생성된 생산자를 room에 대해서 consumer (소비자)에게 제공해 주기 위해 사용
+export function findProducer(room, producerId) {
+  // 특정 채널(라우터, 룸)에서 producerId에 대한 생산자를 찾아주기
+  for (const peer of room.peers.values()) {
+    const producer = peer.producers.get(producerId)
+
+    if (producer) {
+      return producer
+    }
+  }
+
+  return null
 }

@@ -1,6 +1,7 @@
 /private/
 
 **/.venv/**
+.venv/
 **/venv/**
 
 *.names*
@@ -11,6 +12,7 @@
 **/datas/**
 
 **/__pycache__/**
+.agents/
 
 **/node_modules/**
 # 로그 및 빌드 파일 제외 (선택)
