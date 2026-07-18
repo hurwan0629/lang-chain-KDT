@@ -1,0 +1,16 @@
+{
+  "name": "2026-07-17_untitled",
+  "version": "1.0.0",
+  "description": "현재 메시지큐와 워커. 예를 들어 카프카, 레디스, RabbitMQ 등과 같은 기술들에 대해서 뭔가 해보고 싶다는 생각이 있었지만 하지 못했었던 부분에 대해서 한번 예제 실습을 통해 감과 프로젝트 하나를 끝내는 연습을 더 해보기 위해 폴더를 팠습니다.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "amqplib": "^2.0.1"
+  }
+}
