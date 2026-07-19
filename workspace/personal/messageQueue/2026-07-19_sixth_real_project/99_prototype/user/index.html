@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원 쇼핑몰 프로토타입</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#home">
+        <strong>Study Shop</strong>
+        <span>회원 화면 프로토타입</span>
+      </a>
+      <nav class="nav">
+        <a href="#signup">회원가입</a>
+        <a href="#login">로그인</a>
+        <a href="#products">상품</a>
+        <a href="#cart">장바구니</a>
+        <a href="#payment">결제</a>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <h2>사용자 플로우</h2>
+        <div class="side-links">
+          <a href="#home">메인페이지</a>
+          <a href="#signup">회원가입</a>
+          <a href="#login">로그인</a>
+          <a href="#products">상품 목록 및 검색</a>
+          <a href="#detail">상품 상세</a>
+          <a href="#cart">장바구니</a>
+          <a href="#payment">결제 페이지</a>
+          <a href="#history">결제 완료 및 기록</a>
+        </div>
+      </aside>
+
+      <section class="content">
+        <article id="home" class="section">
+          <div class="section-header">
+            <div>
+              <h1>오늘의 추천 상품</h1>
+              <p>로그인 후 상품을 검색하고 장바구니 또는 즉시 구매로 주문을 진행합니다.</p>
+            </div>
+            <a class="button primary" href="#products">상품 보기</a>
+          </div>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-image">ITEM 01</div>
+              <div class="product-body">
+                <div class="product-title"><span>무선 키보드</span><span class="price">59,000원</span></div>
+                <span class="badge success">재고 24개</span>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">ITEM 02</div>
+              <div class="product-body">
+                <div class="product-title"><span>USB 허브</span><span class="price">32,000원</span></div>
+                <span class="badge warning">재고 5개</span>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">ITEM 03</div>
+              <div class="product-body">
+                <div class="product-title"><span>노트북 거치대</span><span class="price">41,000원</span></div>
+                <span class="badge success">재고 18개</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="signup" class="section">
+          <div class="section-header">
+            <div>
+              <h2>회원가입</h2>
+              <p>가입 완료 후 메인페이지로 이동하는 흐름입니다.</p>
+            </div>
+          </div>
+          <div class="form-grid three">
+            <label>아이디 <input value="user01"></label>
+            <label>이메일 <input value="user01@example.com"></label>
+            <label>이름 <input value="홍길동"></label>
+            <label>비밀번호 <input type="password" value="password"></label>
+            <label>주소 <input value="서울시 강남구"></label>
+            <label>역할 <input value="USER" disabled></label>
+          </div>
+          <div class="actions" style="margin-top:14px">
+            <button class="button primary">가입하기</button>
+          </div>
+        </article>
+
+        <article id="login" class="section">
+          <div class="section-header">
+            <div>
+              <h2>로그인</h2>
+              <p>아이디와 비밀번호로 로그인하고 탈퇴 계정은 제외합니다.</p>
+            </div>
+          </div>
+          <div class="search-row">
+            <input value="user01">
+            <button class="button primary">로그인</button>
+          </div>
+        </article>
+
+        <article id="products" class="section">
+          <div class="section-header">
+            <div>
+              <h2>상품 목록 및 검색</h2>
+              <p>상품명 검색과 재고 상태를 한 번에 확인합니다.</p>
+            </div>
+          </div>
+          <div class="search-row">
+            <input placeholder="상품명을 입력하세요" value="키보드">
+            <button class="button primary">검색</button>
+          </div>
+          <div class="product-grid" style="margin-top:16px">
+            <div class="product-card">
+              <div class="product-image">KEYBOARD</div>
+              <div class="product-body">
+                <div class="product-title"><span>무선 키보드</span><span class="price">59,000원</span></div>
+                <span class="muted">조용한 타건감, 블루투스 지원</span>
+                <div class="actions">
+                  <a class="button" href="#detail">상세</a>
+                  <button class="button primary">담기</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">MOUSE</div>
+              <div class="product-body">
+                <div class="product-title"><span>무선 마우스</span><span class="price">27,000원</span></div>
+                <span class="muted">가벼운 사무용 마우스</span>
+                <div class="actions">
+                  <a class="button" href="#detail">상세</a>
+                  <button class="button primary">담기</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-image">STAND</div>
+              <div class="product-body">
+                <div class="product-title"><span>노트북 거치대</span><span class="price">41,000원</span></div>
+                <span class="muted">높이 조절 가능</span>
+                <div class="actions">
+                  <a class="button" href="#detail">상세</a>
+                  <button class="button primary">담기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="detail" class="section">
+          <div class="split">
+            <div class="detail-preview">무선 키보드 이미지</div>
+            <div class="summary-list">
+              <div>
+                <h2>무선 키보드</h2>
+                <p>상품 상세 설명, 재고, 가격을 확인하고 장바구니 또는 즉시 구매를 선택합니다.</p>
+              </div>
+              <div class="row"><span>가격</span><strong>59,000원</strong></div>
+              <div class="row"><span>재고</span><strong>24개</strong></div>
+              <label>수량 <input type="number" value="1" min="1"></label>
+              <div class="actions">
+                <button class="button">장바구니에 넣기</button>
+                <button class="button primary">즉시 구매</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="cart" class="section">
+          <div class="section-header">
+            <div>
+              <h2>장바구니</h2>
+              <p>선택한 상품의 수량과 총액을 확인합니다.</p>
+            </div>
+            <a class="button primary" href="#payment">구매하기</a>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>상품</th><th>가격</th><th>수량</th><th>합계</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>무선 키보드</td><td>59,000원</td><td>1</td><td>59,000원</td></tr>
+              <tr><td>USB 허브</td><td>32,000원</td><td>2</td><td>64,000원</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article id="payment" class="section">
+          <div class="section-header">
+            <div>
+              <h2>결제 페이지</h2>
+              <p>배송지와 결제 수단을 확인한 뒤 결제 API 승인 요청을 보냅니다.</p>
+            </div>
+          </div>
+          <div class="split">
+            <div class="form-grid">
+              <label>수령인 <input value="홍길동"></label>
+              <label>이메일 <input value="user01@example.com"></label>
+              <label style="grid-column:1 / -1">배송지 <input value="서울시 강남구 테헤란로"></label>
+              <label>결제수단
+                <select>
+                  <option>카드</option>
+                  <option>간편결제</option>
+                </select>
+              </label>
+            </div>
+            <div class="summary-list">
+              <div class="row"><span>상품 합계</span><strong>123,000원</strong></div>
+              <div class="row"><span>배송비</span><strong>0원</strong></div>
+              <div class="row"><span>결제 금액</span><strong class="price">123,000원</strong></div>
+              <button class="button primary">결제하기</button>
+            </div>
+          </div>
+        </article>
+
+        <article id="history" class="section">
+          <div class="section-header">
+            <div>
+              <h2>결제 완료 및 기록</h2>
+              <p>결제 성공 후 주문 기록을 보여주고 이메일 발송 메시지를 큐에 넣습니다.</p>
+            </div>
+            <span class="badge success">PAID</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>주문번호</th><th>상태</th><th>금액</th><th>주문일</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>#10004</td><td>PAID</td><td>123,000원</td><td>2026-07-19</td></tr>
+              <tr><td>#10003</td><td>SHIPPING</td><td>41,000원</td><td>2026-07-18</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "2026-07-18_third_practice_deeper_again",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "hurwan",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "amqplib": "^2.0.1"
+  }
+}
