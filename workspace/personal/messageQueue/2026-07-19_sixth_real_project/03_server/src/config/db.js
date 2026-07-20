@@ -13,4 +13,10 @@ const pool = new Pool({
   max: 10
 })
 
+export async function closePgPool() {
+  if(!pool.closed) {
+    await pool.close()
+  }
+}
+
 export default pool

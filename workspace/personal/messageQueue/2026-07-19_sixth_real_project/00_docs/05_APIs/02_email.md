@@ -44,7 +44,7 @@ body: {
 
 # Response
 status: 200
-body: {
+body: { // 10분동안 clientCode 를 통한 로그인 연장시켜주기
   success: true,
   message: "email verified",
   data: {}
@@ -53,7 +53,7 @@ body: {
 status 400
 body: {
   success: false,
-  message: "wrong email code",
+  message: "invalid values",
   data: {}
 }
 ```

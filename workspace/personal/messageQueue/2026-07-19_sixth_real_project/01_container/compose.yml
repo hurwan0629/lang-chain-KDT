@@ -10,6 +10,50 @@ services:
     volumes:
       - postgres_data_20260719:/var/lib/postgresql/data
       - ../02_database/tables.sql:/docker-entrypoint-initdb.d/tables.sql
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: apppass
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      TZ: Asia/Seoul
+    
+    command:
+      - sh
+      - -c
+      - |
+        exec redis-server \
+          --appendonly yes \
+          --requirepass "$$REDIS_PASSWORD"
+    
+    volumes:
+      - redis-data:/data
+    
+    healthcheck:
+      test: 
+        [
+          "CMD-SHELL",
+          'redis-cli -a "$$REDIS_PASSWORD" ping | grep PONG'
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    
+    restart: unless-stopped
 
 volumes:
   postgres_data_20260719:
+  rabbitmq_data:
+  redis-data:

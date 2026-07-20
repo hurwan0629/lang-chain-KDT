@@ -47,6 +47,30 @@ const config = {
     database: required("DB_NAME", "test_db"),
     user: required("DB_USER", "root"),
     password: required("DB_PASSWORD", "1234")
+  },
+
+  redis: {
+    host: required("REDIS_ADDRESS", "localhost"),
+    port: required("REDIS_PORT", "6379"),
+    password: required("REDIS_PASSWORD", "1234")
+  },
+
+  bcrypt: {
+    salt: parseInt(required("BCRYPT_SALT", 10))
+  },
+
+  email: {
+    codeLength: parseInt(required("EMAIL_CODE_LENGTH", 6)),
+    verifiedString: required("EMAIL_VERIFIED_STRING", "VERIFIED")
+  },
+
+  gmail: {
+    user: required("GMAIL_USER"),
+    appPassword: required("GMAIL_APP_PASSWORD")
+  },
+
+  brevo: {
+    apiKey: required("BREVO_API_KEY")
   }
 }
 

@@ -2,13 +2,13 @@
 > 모든 api는 `/api` 로 시작되며 아래와 같은 하위 항목이 존재합니다.
 
 - [`/auth`](./01_auth.md)
-  - `POST /login`
-  - `POST /refresh`
-  - `GET /me`
-  - `POST /logout`
+  - [x] `POST /login`
+  - [x] `POST /refresh`
+  - [x] `GET /me`
+  - [x] `POST /logout`
 - [`/email`](./02_email.md)
-  - `POST /send`
-  - `POST /check`
+  - [x] `POST /send`
+  - [x] `POST /check`
 - [`/users`](./03_users.md)
   - `GET /idDuplicated`
   - `POST /signup` 

@@ -1,10 +1,12 @@
 import { Router } from "express";
-import logger from "../../utils/logger.js";
+import * as EmailController from "../../controller/email.controller.js"
 
 const router = Router()
 
-router.get("/admin", (req, res) => {
-  logger("admin.router.js GET /admin", "hello")
-})
+// /api/email/*
+
+router.post("/send", EmailController.sendEmailVerifyCode)
+
+router.post("/check", EmailController.checkEmailVerifyCode)
 
 export default router
