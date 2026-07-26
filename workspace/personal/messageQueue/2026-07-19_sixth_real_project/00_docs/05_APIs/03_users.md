@@ -42,7 +42,13 @@ body: {
   success: true,
   message: "user created",
   data: {
-    created: true
+    user: {
+      id: number, 
+      name: string, 
+      email: string, 
+      createdAt: ISOString, 
+      role: string("USER")
+    }
   }
 }
 
@@ -52,6 +58,16 @@ body: {
   message: "invalid data",
   data: {
     created: false
+  }
+}
+
+// id 중복
+status: 400
+body: {
+  success: false,
+  message: "id duplicated",
+  data: {
+    id: string
   }
 }
 

@@ -1,0 +1,15 @@
+CREATE TABLE users(
+    pk BIGSERIAL PRIMARY KEY,
+    id VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE orders(
+    pk BIGSERIAL PRIMARY KEY,
+    user_pk BIGINT NOT NULL REFERENCES users(pk),
+    total_price INTEGER NOT NULL CHECK (total_price >= 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

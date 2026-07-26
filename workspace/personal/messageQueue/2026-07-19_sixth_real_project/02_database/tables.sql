@@ -6,7 +6,7 @@ CREATE TABLE users (
 -- - password_hash
   password_hash VARCHAR(255) NOT NULL,
 -- - role
-  role VARCHAR(30) NOT NULL CHECK (role IN ('ADMIN', 'USER')),
+  role VARCHAR(30) NOT NULL DEFAULT 'USER' CHECK (role IN ('ADMIN', 'USER')),
 -- - name
   name VARCHAR(30) NOT NULL,
 -- - email

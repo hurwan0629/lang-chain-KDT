@@ -1,10 +1,9 @@
 // auth.controller.js
 
-import { ApiError } from "../utils/ApiError"
+import { ApiError } from "../utils/ApiError.js"
 import * as AuthService from "../service/auth.service.js"
 import * as UserService from "../service/users.service.js"
 import * as JwtService from "../service/jwt.service.js"
-import config from "../config/env.js";
 import logger from "../utils/logger.js";
 import {accessCookieOptions, refreshCookieOptions} from "../config/jwt.js";
 

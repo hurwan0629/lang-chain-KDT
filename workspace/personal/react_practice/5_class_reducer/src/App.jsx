@@ -25,7 +25,7 @@ function App() {
     <>
       <h1>{state.name}</h1>
       <input 
-      onChange={e => setNameInput(e.target.value)} 
+      onChange={e => setNameInput(e.target.value)}
       value={nameInput} />
       <button onClick={() => {
         dispatch({ type: "setName", name: nameInput })
