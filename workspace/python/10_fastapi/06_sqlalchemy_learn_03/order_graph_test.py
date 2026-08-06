@@ -38,11 +38,14 @@ with Session(engine) as session:
     session.add(user)
 
     print(" --- add 이후 --- ")
-    print(session.new)
+    print("session.new:", session.new)
+    print("identity map:", session.identity_map.values())
 
     session.flush()
 
     print(" --- flush 이후 --- ")
+
+    print("identity map:", session.identity_map.values())
 
     print("user:", user.id)
     print("order:", order.id)
