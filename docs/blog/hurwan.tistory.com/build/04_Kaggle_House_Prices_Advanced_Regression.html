@@ -1,0 +1,1732 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Prices - Advanced Regression Techniques</title>
+  <style>
+/* Blog design version: v1.3 */
+.tech-post {
+  --bg: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --card: rgba(255, 255, 255, 0.94);
+  --accent: #19b97c;
+  --accent-dark: #119164;
+  --aurora-green: rgba(120, 255, 196, 0.24);
+  --aurora-green-soft: rgba(82, 255, 173, 0.14);
+  --aurora-blue: rgba(130, 210, 255, 0.13);
+  --aurora-purple: rgba(186, 156, 255, 0.12);
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 18px 80px;
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.tech-post * {
+  box-sizing: border-box;
+}
+
+.post-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 28px;
+  border: 1px solid rgba(25, 185, 124, 0.12);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 14% 12%, var(--aurora-green), transparent 28%),
+    radial-gradient(circle at 84% 15%, var(--aurora-purple), transparent 28%),
+    radial-gradient(circle at 50% 100%, var(--aurora-blue), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fbfffd 48%, #ffffff 100%);
+  box-shadow: var(--shadow);
+}
+
+.post-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(circle at 20% 20%, var(--aurora-green-soft), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(186, 156, 255, 0.08), transparent 20%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.post-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.post-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.08);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.post-title {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+}
+
+.post-subtitle {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-section {
+  margin-top: 52px;
+  scroll-margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.3);
+  flex-shrink: 0;
+}
+
+.post-card {
+  margin: 18px 0;
+  padding: 24px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green), transparent 32%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-title,
+.post-card h3 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.tech-post p {
+  margin: 10px 0;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tech-post p code,
+.tech-post li code,
+.post-note code,
+.read-table code {
+  display: inline-block;
+  padding: 0.08em 0.38em;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #1f2937;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 0.92em;
+  font-weight: 600;
+  line-height: 1.55;
+  vertical-align: baseline;
+}
+
+.post-list,
+.post-card ul {
+  margin: 12px 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.post-list li,
+.post-card li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-list li::before,
+.post-card li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.numbered-list {
+  margin: 12px 0 0;
+  padding-left: 24px;
+}
+
+.numbered-list li {
+  margin: 8px 0;
+  padding-left: 4px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.post-card .numbered-list li::before {
+  display: none;
+  content: none;
+}
+
+.post-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+}
+
+.post-note {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(120, 255, 196, 0.14), rgba(255, 255, 255, 0.92));
+  color: #334155;
+}
+
+.source-toggle {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+}
+
+.source-toggle summary {
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.source-box {
+  overflow-x: auto;
+  margin: 14px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.source-box code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.post-toc {
+  margin-top: 24px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(25, 185, 124, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, var(--aurora-green-soft), transparent 30%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.toc-title,
+.post-toc strong {
+  display: block;
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.toc-list,
+.post-toc ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-list li,
+.post-toc ol li {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.toc-list a,
+.post-toc ol a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 185, 124, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.toc-list a:hover,
+.post-toc ol a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(25, 185, 124, 0.36);
+  background: rgba(240, 253, 247, 0.92);
+  color: #1d4ed8;
+}
+
+.toc-main {
+  flex: 1 1 auto;
+}
+
+.toc-commit {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  white-space: nowrap;
+}
+
+.toc-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(25, 185, 124, 0.09);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.post-divider {
+  height: 1px;
+  margin: 38px auto 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.35), transparent);
+}
+
+.study-timeline {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  margin: 18px 0 0;
+  padding-left: 36px;
+}
+
+.study-timeline::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #83ffc0, #19b97c);
+  box-shadow: 0 0 16px rgba(25, 185, 124, 0.18);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 18px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, var(--aurora-green-soft), transparent 34%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: -35px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(25, 185, 124, 0.24), 0 0 16px rgba(25, 185, 124, 0.2);
+}
+
+.timeline-meta {
+  margin: 0 0 6px;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.timeline-title {
+  margin: 10px 0 0;
+  color: #111827;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+}
+
+.timeline-title a {
+  color: #111827;
+  text-decoration: none;
+}
+
+.timeline-title a:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+.timeline-item p {
+  margin: 0;
+}
+
+.commit-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 12px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.commit-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.commit-link::after {
+  content: ">";
+  margin-left: 6px;
+  font-size: 13px;
+}
+
+.read-table {
+  width: 100%;
+  margin: 12px 0 18px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.read-table th,
+.read-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  color: #334155;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: top;
+}
+
+.read-table th {
+  background: rgba(25, 185, 124, 0.08);
+  color: #111827;
+  font-weight: 800;
+}
+
+.read-table tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .tech-post {
+    width: min(760px, calc(100vw - 420px));
+    max-width: none;
+    min-width: 620px;
+    margin-left: calc(100% - min(760px, calc(100vw - 420px)));
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .tech-post {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 26px 14px 60px;
+  }
+
+  .post-hero {
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+
+  .toc-list,
+  .post-toc ol {
+    grid-template-columns: 1fr;
+  }
+
+  .toc-list li,
+  .post-toc ol li {
+    flex-direction: column;
+  }
+
+  .toc-commit {
+    width: fit-content;
+  }
+
+  .study-timeline {
+    padding-left: 32px;
+  }
+
+  .timeline-item::before {
+    left: -31px;
+  }
+
+  .read-table th,
+  .read-table td {
+    display: block;
+    width: 100%;
+  }
+}
+
+
+    .code-box,
+    .output-box {
+      overflow-x: auto;
+      margin: 14px 0;
+      padding: 16px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 16px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: "JetBrains Mono", "D2Coding", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre;
+    }
+    .code-box code,
+    .output-box code {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+    }
+    .notebook-html-output {
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    .notebook-html-output table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 14px;
+      background: #fff;
+      font-size: 13px;
+    }
+    .notebook-html-output th,
+    .notebook-html-output td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      color: #334155;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .notebook-html-output th {
+      background: rgba(25, 185, 124, 0.08);
+      color: #111827;
+      font-weight: 800;
+    }
+    .notebook-figure {
+      margin: 18px 0;
+    }
+    .notebook-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 14px;
+      background: #fff;
+    }
+    .notebook-figure figcaption {
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+  </style>
+</head>
+<body>
+  <article class="tech-post">
+    <header class="post-hero">
+      <div class="post-hero-inner">
+        <p class="post-kicker">Kaggle · Machine Learning</p>
+        <h1 class="post-title">House Prices - Advanced Regression Techniques</h1>
+        <p class="post-subtitle">Kaggle House Prices 데이터셋을 불러오고 EDA와 결측치 데이터 분석을 시작한 노트북 정리입니다.</p>
+      </div>
+    </header>
+
+    <details class="source-toggle">
+      <summary>gpt가 디자인 하기 전 원본</summary>
+      <pre class="source-box"><code># House Prices - Advanced Regression Techniques
+해당 제목은 아마 발전된 회귀를 이용해서 집값을 예측하는 프로젝트로 보입니다.
+
+[캐글 링크](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview)
+
+from pathlib import Path
+
+# 해당 위치에 "사용자명/.kaggle/kaggle.json" 에 Legacy Api Key가 있는지 확인해야합니다. 아니면 사용할 수 없더라고요.
+
+print(Path.home())
+print((Path.home() / ".kaggle" / "kaggle.json").exists())
+
+import kagglehub
+
+# Download latest version
+path = kagglehub.competition_download('house-prices-advanced-regression-techniques')
+
+print("Path to competition files:", path)
+
+import pprint
+
+# pathlib를 이용해서 해당 디렉토리에 데이터가 있는지 확인해줍니다.
+data_dir = Path(path)
+
+pprint.pprint(list(data_dir.iterdir()))
+
+디렉토리 경로에 `iterdir()`을 통해 제너레이터를 `list()`로 뽑아보면 `data_description.txt`, `sample_submission.csv`, `test.csv`,`train.csv`를 확인할 수 있습니다.
+
+import pandas as pd
+
+train_df = pd.read_csv(data_dir / "train.csv")
+test_df = pd.read_csv(data_dir / "test.csv")
+
+display(test_df.head())
+print(test_df.shape)
+
+print(train_df.shape)
+
+# print(test_df.columns)
+# print(train_df.columns)
+
+for tr_c in list(train_df.columns):
+    exists_flag=False
+    for t_c in list(test_df.columns):
+        if(str(t_c) == str(tr_c)):
+            exists_flag=True
+    if not exists_flag:
+        print(c)
+
+해당 데이터셋에서 Kaggle competition에서 제공하는 코드를 이용해서 데이터를 받게된다면 `.cache/kagglehub/competitions`에 데이터셋 폴더가 생성되는 것을 확인할 수 있습니다.
+
+해당 집값 예측의 경우에는 `train.csv`, `test.csv`가 존재하며 `train`에는 `target` 값이 존재하는 것을 확인할 수 있습니다. `SalePrice`는 `train.csv` 데이터셋에만 존재하는 것을 확인할 수 있습니다.
+
+&gt; 다음에는 `data_description.txt`를 한번 확인해보도록 하겠습니다.
+
+with open(Path(data_dir / "data_description.txt"), "r") as f:
+    print(f.read())
+
+솔직히 뭐라고 하는지 잘 모르겠습니다...
+
+GPT에게 도움을 받아보겠습니다.
+
+---
+
+일단 물어보니 데이터 사전인건 맞는거같은데 답변은 나왔지만 일단 할 수 있는 만큼만 한번 읽어보겠습니다.
+
+좀 txt를 들여다보니 depth별로 바깥쪽은 컬럼명, 안쪽은 그 컬럼의 범주 정도를 나타내는 것 같습니다.
+
+양이 적지는 않네요. 한번 요약해보면서 덩강덩강 읽어보겠습니다.
+
+- MSSubClass는 아마 세일하는 주거지로 보입니다. 그런데 데이터만 보면 아마 STORY? AGES? 년도? 같은 데이터가 존재하네요. (MSZongoing를 보니까 sale가 세일이 아니라 판매를 의미하는 거였네요. 그리고 아마 얼마나 오래되었는지를 나타내느게 아닐까 싶습니다.)
+- MSZongoing에서는 지역별로 나눠서 보여주는 것 같습니다. A는 예를 들어서 문화, C는 사업, FV는 뭔가 산업 관련같은데 이것도 조금 도움이 필요할 것 같습니다.
+- LotFrontage의 경우에는 얼마나 거리가 긴지? 나타내는 모양인데 아마 범주형은 아니고 숫자형일 것으로 예측됩니다.
+- LotArea: 뭔가 길이와 관련된거같은데 square라고 나와있기 때문에 면적을 말하는거같습니다. 구글 번역기에서는 피트라고 하는데 그것도 잘 모르겠습니다. Lot이 정확히 무엇인지
+- Street는 그냥 자갈/포장을 의미하는 Grvl, Pave를 의미하네요.
+- Alley의 경우에는 본적이 있는데 기억이 안나서 찾아보니 **골목**이네요.
+- LotShape의 경우에도 Irregular이라는 규칙성을 나타내는 것으로 보아 약간 정사각형 모음과 같이 정렬되어있는지 아니면 구불구불 짜여져있는지를 확인하는 것 같습니다.
+
+---
+
+# 문제 발생
+지금 영어가 안됩니다. 이거 GPT한테 던져주고 해석해달라 한다음에 모르는 문법 정리 한번 해야할 것 같습니다. 일단 읽을줄은 아는데 단어를 너무 모릅니다. 공부하고 진행하겠습니다.
+
+# 일부 공부하고 작업 식작
+train_df.head()
+
+train_df.info()
+
+# EDA
+일단 총 데이터는 0 ~ 1459번까지 1460개 존재합니다.
+
+식별자, 땅의 타입, 면적, 건축의 형태, 화덕? 지하실, 울타리 여부 등이 존재합니다.
+
+일단 결측치 상태부터 한번 확인해보겠습니다.
+
+train_df.isna().sum()
+
+결측치가 있는 데이터들을 살펴보면
+
+isna_series = (
+    train_df.isna().sum()[train_df.isna().sum() &gt; 0]
+    .sort_values(ascending=False)
+)
+
+isna_columns = list(
+    train_df.isna().sum()[train_df.isna().sum() &gt; 0]
+    .sort_values(ascending=False)
+    .index
+)
+
+isna_columns
+
+isna_count = train_df.isna().sum()
+
+isna_df = pd.DataFrame({
+    "count": isna_count[isna_count &gt; 0],
+    "raito": train_df.isna().mean()[isna_count &gt; 0],
+    "dtype": train_df.dtypes[isna_count &gt; 0],
+    "nunique": train_df.nunique()[isna_count &gt; 0]
+}).sort_values("raito", ascending=False)
+
+isna_df
+
+# 결측치 데이터 분석
+데이터에 결측은 2가지로 나뉠 수 있습니다.
+1. 실제 결측: 원래 값이 있어야하는데 기록되지 않음
+2. 구조적인 없음: 그냥 없음을 NA로 표현한 것
+
+for c in isna_columns:
+    print(f"# [{c}]")
+    print(train_df[c].isna().sum())
+    if not len(train_df[c].unique()) &gt; 20:
+        print(train_df[c].unique())
+    else:
+        print(train_df[c].unique()[:21])
+    print(train_df[c].dtype)
+    print()
+
+# PoolQC
+- NA는 그냥 수영장 없음
+- TA값이 없긴 한데 그냥 평범한 수영장은 없어서 그런건가
+# MiscFeature
+- 이건 기타 요소가 없다는 의미
+# Alley
+- 골목 포장이 없거나 골목이 없다는 뜻?
+# Fence
+- Fence가 없다는 뜻
+# MasVnrType
+- 아마 마감 종류인거같은데 None는 없다는 의미.
+- 나머지 컬럼들은 뭘 의미하는건지 잘 모르겠음
+# FireplaceQu
+- 화덕이라고 해야하나 집 안에 있는 벽난로를 의미함.
+- 이니셜별로 품질을 말하는 것 같다.
+# LotFrontage
+- 숫자형인데 없으니까 그냥 결측치인듯.
+- 숫자의 의미는 뭔가 요소와 이어진 거리의 길이?
+# GarageType
+- 이것도 그냥 없다는 의미. 아래의 Garage* 형태의 컬럼도 모두 없는 것이라고 보면 됨.
+    - GarageYrBlt
+    - GarageFinish
+    - GarageQual
+    - GarageCond
+# BsmtExposure
+- 이것도 그냥 지하실이 없다는 의미 아래도 동일함
+    - BsmtFinType2
+    - BsmtQual
+    - BsmtCond
+    - BsmtFinType1
+# MasVnrArea
+- 결측치.
+- 벽쪽 마감 범위를 말하는거 같음
+# Electrical
+- nan가 전기가 없다는 것인지 아니면 측정하지 못한건지 확실하지 않음.
+
+# 데이터 전처리
+이제 결측치의 종류를 먼저 나누었습니다.
+
+여기에서 나온 결측치는 크게 2종류로
+- 구조적 결측치 (데이터를 못 모은게 아니라 애초에 값이 존재하지 않아서 결측치인 값. ` Not Applicable`)
+- `Actual Missing Value` - 실제 결측치 (진짜로 데이터를 모으지 못한 값)
+
+가 있습니다. 제가 찾은 값들 중에서는 마감 면적(`MasVnrArea`), `Electrical` 정도가 수치적으로 채워야할 값인 듯 합니다.
+
+이렇게 되면 이제 다른 값들은 올바른 값으로 문자열 또는 수치형 범주 (MSSubClass)를 문자로 바꿔준 뒤 실제 결측 데이터의 경우에는 값을 적절히 찾아주고 (중앙값 보다는 transform을 이용해서), 범주형의 경우에는 타입에 따라 각각 비교가 불가능한 OneHot인코딩 또는 좋고 나쁨 또는 크고 작음 과 같은 성질이 있어 이를 비교가 가능한 형태인 Ordinal 인코딩을 할 수도 있습니다.
+
+&gt; 이때 MasVnrArea는 MasVnrType에 따라 마감을 하지 않은 것일 수 있습니다. 이 차이를 유심히 확인해야합니다.
+
+이제 변환기를 천천히 만들어보겠습니다.</code></pre>
+    </details>
+
+    <nav class="post-toc">
+      <strong class="toc-title">목차</strong>
+      <ol class="toc-list">
+<li><a href="#section-01"><span class="toc-index">01</span><span class="toc-main">House Prices - Advanced Regression Techniques</span></a></li>
+<li><a href="#section-02"><span class="toc-index">02</span><span class="toc-main">문제 발생</span></a></li>
+<li><a href="#section-03"><span class="toc-index">03</span><span class="toc-main">EDA</span></a></li>
+<li><a href="#section-04"><span class="toc-index">04</span><span class="toc-main">결측치 데이터 분석</span></a></li>
+<li><a href="#section-05"><span class="toc-index">05</span><span class="toc-main">PoolQC</span></a></li>
+<li><a href="#section-06"><span class="toc-index">06</span><span class="toc-main">MiscFeature</span></a></li>
+<li><a href="#section-07"><span class="toc-index">07</span><span class="toc-main">Alley</span></a></li>
+<li><a href="#section-08"><span class="toc-index">08</span><span class="toc-main">Fence</span></a></li>
+<li><a href="#section-09"><span class="toc-index">09</span><span class="toc-main">MasVnrType</span></a></li>
+<li><a href="#section-10"><span class="toc-index">10</span><span class="toc-main">FireplaceQu</span></a></li>
+<li><a href="#section-11"><span class="toc-index">11</span><span class="toc-main">LotFrontage</span></a></li>
+<li><a href="#section-12"><span class="toc-index">12</span><span class="toc-main">GarageType</span></a></li>
+<li><a href="#section-13"><span class="toc-index">13</span><span class="toc-main">BsmtExposure</span></a></li>
+<li><a href="#section-14"><span class="toc-index">14</span><span class="toc-main">MasVnrArea</span></a></li>
+<li><a href="#section-15"><span class="toc-index">15</span><span class="toc-main">Electrical</span></a></li>
+<li><a href="#section-16"><span class="toc-index">16</span><span class="toc-main">데이터 전처리</span></a></li>
+      </ol>
+    </nav>
+
+<section class="post-section" id="section-01"><h2 class="section-title">House Prices - Advanced Regression Techniques</h2><div class="post-card stack">
+<p>해당 제목은 아마 발전된 회귀를 이용해서 집값을 예측하는 프로젝트로 보입니다.</p>
+<p>[캐글 링크](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview)</p>
+<pre class="code-box"><code>from pathlib import Path
+
+# 해당 위치에 "사용자명/.kaggle/kaggle.json" 에 Legacy Api Key가 있는지 확인해야합니다. 아니면 사용할 수 없더라고요.
+
+print(Path.home())
+print((Path.home() / ".kaggle" / "kaggle.json").exists())</code></pre>
+<pre class="output-box"><code>C:\Users\hurwa
+True</code></pre>
+<pre class="code-box"><code>import kagglehub
+
+# Download latest version
+path = kagglehub.competition_download('house-prices-advanced-regression-techniques')
+
+print("Path to competition files:", path)</code></pre>
+<pre class="output-box"><code>C:\LANG_CHAIN_2026\2026-05-19_KDT_lang_chain\workspace\.venv\Lib\site-packages\tqdm\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm</code></pre>
+<pre class="output-box"><code>Path to competition files: C:\Users\hurwa\.cache\kagglehub\competitions\house-prices-advanced-regression-techniques</code></pre>
+<pre class="code-box"><code>import pprint
+
+# pathlib를 이용해서 해당 디렉토리에 데이터가 있는지 확인해줍니다.
+data_dir = Path(path)
+
+pprint.pprint(list(data_dir.iterdir()))</code></pre>
+<pre class="output-box"><code>[WindowsPath('C:/Users/hurwa/.cache/kagglehub/competitions/house-prices-advanced-regression-techniques/data_description.txt'),
+ WindowsPath('C:/Users/hurwa/.cache/kagglehub/competitions/house-prices-advanced-regression-techniques/sample_submission.csv'),
+ WindowsPath('C:/Users/hurwa/.cache/kagglehub/competitions/house-prices-advanced-regression-techniques/test.csv'),
+ WindowsPath('C:/Users/hurwa/.cache/kagglehub/competitions/house-prices-advanced-regression-techniques/train.csv')]</code></pre>
+<p>디렉토리 경로에 <code>iterdir()</code>을 통해 제너레이터를 <code>list()</code>로 뽑아보면 <code>data_description.txt</code>, <code>sample_submission.csv</code>, <code>test.csv</code>,<code>train.csv</code>를 확인할 수 있습니다.</p>
+<pre class="code-box"><code>import pandas as pd
+
+train_df = pd.read_csv(data_dir / "train.csv")
+test_df = pd.read_csv(data_dir / "test.csv")
+
+display(test_df.head())
+print(test_df.shape)</code></pre>
+<div class="notebook-html-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>MSSubClass</th>
+      <th>MSZoning</th>
+      <th>LotFrontage</th>
+      <th>LotArea</th>
+      <th>Street</th>
+      <th>Alley</th>
+      <th>LotShape</th>
+      <th>LandContour</th>
+      <th>Utilities</th>
+      <th>...</th>
+      <th>ScreenPorch</th>
+      <th>PoolArea</th>
+      <th>PoolQC</th>
+      <th>Fence</th>
+      <th>MiscFeature</th>
+      <th>MiscVal</th>
+      <th>MoSold</th>
+      <th>YrSold</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1461</td>
+      <td>20</td>
+      <td>RH</td>
+      <td>80.0</td>
+      <td>11622</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>120</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>MnPrv</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1462</td>
+      <td>20</td>
+      <td>RL</td>
+      <td>81.0</td>
+      <td>14267</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Gar2</td>
+      <td>12500</td>
+      <td>6</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1463</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>74.0</td>
+      <td>13830</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>MnPrv</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>3</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1464</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>78.0</td>
+      <td>9978</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1465</td>
+      <td>120</td>
+      <td>RL</td>
+      <td>43.0</td>
+      <td>5005</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>HLS</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>144</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 80 columns</p>
+</div></div>
+<pre class="output-box"><code>(1459, 80)</code></pre>
+<pre class="code-box"><code>print(train_df.shape)
+
+# print(test_df.columns)
+# print(train_df.columns)
+
+for tr_c in list(train_df.columns):
+    exists_flag=False
+    for t_c in list(test_df.columns):
+        if(str(t_c) == str(tr_c)):
+            exists_flag=True
+    if not exists_flag:
+        print(c)</code></pre>
+<pre class="output-box"><code>(1460, 81)</code></pre>
+<p>해당 데이터셋에서 Kaggle competition에서 제공하는 코드를 이용해서 데이터를 받게된다면 <code>.cache/kagglehub/competitions</code>에 데이터셋 폴더가 생성되는 것을 확인할 수 있습니다.</p>
+<p>해당 집값 예측의 경우에는 <code>train.csv</code>, <code>test.csv</code>가 존재하며 <code>train</code>에는 <code>target</code> 값이 존재하는 것을 확인할 수 있습니다. <code>SalePrice</code>는 <code>train.csv</code> 데이터셋에만 존재하는 것을 확인할 수 있습니다.</p>
+<p>&gt; 다음에는 <code>data_description.txt</code>를 한번 확인해보도록 하겠습니다.</p>
+<pre class="code-box"><code>with open(Path(data_dir / "data_description.txt"), "r") as f:
+    print(f.read())</code></pre>
+<p>솔직히 뭐라고 하는지 잘 모르겠습니다...</p>
+<p>GPT에게 도움을 받아보겠습니다.</p>
+<p>---</p>
+<p>일단 물어보니 데이터 사전인건 맞는거같은데 답변은 나왔지만 일단 할 수 있는 만큼만 한번 읽어보겠습니다.</p>
+<p>좀 txt를 들여다보니 depth별로 바깥쪽은 컬럼명, 안쪽은 그 컬럼의 범주 정도를 나타내는 것 같습니다.</p>
+<p>양이 적지는 않네요. 한번 요약해보면서 덩강덩강 읽어보겠습니다.</p>
+<ul class="post-list"><li>MSSubClass는 아마 세일하는 주거지로 보입니다. 그런데 데이터만 보면 아마 STORY? AGES? 년도? 같은 데이터가 존재하네요. (MSZongoing를 보니까 sale가 세일이 아니라 판매를 의미하는 거였네요. 그리고 아마 얼마나 오래되었는지를 나타내느게 아닐까 싶습니다.)</li><li>MSZongoing에서는 지역별로 나눠서 보여주는 것 같습니다. A는 예를 들어서 문화, C는 사업, FV는 뭔가 산업 관련같은데 이것도 조금 도움이 필요할 것 같습니다.</li><li>LotFrontage의 경우에는 얼마나 거리가 긴지? 나타내는 모양인데 아마 범주형은 아니고 숫자형일 것으로 예측됩니다.</li><li>LotArea: 뭔가 길이와 관련된거같은데 square라고 나와있기 때문에 면적을 말하는거같습니다. 구글 번역기에서는 피트라고 하는데 그것도 잘 모르겠습니다. Lot이 정확히 무엇인지</li><li>Street는 그냥 자갈/포장을 의미하는 Grvl, Pave를 의미하네요.</li><li>Alley의 경우에는 본적이 있는데 기억이 안나서 찾아보니 **골목**이네요.</li><li>LotShape의 경우에도 Irregular이라는 규칙성을 나타내는 것으로 보아 약간 정사각형 모음과 같이 정렬되어있는지 아니면 구불구불 짜여져있는지를 확인하는 것 같습니다.</li></ul>
+<p>---</p>
+</div></section><section class="post-section" id="section-02"><h2 class="section-title">문제 발생</h2><div class="post-card stack">
+<p>지금 영어가 안됩니다. 이거 GPT한테 던져주고 해석해달라 한다음에 모르는 문법 정리 한번 해야할 것 같습니다. 일단 읽을줄은 아는데 단어를 너무 모릅니다. 공부하고 진행하겠습니다.</p>
+<pre class="code-box"><code># 일부 공부하고 작업 식작
+train_df.head()</code></pre>
+<div class="notebook-html-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>MSSubClass</th>
+      <th>MSZoning</th>
+      <th>LotFrontage</th>
+      <th>LotArea</th>
+      <th>Street</th>
+      <th>Alley</th>
+      <th>LotShape</th>
+      <th>LandContour</th>
+      <th>Utilities</th>
+      <th>...</th>
+      <th>PoolArea</th>
+      <th>PoolQC</th>
+      <th>Fence</th>
+      <th>MiscFeature</th>
+      <th>MiscVal</th>
+      <th>MoSold</th>
+      <th>YrSold</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>65.0</td>
+      <td>8450</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>208500</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>20</td>
+      <td>RL</td>
+      <td>80.0</td>
+      <td>9600</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>5</td>
+      <td>2007</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>181500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>68.0</td>
+      <td>11250</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>9</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>223500</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>70</td>
+      <td>RL</td>
+      <td>60.0</td>
+      <td>9550</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2006</td>
+      <td>WD</td>
+      <td>Abnorml</td>
+      <td>140000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>84.0</td>
+      <td>14260</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>12</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>250000</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 81 columns</p>
+</div></div>
+<pre class="code-box"><code>train_df.info()</code></pre>
+<pre class="output-box"><code>&lt;class 'pandas.DataFrame'&gt;
+RangeIndex: 1460 entries, 0 to 1459
+Data columns (total 81 columns):
+ #   Column         Non-Null Count  Dtype  
+---  ------         --------------  -----  
+ 0   Id             1460 non-null   int64  
+ 1   MSSubClass     1460 non-null   int64  
+ 2   MSZoning       1460 non-null   str    
+ 3   LotFrontage    1201 non-null   float64
+ 4   LotArea        1460 non-null   int64  
+ 5   Street         1460 non-null   str    
+ 6   Alley          91 non-null     str    
+ 7   LotShape       1460 non-null   str    
+ 8   LandContour    1460 non-null   str    
+ 9   Utilities      1460 non-null   str    
+ 10  LotConfig      1460 non-null   str    
+ 11  LandSlope      1460 non-null   str    
+ 12  Neighborhood   1460 non-null   str    
+ 13  Condition1     1460 non-null   str    
+ 14  Condition2     1460 non-null   str    
+ 15  BldgType       1460 non-null   str    
+ 16  HouseStyle     1460 non-null   str    
+ 17  OverallQual    1460 non-null   int64  
+ 18  OverallCond    1460 non-null   int64  
+ 19  YearBuilt      1460 non-null   int64  
+ 20  YearRemodAdd   1460 non-null   int64  
+ 21  RoofStyle      1460 non-null   str    
+ 22  RoofMatl       1460 non-null   str    
+ 23  Exterior1st    1460 non-null   str    
+ 24  Exterior2nd    1460 non-null   str    
+ 25  MasVnrType     588 non-null    str    
+ 26  MasVnrArea     1452 non-null   float64
+ 27  ExterQual      1460 non-null   str    
+ 28  ExterCond      1460 non-null   str    
+ 29  Foundation     1460 non-null   str    
+ 30  BsmtQual       1423 non-null   str    
+ 31  BsmtCond       1423 non-null   str    
+ 32  BsmtExposure   1422 non-null   str    
+ 33  BsmtFinType1   1423 non-null   str    
+ 34  BsmtFinSF1     1460 non-null   int64  
+ 35  BsmtFinType2   1422 non-null   str    
+ 36  BsmtFinSF2     1460 non-null   int64  
+ 37  BsmtUnfSF      1460 non-null   int64  
+ 38  TotalBsmtSF    1460 non-null   int64  
+ 39  Heating        1460 non-null   str    
+ 40  HeatingQC      1460 non-null   str    
+ 41  CentralAir     1460 non-null   str    
+ 42  Electrical     1459 non-null   str    
+ 43  1stFlrSF       1460 non-null   int64  
+ 44  2ndFlrSF       1460 non-null   int64  
+ 45  LowQualFinSF   1460 non-null   int64  
+ 46  GrLivArea      1460 non-null   int64  
+ 47  BsmtFullBath   1460 non-null   int64  
+ 48  BsmtHalfBath   1460 non-null   int64  
+ 49  FullBath       1460 non-null   int64  
+ 50  HalfBath       1460 non-null   int64  
+ 51  BedroomAbvGr   1460 non-null   int64  
+ 52  KitchenAbvGr   1460 non-null   int64  
+ 53  KitchenQual    1460 non-null   str    
+ 54  TotRmsAbvGrd   1460 non-null   int64  
+ 55  Functional     1460 non-null   str    
+ 56  Fireplaces     1460 non-null   int64  
+ 57  FireplaceQu    770 non-null    str    
+ 58  GarageType     1379 non-null   str    
+ 59  GarageYrBlt    1379 non-null   float64
+ 60  GarageFinish   1379 non-null   str    
+ 61  GarageCars     1460 non-null   int64  
+ 62  GarageArea     1460 non-null   int64  
+ 63  GarageQual     1379 non-null   str    
+ 64  GarageCond     1379 non-null   str    
+ 65  PavedDrive     1460 non-null   str    
+ 66  WoodDeckSF     1460 non-null   int64  
+ 67  OpenPorchSF    1460 non-null   int64  
+ 68  EnclosedPorch  1460 non-null   int64  
+ 69  3SsnPorch      1460 non-null   int64  
+ 70  ScreenPorch    1460 non-null   int64  
+ 71  PoolArea       1460 non-null   int64  
+ 72  PoolQC         7 non-null      str    
+ 73  Fence          281 non-null    str    
+ 74  MiscFeature    54 non-null     str    
+ 75  MiscVal        1460 non-null   int64  
+ 76  MoSold         1460 non-null   int64  
+ 77  YrSold         1460 non-null   int64  
+ 78  SaleType       1460 non-null   str    
+ 79  SaleCondition  1460 non-null   str    
+ 80  SalePrice      1460 non-null   int64  
+dtypes: float64(3), int64(35), str(43)
+memory usage: 924.0 KB</code></pre>
+</div></section><section class="post-section" id="section-03"><h2 class="section-title">EDA</h2><div class="post-card stack">
+<p>일단 총 데이터는 0 ~ 1459번까지 1460개 존재합니다.</p>
+<p>식별자, 땅의 타입, 면적, 건축의 형태, 화덕? 지하실, 울타리 여부 등이 존재합니다.</p>
+<p>일단 결측치 상태부터 한번 확인해보겠습니다.</p>
+<pre class="code-box"><code>train_df.isna().sum()</code></pre>
+<pre class="output-box"><code>Id                 0
+MSSubClass         0
+MSZoning           0
+LotFrontage      259
+LotArea            0
+                ... 
+MoSold             0
+YrSold             0
+SaleType           0
+SaleCondition      0
+SalePrice          0
+Length: 81, dtype: int64</code></pre>
+<p>결측치가 있는 데이터들을 살펴보면</p>
+<pre class="code-box"><code>isna_series = (
+    train_df.isna().sum()[train_df.isna().sum() &gt; 0]
+    .sort_values(ascending=False)
+)</code></pre>
+<pre class="code-box"><code>isna_columns = list(
+    train_df.isna().sum()[train_df.isna().sum() &gt; 0]
+    .sort_values(ascending=False)
+    .index
+)</code></pre>
+<pre class="code-box"><code>isna_columns</code></pre>
+<pre class="output-box"><code>['PoolQC',
+ 'MiscFeature',
+ 'Alley',
+ 'Fence',
+ 'MasVnrType',
+ 'FireplaceQu',
+ 'LotFrontage',
+ 'GarageType',
+ 'GarageYrBlt',
+ 'GarageFinish',
+ 'GarageQual',
+ 'GarageCond',
+ 'BsmtExposure',
+ 'BsmtFinType2',
+ 'BsmtQual',
+ 'BsmtCond',
+ 'BsmtFinType1',
+ 'MasVnrArea',
+ 'Electrical']</code></pre>
+<pre class="code-box"><code>isna_count = train_df.isna().sum()
+
+isna_df = pd.DataFrame({
+    "count": isna_count[isna_count &gt; 0],
+    "raito": train_df.isna().mean()[isna_count &gt; 0],
+    "dtype": train_df.dtypes[isna_count &gt; 0],
+    "nunique": train_df.nunique()[isna_count &gt; 0]
+}).sort_values("raito", ascending=False)</code></pre>
+<pre class="code-box"><code>isna_df</code></pre>
+<div class="notebook-html-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>raito</th>
+      <th>dtype</th>
+      <th>nunique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PoolQC</th>
+      <td>1453</td>
+      <td>0.995205</td>
+      <td>str</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>MiscFeature</th>
+      <td>1406</td>
+      <td>0.963014</td>
+      <td>str</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>Alley</th>
+      <td>1369</td>
+      <td>0.937671</td>
+      <td>str</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>Fence</th>
+      <td>1179</td>
+      <td>0.807534</td>
+      <td>str</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>MasVnrType</th>
+      <td>872</td>
+      <td>0.597260</td>
+      <td>str</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>FireplaceQu</th>
+      <td>690</td>
+      <td>0.472603</td>
+      <td>str</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>LotFrontage</th>
+      <td>259</td>
+      <td>0.177397</td>
+      <td>float64</td>
+      <td>110</td>
+    </tr>
+    <tr>
+      <th>GarageType</th>
+      <td>81</td>
+      <td>0.055479</td>
+      <td>str</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>GarageYrBlt</th>
+      <td>81</td>
+      <td>0.055479</td>
+      <td>float64</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>GarageFinish</th>
+      <td>81</td>
+      <td>0.055479</td>
+      <td>str</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>GarageQual</th>
+      <td>81</td>
+      <td>0.055479</td>
+      <td>str</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>GarageCond</th>
+      <td>81</td>
+      <td>0.055479</td>
+      <td>str</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>BsmtExposure</th>
+      <td>38</td>
+      <td>0.026027</td>
+      <td>str</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>BsmtFinType2</th>
+      <td>38</td>
+      <td>0.026027</td>
+      <td>str</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>BsmtQual</th>
+      <td>37</td>
+      <td>0.025342</td>
+      <td>str</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>BsmtCond</th>
+      <td>37</td>
+      <td>0.025342</td>
+      <td>str</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>BsmtFinType1</th>
+      <td>37</td>
+      <td>0.025342</td>
+      <td>str</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>MasVnrArea</th>
+      <td>8</td>
+      <td>0.005479</td>
+      <td>float64</td>
+      <td>327</td>
+    </tr>
+    <tr>
+      <th>Electrical</th>
+      <td>1</td>
+      <td>0.000685</td>
+      <td>str</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div></section><section class="post-section" id="section-04"><h2 class="section-title">결측치 데이터 분석</h2><div class="post-card stack">
+<p>데이터에 결측은 2가지로 나뉠 수 있습니다.</p>
+<p>1. 실제 결측: 원래 값이 있어야하는데 기록되지 않음</p>
+<p>2. 구조적인 없음: 그냥 없음을 NA로 표현한 것</p>
+<pre class="code-box"><code>for c in isna_columns:
+    print(f"# [{c}]")
+    print(train_df[c].isna().sum())
+    if not len(train_df[c].unique()) &gt; 20:
+        print(train_df[c].unique())
+    else:
+        print(train_df[c].unique()[:21])
+    print(train_df[c].dtype)
+    print()</code></pre>
+<pre class="output-box"><code># [PoolQC]
+1453
+&lt;StringArray&gt;
+[nan, 'Ex', 'Fa', 'Gd']
+Length: 4, dtype: str
+str
+
+# [MiscFeature]
+1406
+&lt;StringArray&gt;
+[nan, 'Shed', 'Gar2', 'Othr', 'TenC']
+Length: 5, dtype: str
+str
+
+# [Alley]
+1369
+&lt;StringArray&gt;
+[nan, 'Grvl', 'Pave']
+Length: 3, dtype: str
+str
+
+# [Fence]
+1179
+&lt;StringArray&gt;
+[nan, 'MnPrv', 'GdWo', 'GdPrv', 'MnWw']
+Length: 5, dtype: str
+str
+
+# [MasVnrType]
+872
+&lt;StringArray&gt;
+['BrkFace', nan, 'Stone', 'BrkCmn']
+Length: 4, dtype: str
+str
+
+# [FireplaceQu]
+690
+&lt;StringArray&gt;
+[nan, 'TA', 'Gd', 'Fa', 'Ex', 'Po']
+Length: 6, dtype: str
+str
+
+# [LotFrontage]
+259
+[ 65.  80.  68.  60.  84.  85.  75.  nan  51.  50.  70.  91.  72.  66.
+ 101.  57.  44. 110.  98.  47. 108.]
+float64
+
+# [GarageType]
+81
+&lt;StringArray&gt;
+['Attchd', 'Detchd', 'BuiltIn', 'CarPort', nan, 'Basment', '2Types']
+Length: 7, dtype: str
+str
+
+# [GarageYrBlt]
+81
+[2003. 1976. 2001. 1998. 2000. 1993. 2004. 1973. 1931. 1939. 1965. 2005.
+ 1962. 2006. 1960. 1991. 1970. 1967. 1958. 1930. 2002.]
+float64
+
+# [GarageFinish]
+81
+&lt;StringArray&gt;
+['RFn', 'Unf', 'Fin', nan]
+Length: 4, dtype: str
+str
+
+# [GarageQual]
+81
+&lt;StringArray&gt;
+['TA', 'Fa', 'Gd', nan, 'Ex', 'Po']
+Length: 6, dtype: str
+str
+
+# [GarageCond]
+81
+&lt;StringArray&gt;
+['TA', 'Fa', nan, 'Gd', 'Po', 'Ex']
+Length: 6, dtype: str
+str
+
+# [BsmtExposure]
+38
+&lt;StringArray&gt;
+['No', 'Gd', 'Mn', 'Av', nan]
+Length: 5, dtype: str
+str
+
+# [BsmtFinType2]
+38
+&lt;StringArray&gt;
+['Unf', 'BLQ', nan, 'ALQ', 'Rec', 'LwQ', 'GLQ']
+Length: 7, dtype: str
+str
+
+# [BsmtQual]
+37
+&lt;StringArray&gt;
+['Gd', 'TA', 'Ex', nan, 'Fa']
+Length: 5, dtype: str
+str
+
+# [BsmtCond]
+37
+&lt;StringArray&gt;
+['TA', 'Gd', nan, 'Fa', 'Po']
+Length: 5, dtype: str
+str
+
+# [BsmtFinType1]
+37
+&lt;StringArray&gt;
+['GLQ', 'ALQ', 'Unf', 'Rec', 'BLQ', nan, 'LwQ']
+Length: 7, dtype: str
+str
+
+# [MasVnrArea]
+8
+[196.   0. 162. 350. 186. 240. 286. 306. 212. 180. 380. 281. 640. 200.
+ 246. 132. 650. 101. 412. 272. 456.]
+float64
+
+# [Electrical]
+1
+&lt;StringArray&gt;
+['SBrkr', 'FuseF', 'FuseA', 'FuseP', 'Mix', nan]
+Length: 6, dtype: str
+str</code></pre>
+</div></section><section class="post-section" id="section-05"><h2 class="section-title">PoolQC</h2><div class="post-card stack">
+<ul class="post-list"><li>NA는 그냥 수영장 없음</li><li>TA값이 없긴 한데 그냥 평범한 수영장은 없어서 그런건가</li></ul>
+</div></section><section class="post-section" id="section-06"><h2 class="section-title">MiscFeature</h2><div class="post-card stack">
+<ul class="post-list"><li>이건 기타 요소가 없다는 의미</li></ul>
+</div></section><section class="post-section" id="section-07"><h2 class="section-title">Alley</h2><div class="post-card stack">
+<ul class="post-list"><li>골목 포장이 없거나 골목이 없다는 뜻?</li></ul>
+</div></section><section class="post-section" id="section-08"><h2 class="section-title">Fence</h2><div class="post-card stack">
+<ul class="post-list"><li>Fence가 없다는 뜻</li></ul>
+</div></section><section class="post-section" id="section-09"><h2 class="section-title">MasVnrType</h2><div class="post-card stack">
+<ul class="post-list"><li>아마 마감 종류인거같은데 None는 없다는 의미.</li><li>나머지 컬럼들은 뭘 의미하는건지 잘 모르겠음</li></ul>
+</div></section><section class="post-section" id="section-10"><h2 class="section-title">FireplaceQu</h2><div class="post-card stack">
+<ul class="post-list"><li>화덕이라고 해야하나 집 안에 있는 벽난로를 의미함.</li><li>이니셜별로 품질을 말하는 것 같다.</li></ul>
+</div></section><section class="post-section" id="section-11"><h2 class="section-title">LotFrontage</h2><div class="post-card stack">
+<ul class="post-list"><li>숫자형인데 없으니까 그냥 결측치인듯.</li><li>숫자의 의미는 뭔가 요소와 이어진 거리의 길이?</li></ul>
+</div></section><section class="post-section" id="section-12"><h2 class="section-title">GarageType</h2><div class="post-card stack">
+<ul class="post-list"><li>이것도 그냥 없다는 의미. 아래의 Garage* 형태의 컬럼도 모두 없는 것이라고 보면 됨.</li></ul>
+<p>- GarageYrBlt</p>
+<p>- GarageFinish</p>
+<p>- GarageQual</p>
+<p>- GarageCond</p>
+</div></section><section class="post-section" id="section-13"><h2 class="section-title">BsmtExposure</h2><div class="post-card stack">
+<ul class="post-list"><li>이것도 그냥 지하실이 없다는 의미 아래도 동일함</li></ul>
+<p>- BsmtFinType2</p>
+<p>- BsmtQual</p>
+<p>- BsmtCond</p>
+<p>- BsmtFinType1</p>
+</div></section><section class="post-section" id="section-14"><h2 class="section-title">MasVnrArea</h2><div class="post-card stack">
+<ul class="post-list"><li>결측치.</li><li>벽쪽 마감 범위를 말하는거 같음</li></ul>
+</div></section><section class="post-section" id="section-15"><h2 class="section-title">Electrical</h2><div class="post-card stack">
+<ul class="post-list"><li>nan가 전기가 없다는 것인지 아니면 측정하지 못한건지 확실하지 않음.</li></ul>
+</div></section><section class="post-section" id="section-16"><h2 class="section-title">데이터 전처리</h2><div class="post-card stack">
+<p>이제 결측치의 종류를 먼저 나누었습니다.</p>
+<p>여기에서 나온 결측치는 크게 2종류로</p>
+<ul class="post-list"><li>구조적 결측치 (데이터를 못 모은게 아니라 애초에 값이 존재하지 않아서 결측치인 값. <code> Not Applicable</code>)</li><li><code>Actual Missing Value</code> - 실제 결측치 (진짜로 데이터를 모으지 못한 값)</li></ul>
+<p>가 있습니다. 제가 찾은 값들 중에서는 마감 면적(<code>MasVnrArea</code>), <code>Electrical</code> 정도가 수치적으로 채워야할 값인 듯 합니다.</p>
+<p>이렇게 되면 이제 다른 값들은 올바른 값으로 문자열 또는 수치형 범주 (MSSubClass)를 문자로 바꿔준 뒤 실제 결측 데이터의 경우에는 값을 적절히 찾아주고 (중앙값 보다는 transform을 이용해서), 범주형의 경우에는 타입에 따라 각각 비교가 불가능한 OneHot인코딩 또는 좋고 나쁨 또는 크고 작음 과 같은 성질이 있어 이를 비교가 가능한 형태인 Ordinal 인코딩을 할 수도 있습니다.</p>
+<p>&gt; 이때 MasVnrArea는 MasVnrType에 따라 마감을 하지 않은 것일 수 있습니다. 이 차이를 유심히 확인해야합니다.</p>
+<p>이제 변환기를 천천히 만들어보겠습니다.</p>
+</div></section>
+  </article>
+</body>
+</html>

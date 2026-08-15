@@ -1,0 +1,167 @@
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<h1>[PCA] 공분산과 투영 및 내적을 이용한 차원축소 과정 정리</h1>
+
+<p>일단 <code>v</code>는 일반적으로 특정 특정 기저 \([e_1, e_2]\) 에서의 벡터를 의미합니다. 예를 들어 해당 기저에서 \(v=[1, 2]\) 라고 한다면 이는 \([e_1 , 2e_2]\) 를 의미하게 됩니다.</p>
+
+<p>\(Xv\) 의 경우에는 특정 행렬, 예를 들어 위에서 설명한 두 기저를 열벡터로 모아둔 행렬이 \(X = \begin{bmatrix}e_1, e_2\end{bmatrix}\)가 될 수 있습니다. 여기에서 \(e_1 = [1, 0]\), \(e_2 = [0, 1]\) 라고 한다면 이는 곧 아래와 같이 표현될 수 있습니다.</p>
+
+\[
+X =  \begin{bmatrix}1 &amp; 0 \\ 0 &amp; 1\end{bmatrix}
+\]
+
+<h2>공분산과 고유벡터</h2>
+
+<p>공분산은 다음과 같은 형태를 가진 <code>정사각 대칭 행렬</code>입니다.</p>
+
+\[
+\begin{bmatrix}
+\operatorname{Var}(x_1) &amp; \operatorname{Cov}(x_1, x_2) &amp; ...\\
+\operatorname{Cov}(x_2, x_1) &amp; \operatorname{Var}(x_2) &amp; ... \\
+... &amp; ... &amp; ...
+\end{bmatrix}
+\]
+
+<blockquote>
+  <p>여기에서 \(x_1, x_2\)는 \(X\)의 기저에 속한 두 기저벡터를 의미합니다.</p>
+</blockquote>
+
+<p>또한 이러한 기저에 존재하는 여러 벡터(데이터)에 대해서 더욱 설명을 잘 하는 소수의 고유 벡터로 압축하는 것을 <strong>PCA</strong>, 즉 차원축소 라고 부릅니다.</p>
+
+<p>일반적으로 원본 기저에 존재하는 여러 벡터들은 자신들을 설명하는 여러 특징(<code>feature</code>)을 가지고있습니다.</p>
+
+<p>그리고 그 차원에 임의의 벡터, 직선을 그은 후 모든 점을 그 벡터에 대해 투영하게 된다면 모든 벡터(데이터)에 대한 내적값들이 생기게 될 것입니다.</p>
+
+<p>여기에서 <strong>PCA</strong>의 주 목적은 그 내적값의 분산을 최대화하여 새로 만들게 될 벡터가 기존의 데이터들에 대한 높은 설명력을 가지게 하는 것입니다.</p>
+
+<blockquote>
+  <p>투영과 코사인 유사도 정리 등에 대해서는 블로그에서 이전에 다뤘지만 향후 조금 더 정리된 형태로 업로드 하겠습니다.</p>
+</blockquote>
+
+<h2>행렬에 대한 고유값/고유벡터 정리</h2>
+
+<p>행렬은 수학적으로 그저 행과 열에 대해서 숫자를 사각형의 형태로 나열한 객체에 불과합니다.</p>
+
+<p>하지만 선형대수학 및 행렬 계산 등에서는 이는 선형변환의 주체로 동작하게 됩니다.</p>
+
+<p>선형변환은 다음과 특징을 가지는 함수를 이야기합니다.</p>
+
+\[
+T(ax_1 + bx_2) = aT(x_1) + bT(x_2)
+\]
+
+<blockquote>
+  <p>\(T()\)는 그냥 \(f()\) 과 같은 함수정도라고 생각해도 무방합니다. 쉽게 말하면 분배 및 상수 분해가 되는 함수를 말합니다.</p>
+</blockquote>
+
+<p>선형변환을 담당하는 행렬의 경우에는 계산의 대상이 되는 벡터 또는 벡터 집합에 대해서 속성들 각각에 대해 가중치를 다르게 주어 새로운 벡터를 반환하는 함수의 역할을 하게 됩니다.</p>
+
+<p>하지만 실제 행렬곱에서는 이러한 계산이 무수히 일어나게 되며 이를 더 쉽게 정리해야할 필요가 있습니다.</p>
+
+<blockquote>
+  <p><strong>행렬에는 행렬을 통해 선형변환을 해도 벡터의 방향은 바뀌지 않고 크기만 변하는 벡터 방향이 존재합니다.</strong></p>
+</blockquote>
+
+\[
+Av = \lambda v
+\]
+
+<p>이 단순하고 풀어보면 복잡한 수식은 결국 행렬 \(A\)의 특징을 쉽게 표현하는 방법이 됩니다.</p>
+
+<h3>고유벡터의 존재 조건</h3>
+
+<p>위의 식에서 \(v=0\) 이 아니게 되기 위해선 \(A - \lambda I= 0 \) 일 필요가 있습니다.</p>
+
+<p>또한 \(A - \lambda I = 0\)이 되기 위해선 \(\operatorname{det}(A- \lambda I )=0\)이 되어야합니다.</p>
+
+<h3>행렬식의 의미</h3>
+
+<p>\(\operatorname{det}(X)\)은 곧 \(X\)가 공간의 부피를 얼마나 확대/축소 하는가를 나타냅니다.</p>
+
+<p>여기에서 만약 \(\operatorname{det}(X)=0\)이라면 <code>n차원</code>의 어떤 \(v\)를 변형하면 차원을 1개 이상 없애버리며 크기를 0으로 줄여버린다는 의미를 가지게 됩니다.</p>
+
+<p>이를 그대로 독립벡터로 가지고가게 된다면 \(\operatorname{det}(A- \lambda I) = 0\) 이 된다는 것은 <strong>\(A - \lambda I\)가 선형 종속하다</strong>라는 특징을 가져야 한다는 것을 알 수 있습니다.</p>
+
+<blockquote>
+  <p>이렇게 일단 고유벡터에 대한 설명을 간단히 마무리 짓겠습니다.</p>
+</blockquote>
+
+<h2>\(v^T\Sigma v = \operatorname{Var}(Xv)\) 를 통한 최대 설명력의 벡터 찾기</h2>
+
+<blockquote>
+  <p>지금까지의 설명은 위 제목의 수식을 설명하기 위한 사전지식입니다.</p>
+</blockquote>
+
+<p>우선 결론을 먼저 잡고 가면 저희의 목적은 \(Var(Xv)\)가 최대화되는 \(Xv\) 를 찾는것이 목적입니다.</p>
+
+<p>위의 목적은 곧 <strong>데이터를 가장 잘 설명하는 축(벡터)를 찾는것</strong>을 말합니다.</p>
+
+<h3>1. \(Var(Xv)\) 정리해보기</h3>
+
+<p>\(\operatorname{Var}(Xv)\) 를 먼저 풀어보겠습니다. (\(X = \begin{bmatrix} x_1 \\ x_2\end{bmatrix}\) 라고 가정하겠습니다. \(E[Xv]\)는 \(Xv\)의 평균을 의미합니다.)</p>
+
+\[
+\begin{aligned}
+\operatorname{Var}(Xv) &amp;= \frac{1}{n}(Xv - E[Xv])^2  \\
+&amp;= \frac{1}{n}(x_1v_1 + x_2v_2 - E[x_1v_1] -E[x_2v_2])^2 \\
+&amp;= \frac{1}{n}(v_1(x_1 - E[x_1]) + v_2(x_2-E[x_2]))^2 \\
+&amp;= \frac{1}{n}(v_1^2(x_1-E[x_1])^2 + 2v_1v_2(x_1-E[x_1])(x_2-E[x_2]) + v_2^2(x_2-E[x_2])^2) \\ 
+&amp;= v_1^2\operatorname{Var}(x_1) + 2v_1v_2\operatorname{Cov}(x_1, x_2) + v_2^2\operatorname{Var}(x_2)
+\end{aligned}
+\]
+
+<blockquote>
+  <p>위와 같이 정리됩니다. 중요한 건 \(Var(Xv) = v_1^2\operatorname{Var}(x_1) + 2v_1v_2\operatorname{Cov}(x_1, x_2) + v_2^2\operatorname{Var}(x_2)\) 라는 점입니다.</p>
+  <p>위 식은 곧 \(Xv\)의 분산은 곧 \(x_1, x_2\) <code>각각의 분산 + 공분산x2</code> 가 곧 설명력이라는 점입니다.</p>
+</blockquote>
+
+<h3>2. \(v^T \Sigma v\) 정리하기</h3>
+
+<p>\(v^T \Sigma v\)는 <code>공분산 행렬</code> \(\Sigma\) 을 이용해서 벡터 \(v\)를 변형 후 원본 \(v\) 와 내적한 값을 의미합니다.</p>
+
+<p>여기에서 <code>공분산 행렬</code> \(\Sigma \in \mathbb{R}^{n \times n}\)는 <code>정사각 대칭 행렬</code> 이기 때문에 모든 직각을 이루는 <code>n</code>개의 고유벡터를 가지게 됩니다. 이를 \(q_1, q_2, ..., q_n\) 이라고 부르겠습니다. 그렇게 되면 \(v = a_1q_1 + a_2q_2 + ... + a_nq_n\)를 표현하게 됩니다.</p>
+
+\[
+\begin{aligned}
+\Sigma v 
+&amp;= \Sigma(a_1q_1 + a_2q_2 + ... + a_nq_n)
+\\ &amp;= a_1 \Sigma q_1 + a_2 \Sigma q_2 + a_n \Sigma q_n
+\\ &amp;= a_1 \lambda_1 + a_2 \lambda_2 + ... + a_n \lambda_n
+\end{aligned}
+\]
+
+<p>과 같이 만들어지게 됩니다. 그리고 모든 \(q_n\)들은 직교하기 때문에</p>
+
+\[
+\begin{aligned}
+v ^T \Sigma v &amp;= (a_1q_1 + a_2q_2 + ... + a_nq_n) ^T (a_1 \lambda_1 + a_2 \lambda_2 + ... + a_n \lambda_n) \\
+&amp;= a_1 \lambda_1 q_1 + a_2 \lambda_2 q_2 + ... + a_n \lambda_n q_n
+\end{aligned}
+\]
+
+<p>가 됩니다. 여기에서 \(\lambda_n\) 과 \(q_n\) 은 정해져있는 값이므로 \(a_n\)의 비율을 조정해서 최대의 분산을 만드는 비율을 찾게됩니다.</p>
+
+<blockquote>
+  <p>대칭행렬의 고유벡터들이 왜 직교인지와 고유한지는 향후 다루겠습니다.</p>
+</blockquote>
+
+<p>이렇게 되면 \(n &lt; n-1\) 일 때 \(\lambda_nq_n &lt; \lambda_{n-1}q_{n-1}\) 라고 가정하면 보통 \(a_1\)이 <code>1</code>이고 나머지 값이 모두 <code>0</code>인 벡터 하나, 그리고 그 다음으로 큰 이미 만들어진 벡터와 직교하는 벡터 하나.... 순서로 벡터들을 뽑아내게 됩니다.</p>
+
+<p>그렇게 뽑힌 <code>n</code>개의 벡터에서 상위 <code>m</code>개만 뽑아서 기존의 큰 차원을 작은 차원의 설명력 좋은 기저들로 이루어진 공간으로 만드는 것을 <strong>PCA</strong> 라고 설명합니다.</p>
+
+<h1>후기</h1>
+
+<p>이전에도 여러번 선형대수학에 대해서 다루었지만 스스로 보기에도 설명력있는 글을 작성한건 이번이 처음이 아닌가 싶습니다.</p>
+
+<p>다음번에는 <code>공분산행렬</code>과 <code>대칭 정사각 행렬</code>, <code>행렬식</code> 에 대해서도 다뤄볼 수 있도록 하겠습니다.</p>
