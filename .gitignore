@@ -10,6 +10,7 @@
 
 **/datasets/**
 **/datas/**
+**/data/**
 
 **/__pycache__/**
 .agents/
@@ -29,3 +30,6 @@ dist/
 **/.env.*
 !**/.env.example
 !**/*.env.example/**
+
+workspace/python/14_scikit_learn/data/eurosat/
+workspace/python/14_scikit_learn/data/eurosat/EuroSAT.zip
