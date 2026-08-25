@@ -20,7 +20,7 @@ $$
 \end{cases}
 $$
 
-<!-- ![relu](image-1.png) -->
+![relu](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image-1.png)
 
 여기에서 `x=0`은 수학적으로 미분 불가능하지만 PyTorch에서는 0으로 처리해줍니다.
 
@@ -65,7 +65,7 @@ $$
 \end{cases}
 $$
 
-![leaky relu](image.png)
+![leaky relu](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image.png)
 
 PyTorch에서는 다음과 같이 사용이 가능합니다
 
@@ -127,7 +127,7 @@ $$
 
 그래프는 다음과 같은 **가로로 늘린 S** 자 형태를 가집니다.
 
-![sigmoid_and_derivative](image-2.png)
+![sigmoid_and_derivative](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image-2.png)
 
 이떄 $\operatorname{Sigmoid}$ 함수의 최대 미분 결과는 `0.25`로 **최대 단점**인 Saturation 현상이 심하게 일어날 수 있습니다.
 
@@ -169,7 +169,7 @@ $$
 \frac{\partial}{\partial x}\operatorname{Tanh}(x) = 1-\operatorname{Tanh}^2(x)
 $$
 
-![alt text](image-3.png)
+![alt text](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image-3.png)
 
 > $\operatorname{Tanh}$ 또한 $\operatorname{Sigmoid}$와 같이 `vanishing gradient` 문제가 존재합니다.
 
@@ -200,11 +200,11 @@ $$
 \frac{\partial}{\partial x}GELU(x) = \Phi(x) + x\phi(x)
 $$
 
-![alt text](image-4.png)
+![alt text](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image-4.png)
 
 > $\Phi$는 표준 정규분포의 누적포함수(CDF)를 말합니다. (이는 표준정규분포에서 지정한 값보다 작은 값이 나올 확률을 말합니다. )
 
-![alt text](image-5.png)
+![alt text](https://raw.githubusercontent.com/hurwan0629/lang-chain-KDT/130f9a7f6217385bcbfeb8ab574de69fbc0be73c/workspace/personal/machinelearning/05_from_first_again/01_2026-08-08_from_first/image-5.png)
 
 
 PyTorch에서의 사용 또한 단순합니다.
