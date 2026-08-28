@@ -1,0 +1,35 @@
+model.eval()이 학습은 되는거구나. 그러면 사용이 그냥 평가나 추론 이런거라기 보다는 진짜 Dropout나 BatchNorm 등등 Module 전용 학습 중지정도인건가? 
+
+eval()과 inference_mode()를 같이 쓰는 이유가 그래서인건가? 추론모드에서는 Dropout하고 BatchNorm ㅡㄷ응ㄹ 제어 못하나
+
+---
+
+grad_context는 모두 context_manager 프로토콜을 가진다는게 결국 __enter__(), __exit__()을 가진다는 건가?
+
+그러면 두 컨텍스트를 동시에 쓴건 그냥 할게 없어서 정도라고 이해하면 되고 inference_mode/none만 써도 문제는 없겠네. 어짜피 훈련 시에는 기본이 enable_grad()이니까.
+
+---
+
+AMP의 autocast는 그러면 계산 정책을 설정한다고 보는거같은데 Conv, Linear, matmul이 FP16으로 계산되는 대표적인 대상이다, 뭔가 연산량이 너무 많아질 수 있는 경우에는 중요도가 높지 않은 경우에는 float16 으로 계산해주는 장치같은거라고 보면 되나? 이게 **적절한**이라는 단어가 너무 추상적이여서 무슨말인지 잘 모르겠어.
+
+FP가 부동소수점이다. 부동소수점은 부호/지수/유효숫자부분 을 나누어서 보낸건 기억하고 있어. 정확하진 않지만.
+
+bfloat16이 BF16? 이건 조금 더 지수가 많은건가봐ㅗ? 약간 띄엄띄엄 보여지는 방식인건가? 계산식이 기억이 안나니까 확실하지 않네.
+
+---
+
+파이토치에서 unit8은 뭐지? 내 기억에는 이미지 관련 255 까지 표현할 대 봤던거같은데.
+
+텐서의 dtype와 device 속성에 대해서도 좀 궁금한게 저게 그냥 문자열이나 타입을 나타내는게 아니라 C레벨로 내려가는 형태라던가 은근히 기본타입 치고는 연결되는게 엄청 많지 않나? 특히 연산하고 backward, optimizer 등등
+
+그리고 float32하고 int32하고 크기 차이가 있나? 4바이트로 소수 표기/ 4바이트로 정수 표기 아니였어?
+
+DMA가 뭐지 비동기 DMA라는건 뭐야? 복사 작업은 IO 작업이라고 보면 되는건가? 그리고 pinned_memory=False + 가상메모리에 저장되어서 현재 메모리에 존재하지 않는 데이터가 non_blocking=True로 loader에서 불러와지면 어덯게 돼?
+
+underflow, overflow는 너무 일반적인 지식이라 알고있어.
+
+gradscaler은 어느정도 요소들 (backward, optimizer, step, update를 통한 scale 적응시켜줌. 이는 모두 grad를 소실하지 않기 위한 것이라고 봤음. 그를 위해서 loss scaling부터 추적하면서 크기를 곱해주는 방식이려나? 하나의 backward에서 여러 갈래에 따른 다른 비율을 적용시켜주는거겠지?)
+
+---
+
+scaler.scale(loss)는 그냥 Tensor을 반환해서 backward()하고. scaler.step(optimizer)을 하면 grad를 적용해주느ㄴ데 이때 오버플로우를 발견하면 step를 그냥 건너뛴다는게 무슨말이지? 이러면 에러를 내는게 조금 더 올바르지 않나? 

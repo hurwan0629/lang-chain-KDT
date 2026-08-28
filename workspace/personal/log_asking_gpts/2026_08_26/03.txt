@@ -1,0 +1,29 @@
+WEIGHT_DECAY -- 가중치 감쇠이자 규제? 라고 함
+
+adam도 옵티마이저 적용해서 가중치가 폭발할 수 있음. adam 자체에도 weight decay가 존재한다. adam에 weight deacy를 적용하면 이전꺼 이전꺼에도 적용할 수 있음 -> 밖으로 빼어서 기울기 연산 후 연산하는걸로 바꾸었다.
+
+
+
+---
+
+model train(dropout 등) | inference_mode (DAG) 차이
+
+전체적인 그림을 보지 않고 그릴 수 있게 하기. 
+
+수업 코드 달달 외워서 안보고 칠 수 있을 정도로.
+
+
+
+GPU AMP 알아보기
+
+pth 사용법 다시 알아보기
+
+parameter freezing 다시 하기
+
+scheduler 다시 써보기
+
+FP32 등에 대해서 알아보기
+
+
+with torch.autocast(device_type=device.type, dtype=torch.float16):  다시 한번 알아보기
+

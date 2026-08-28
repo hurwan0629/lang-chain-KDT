@@ -1,0 +1,65 @@
+- amp 가 도데체 뭐길래 타입이 마음대로 바뀌는 것인가
+- Tensor의 dtype과 FloatTensor, LongTensor 등이 여러가지 있는거같은데 이걸 어떻게 해결해야 하는 것인지
+- model.in_features 등과 같은 내부 요소들과 Sequential의 인덱싱 기능, 네임 파라미터, 등등 정리를 한번 해야할거같음. model.parameters()도 재귀적으로 호출되는 형태인걸로 보이고.
+- 파라미터 프리징도 단순하게 Parameter.requires_grad=False로 하면 어느정도 다 해결이 되는거같은데 맞나?
+- 전체적인 PyTorch 프레임워클르 알아야할거같음. 이게 데이터셋 타입도 되게 많고, 서브셋, 옵티마이저, step, 스케줄러, amp, 손실함수, 파라미터(또는 모델) 및 파라미터 외에도 .pth에 저장이 되는거같던데 뭐지?
+- gpu/cpu 사용시에 일어나는 디바이스 문제에 대해서 막는 방법
+- transforms.Normalize를 할 때 필요한 mean과 std에서 보통 원본 channel을 기준으로 모든 훈련 데이터셋의 요소들의 평균/표준편차를 구하는건가? 너무 연산이 많은거같은데 어떻게 바로 연산이 되는거지
+- matplotlib과 figure, axes 등의 객체 사용 방법에 대하여
+- 옵티마이저에도 param_groups가 있고 한거같은데 이것도 좀 구조가 궁금함. 속성이 워낙 많은거같아서. 안에 "lr"이라는 키도 있는거같은데 뭐지
+```
+optimizer = optim.AdamW(
+    filter(lambda p: p.requires_grad, model.parameters()),
+    lr=1e-3,
+    weight_decay=1e-4
+)
+print("초기 학습률:", optimizer.param_groups[0]["lr"])
+```
+- amp가 무엇인지. 코드도 햇갈림. 크게 훈련/학습에 따라 다른 환경으로 돌려주는거같은데 non_blocking과 autocast, amp 등을 모르겠음. scaler.*도
+```
+use_amp = DEVICE.type == "cuda"
+# loss값을 일시적으로 크게 만들어서 작은 gradient가 사라지는 것을 방지해주기도 함.
+scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
+
+def run_epoch(model, loader, criterion, device, optimizer=None):
+    is_training = optimizer is not None
+    if is_training:
+        model.train()
+    else:
+        model.eval()
+
+    running_loss = 0.0
+    running_correct = 0
+    running_samples = 0
+
+    grad_context = torch.enable_grad() if is_training else torch.inference_mode()
+    with grad_context:
+        for images, labels in loader:
+            images = images.to(device, non_blocking=PIN_MEMORY)
+            labels = labels.float().unsqueeze(1).to(device, non_blocking=PIN_MEMORY)
+
+            if is_training:
+                optimizer.zero_grad()
+            with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=use_amp):
+                logits = model(images)
+                loss = criterion(logits, labels)
+            if is_training:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+
+            probabilities = torch.sigmoid(logits)
+            predictions = (probabilities >= 0.5).float()
+            batch_size = labels.size(0)
+            running_loss += loss.item() * batch_size
+            running_correct += (predictions == labels).sum().item()
+            running_samples += batch_size
+
+    epoch_loss = running_loss / running_samples
+    epoch_accuracy = running_correct / running_samples
+    return epoch_loss, epoch_accuracy
+```
+
+---
+
+> 일단 내가 흐름을 설명하고 너가 보정하느 방식이면 좋겠으니 너가 읽고 알려주면 내가 순서대로 설명하는 형태로 가면 좋을 것 같다.

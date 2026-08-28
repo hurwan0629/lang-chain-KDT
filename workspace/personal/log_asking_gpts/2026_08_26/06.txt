@@ -1,0 +1,21 @@
+nn.Dropout(p) 하고 nn.BatchNorm(인자 보통 안쓰나)는 train으로 꺼야하는 것들로 기억할게. 순방향에서 영향이 가는거니까.
+
+ autocast는 일단 연산량과 정확도 사이의 적절 지점을 설정해 놓은 값대로 연산하는 것으로 기억할게.
+
+이진수 관련해서도 공부할 대상으로 생각할게
+
+amp.GradScaler()도 객체인거지? 그리고 인자로 가지는 enabled는 뭐야? gpu하고 관계가 있는건가?
+
+optim.lr_schedular도 결국 optimizer 래퍼 클래스에 가까운 모습이고 스케줄러를 scaler 안에 넣어서 step() 하는 형태이려나 lr_schedular도 그러면 부모로 가지는 타입이 optimizer 계열인데 이게 loss가 줄어드는걸 추적하는거 아니야? 그런데 optimizer의 step는 텐서의 grad를 직접 사용하잖아? 그러면 loss가 줄었는지 아닌지는 어떻게 판단하는거야?
+
+model.state_dict에는 [self.모듈].레이어_번호.종류(weight/bias 또는 무언가) 정도로 키가 나오는거려나
+
+pth 저장도 되게 쉽게되네.
+
+torch.save(직렬화_대상, "경로")
+
+로드도 weight 또는 받을 대상을 그대로 torch.load(경로, weight_only=선택) 인거고. map_location는 뭔지 잘 모르겠다.
+
+그리고 Dataset 계여ㅕㄹ은 크게 TensorDataset, FolderImage, datasets.데이터셋, Subset(원본, 인덱스) 정도이려나?
+
+데이터셋부터 답해줘
