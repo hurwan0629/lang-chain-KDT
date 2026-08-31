@@ -33,6 +33,8 @@ while True:
         print("카메라 프레임을 읽지 못했습니다.")
         break
 
+    frame = cv2.resize(frame, (1280, 960))
+
     #
     cv2.imshow('camera', frame)
     # 키 입력을 기다리면서 OpenCV 창 이벤트도 처리하는 함수

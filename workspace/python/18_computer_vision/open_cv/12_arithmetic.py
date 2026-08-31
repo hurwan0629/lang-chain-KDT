@@ -11,7 +11,7 @@ if not IMG_DIR.exists():
 print("이미지 디렉토리:", IMG_DIR.cwd(), end="\n")
 
 img1 = cv2.imread(str(IMG_DIR / "dog.jpg"))
-img2 = cv2.imread(str(IMG_DIR / "square.bmp "))
+img2 = cv2.imread(str(IMG_DIR / "square.bmp"))
 
 # 1. 단순 덧셈. 255보다 큰 값은 255로 제한
 dst_add = cv2.add(img1, img2)

@@ -101,6 +101,7 @@ for cap in (cap1, cap2):
 
         out.write(frame)
         cv2.imshow("output", frame)
+
         if cv2.waitKey(delay) == 27:
             stop = True
             break

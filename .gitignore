@@ -15,6 +15,10 @@
 **/__pycache__/**
 .agents/
 
+# 영상 등 파일
+*.avi
+
+
 **/node_modules/**
 # 로그 및 빌드 파일 제외 (선택)
 npm-debug.log*
