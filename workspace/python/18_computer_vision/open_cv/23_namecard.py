@@ -1,0 +1,1 @@
+# namecard를 클릭해서 드래그 할 수 있는 사각형 + 꼭짓점의 점 만들어서 클릭 space 또는 enter을 통해 크롭한 display를 하나 만들어주기
