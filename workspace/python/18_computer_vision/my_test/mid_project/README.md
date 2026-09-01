@@ -35,6 +35,6 @@ dataset/
 이를 위해 폴더를 다음과 같이 나누려 합니다.
 - `app/`: 실제 어플
 - `training/`: 얼굴 인식 어플
-- `data/`: 저장한 얼굴 데이터들과 이를 `train`/`validation`으로 나눈 폴더
+- `data/`: 저장한 얼굴 데이터들과 이를 `hurwan_train.py`/`validation`으로 나눈 폴더
 - `models/`: `.pth` 저장 폴더
 - 
