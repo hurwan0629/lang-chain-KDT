@@ -1,9 +1,8 @@
 from torchvision.datasets import ImageFolder
-from pathlib import Path
 from torch.utils.data import Subset, DataLoader
 
 from .env import IS_CUDA, NUM_WORKERS, IMAGE_PATH
-from .transforms import train_transform, test_transform
+from my_test.mid_project.train.train__.transforms import train_transform, test_transform
 from sklearn.model_selection import train_test_split
 import numpy as np
 
