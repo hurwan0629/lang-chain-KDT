@@ -1,104 +1,61 @@
-# 소개
-이곳은 개발자 취준생 **허완**이 `랭체인을 활용한 AI 영상객체탐지분석 플랫폼 구축과정` 국비 과정의 작업을 하기 위한 공간입니다.
+# KDT LangChain Learning Archive
 
-(`Construction_Process_of_an_AI_Video_Object_Detection_and_Analysis_Platform_Utilizing_LangChain`)
+2026-05-19부터 진행한 KDT 수업, 개인 학습, 실습 프로젝트, 블로그 산출물을 정리한 저장소입니다.
 
-시작일: 2026년 05월 19일
+## Folder Map
 
-종료일: 2026년 12월 17일
+- `01_class/`: 수업 중 작성한 코드, 실습 파일, 수업 일지
+- `02_self_study/`: 개인 복습, 책 정리, 추가 실습, 개념 노트
+- `03_projects/`: 과제형/프로젝트형 작업물
+- `04_blog/`: 블로그 원문, 티스토리 HTML, 템플릿, 발행 보조 도구
+- `05_resources/`: 공용 리소스, 데이터, 이미지, requirements
+- `90_uncertain/`: 출처나 주제가 애매해서 나중에 다시 확인할 파일
+- `99_legacy/`: 기존 루트 문서, IDE 설정, 개인/메타성 자료, 원래 구조 보존 자료
 
-총 139일
+## Quick Index
 
----
+### Class
 
-## Python Version
+- Python basics: `01_class/python/`
+- Crawling and Selenium: `01_class/crawling/`
+- HTML/CSS: `01_class/html_css/`
+- JavaScript and Node: `01_class/javascript_node/`
+- FastAPI/API practice: `01_class/api_fastapi/`
+- Machine learning and scikit-learn: `01_class/machine_learning/`
+- PyTorch and deep learning: `01_class/deep_learning/`
+- OpenCV and computer vision: `01_class/computer_vision/`
+- Class diary: `01_class/class_diary/`
 
-Python 3.12.10
+### Self Study
 
-## Node Version
-- 24.18.0 (대체로 수업 진행용)
-- 22.13.0 (기존에 사용하던 것 / 앞으로는 덜 사용할 예정)
+- Python language: `02_self_study/python/`
+- Data analysis: `02_self_study/data_analysis/`
+- Statistics: `02_self_study/statistics/`
+- Math and linear algebra: `02_self_study/math/`
+- Algorithms and data structures: `02_self_study/algorithms/`
+- C language: `02_self_study/c_language/`
+- CS, OS, network: `02_self_study/cs/`
+- Software engineering: `02_self_study/software_engineering/`
+- DevOps: `02_self_study/devops/`
+- AI/LLM notes: `02_self_study/ai_llm/`
 
-## 커밋 규칙:
-`[YYYY-mm-dd HH:MM] [note|code|html|chore]: [description]`
+### Projects
 
-> 해당 커밋 규칙은 시작일을 기준으로 `[2026-06-26 21:08:54]` 까지 지켜지지 않았습니다. 위에 적혀있는 커밋 규칙은 믿을 규칙이 안됩니다.
+- Hackerton: `03_projects/hackerton/`
+- Crawling exam: `03_projects/crawling_exam/`
+- Message queue project: `03_projects/message_queue/`
+- Computer vision mid project: `03_projects/computer_vision_mid_project/`
+- Mixed small projects: `03_projects/small_project/`
 
-# 반드시 공부할 것
-- [x] [2026-06-28 19:43:09]: http 메시지의 인코딩/디코딩 처리 방식
-- [] [2026-07-02 16:49:41]: 빌드와 배포, TDD, 소프트웨어 공학에 대한 탐구, DDD, 개발 환경(devDependencies vs Dependencies), 버전 관리방법, git 등
-- [] [2026-07-02 17:58:28]: 데이터베이스 url을 통한 연결 정리해보기
-- [] [2026-07-03 07:50:00]: 네트워크 한번 더 공부하기
-- [] [2026-07-03 07:50:26]: 도커 공부하기
-- [] [2026-07-03 07:51:15]: PowerShell 문법 공부하기
-- [] [2026-07-03 07:51:45]: 머신러닝 영상 더 공부하기
-- [] [2026-07-03 14:42:00]: VM 등을 통해 NAT, DHCP, DNS, 방화벽, 보안, 라우팅, IIS(윈도우 서버), Apache(리눅스) 등 또는 FTP, IGMP, 메일서버, SSH 연습해보기
-- [] [2026-07-10 13:09:08]: Google apis 알아보고, openid 재단 및 oauth2 공식 글 한번 읽어보기. 어떤 철학인지
-공부할거:
-- [] [2026-07-20 19:45:06]: 작업 시에 명명 규칙, try-catch 사용방법, sql에서 반환값 및 에러를 어떤 형태로 해야할지, service/repo/controller 등중 어디에서 어떻게 처리해야하는건지, 계층 분리는 시작할 때 어떤식으로 하고 시작해야하는건지, 직접 하는게 너무 귀찮은데 어떻게 해야하는건지, typescript와 eslint는 무조건 하는게 편한지, 생산성 측면에서 너무 귀찮은데 뭐가 병목인지, 메서드 명은 어떤식으로 작업해야하는지
-- [] [2026-07-20 19:45:02]: api 명세서 및 이런 문서화는 어떤식으로 해야하는지
-- [] [2026-07-20 19:45:02]: sql의 성능차이에 대해서
-- [] [2026-07-20 19:45:02]: git branch 및 작업별로 commit 및 멋대로 적용되지 않게 관리하는 방법
-- [] [2026-07-20 19:45:02]: docker은 어떤식으로 활용하는지
-- [] [2026-07-20 19:45:02]: figma의 활용 방법에 대해서 
-- [] [2026-07-20 19:45:02]: 뭔가 나만의 규칙을 만들어야하는건지 개발자의 일반적인 규격은 어디 정해진 것이 없는건지, 어떤식으로 개발 작업을 관리해야하는 것인지
-- [] [2026-07-20 19:45:02]: 다이어그램들 제작 방법 한번 직접 해보면서 알아보기
-- [] [2026-07-20 19:45:02]: 터미널 및 여러 작업의 경우에 뭔가 옆에 띄워놓고 작업할만한 방법 (노트북에 모니터를 띄운다던가 방법이 있는지)
-- [] [2026-07-20 19:45:02]: socket 프로그래밍까지 어떤식으로 설계를 해야할지
-- [] [2026-07-20 19:45:02]: 프로젝트의 전체적인 진행 프로세스는 어떤식으로 구현되는지 (사용자 흐름부터? 브레인스토밍? db? 프로토타입? 에자일? 폭포수? TDD? DDD?)
+## Timeline
 
-# 타임라인
-### 2026-06-26 [금]
-[2026-06-26 21:09:48]: 약 1달동안 `파이썬(백 언어) -> MySQL(DB) -> html -> css -> js -> 크롤링 -> Node`의 절차를 밟고있습니다. 노드 서버, `ejs`, 셀레니움은 많이 사용해보지 않아 이전까지는 어느정도 수업 추적만 하다 얼마 전 자격증 및 개인 학업이 어느정도 정리되어 공부를 시작하고 있습니다. `ejs`는 `.jsp`와 거의 같아서 그냥 이전에도 사용하듯이 사용할 수 있는거같고, 노드 서버 및 프로젝트 관리는 익숙해져야 할 것 같습니다. 셀레니움은 애초에 편의를 위한 라이브러리이기 때문에 구조까지 파진 않고 어느정도 실습을 위주로 연습중입니다. 1달만에 하는 회고라 말이 조금 많았습니다. 추가로 폴더 정리가 필요할지도 모르겠습니다.
+- 2026-05: Python basics, data analysis basics, statistics, blog templates
+- 2026-06: C, data structures, HTML/CSS, JavaScript, Node, crawling, ML basics
+- 2026-07: Hackerton, network/server practice, WebSocket, WebRTC, RabbitMQ, React
+- 2026-08: ML/DL review, PyTorch, CNN, OpenCV
+- 2026-09: Computer vision project, object detection, annotation conversion
 
-### 2026-06-27 [토]
-[2026-06-27 09:06:40]: 이번 주말(2일동안 목표는 2가지 입니다.) 데이터 분석 관련의 2가지 이상의 개념 알기, 셀레니움 크롤링 다루는 연습 한번씩 더 하기, 노드 JS를 통해서 서버 및 아키텍처 구축해보기 [여기](.\workspace\personal\small_project\00_web\architect_practice) - 우선 크롤링 먼저 한번 더 해보려 합니다. 액션 체인, jsexecutor, 기타 설정 및 데이터 등 다루기 위한 연습이 목적입니다.
+## Notes
 
-[2026-06-27 11:33:54]: 교보문고와 숭실대사이트에서 이것저것 왔다갔다 하면서 js, action, XPATH 등을 좀 새로 익혔습니다. 이제 Node를 좀 써보려고 합니다.
+Some folders were split by actual content rather than original folder name. For example, PyTorch/CNN files that were under the old `workspace/python/14_scikit_learn/` path are now under `01_class/deep_learning/pytorch_cnn_from_14_scikit_learn/`.
 
-[2026-06-27 19:12:06]: 노드 서버를 사용하면서 미들웨어, 여러 설정 방법, ejs 및 정적 자원을 통한 js 붙여주기 등 연습과 Readable/Writable Stream 및 몇가지 객체들을 알아보았습니다.
-
-### 2026-06-28 [일]
-[2026-06-28 13:58:29]: 아침 약 10시쯤부터 11시 반까지 몇가지 분류 모델을 사용해보았고, 2시가지 개인 [KDT 카페 서버](https://github.com/hurwan0629/kdt-cafe) 제작을 하였습니다. 현재는 시험에 나온다는 동기/비동기 파일 작성(노드) 및 크롤링(셀레니움) 문제에 신경써 연습을 조금 더 하려 합니다.
-
-[2026-06-28 15:48:46]: [파일 다루기](.\workspace\personal\nodeJS\02_file_control)와 [방명록 실습](.\workspace\personal\nodeJS\03_guest_book)를 하였습니다. (왜 2시간이나 흘렀지? 어려운게 아닌데 ;;)
-
-[2026-06-28 20:36:26]: 오늘의 마지막 로그입니다. 노드를 통해 로그인, 회원가입, 로그인 쿠키 전달, 로그인 되어있다면 로그인 안시켜주기, ejs, 방명록 제작, 파일 I/O 를 통한 자원 (방명록과 회원) 관리 를 하였습니다.
-
-### 2026-06-29 [월]
-[2026-06-29 07:25:06]: 일어나서 바로 학원에 왔더니 막 코드를 칠 기분은 아닌 것 같습니다. 일단 개념 정리([http 메시지의 인코딩/디코딩 처리 방식], [js 및 express 문법])를 하면서 시간을 보내야할 것 같습니다.
-
-[2026-06-29 08:28:02]: 이해가 많이 되었다고 봅니다. express에서 먼저 모두 받고, `req.on("data")` 에서 버퍼를 받아 인코딩 -> `application/x-www-encoded` 타입이라면 `decodeURIcomponent(body)`를 통해 인코딩하여 사용할 수 있습니다. 이를 편하게 해주는 것이 `express.urlencoded()`입니다. [작업](./workspace/personal/nodeJS/04_http_encoding/)
-
-[2026-06-29 08:29:55]: 이번에는 어제 작업한 [방명록](./workspace/personal/nodeJS/03_guest_book/)에서 모듈을 어떻게 분리할지 한번 알아보도록 하겠습니다.
-
-### 2026-06-30 [화]
-[2026-06-30 18:09:12]: 오늘 시험을 보았습니다. 크롤링 시험이였는데 작업은 [테스트 폴더](./workspace/test/2026-06-30_HURWAN_crawling/)에서 진행하였습니다. 일단 지금까지 한 일은 몽고DB 관련 공부였습니다. 티스토리에 간단하게 [포스팅](https://hurwan.tistory.com/59)을 하였으며 시험이 끝났으니 본격적으로 머신러닝과 함께 공부할 생각입니다.
-
-### 2026-07-01 [수]
-[2026-07-01 07:40:05]: 어제 공부 1시간하다 집가서 바로 잤습니다. 현재는 `npm mongodb` 패키지를 통해 데이터베이스를 다뤄보고 있습니다. 전체적으로 직관적이라 어렵진 않은데 `$` 필드참조가 약간 햇갈려서 알아보는 중입니다. 추가로 앞으로 대기업의 블로그를 분석해보기 시작하는건 어떻까 생각이 들었습니다. 저만의 지식으로는 더이상 큰 폭으로 전진하는건 어렵다 판단했기 때문입니다.
-
-[2026-07-01 09:09:31]: mongodb 쿼리를 짜는법을 조금 연습했습니다. `aggregate`와 `CRUD`를 해보면서 감을 잡아보려했는데 처음보단 나아졌지만 아직 연습이 더 필요한 것 같다고 느꼈습니다. `RDB`하고 느낌이 좀 다른 느낌이였습니다.
-
-[2026-07-01 09:16:15]: 시험 때문에 다시 공부 흐름이 리셋되는 느낌
-
-[2026-07-01 16:52:53]: 현재 수업동안에는 mongodb와 간단한 html crud를 배웠습니다. 이후에 저는 개인적으로 물리적 JOIN 방식에 대해서 알아보았습니다.
-
-### 2026-07-02 [목]
-[2026-07-02 16:47:35]: 오늘은 전체적으로 보안과 인증/인가 등에 대해서 공부한느것 같습니다. 어제 저녁에는 수학에 대해서 약간 정리를 하였는데 이번에 express 프레임워크를 본격적으로 사용하기 시작하며 이번에 약간 집중할 때로 판단하고 이부분에 집중하기로 했습니다. 또한 이전에 작업했었던 [`java-practice`](https://github.com/hurwan0629/java-practice/tree/main/IntellijProject) 작업물이 한번에 눈에 들어오지 않기도 하고 이전에 제가 하던 작업들 및 구조들을 다시 복기할겸 확인하면 좋겠다는 생각이 들었습니다. 
-
-### 2026-07-05 [일]
-[2026-07-05 08:52:07]: 오늘 할일 `1. 데이터 활용 조사. 기술 활용 예상. AI 학습 방식 조사`, `2. 프론트 ejs 만들기 과제`, `3. 가상 환경을 통한 네트워크 및 서버 실습`
-
-[2026-07-05 16:30:15]: [작업](/workspace/hackerton) 끝냈는데([요약본](workspace\hackerton\to_show\2026_07_05_result)) 기빨리는데 또 만족스럽지가 않습니다. ㅋㅋ. 지인분께 이야기해보니 뭔가 사회적인 공감대를 잘 찝어내거나 비용을 절감시킬 수 있는 부분을 잘 잡아보라거나 하는부분에서 데이터까지 존재하는 것을 잡아보라고 하셨습니다. 이부분은 개발로도 되지않는 부분인것 같아 어려움을 겪고 있습니다. 뭐 제대로 고민한적이 없었으니 당연한걸지도 모르죠. 아무튼 한번 책도 사서 읽어보고 하려고 합니다. 기술적인 부분은 이제 공부가 어렵지 않으니 앞으로 새로운 분야로는 그냥 이런 아이디어나 글쓰기, 전달력 등을 연습하면 좋을 것 같습니다. 일단 주말동안 기술 공부를 많이 하지 못했으니 한 3시간정도 기술 공부 하다가 집에 가려고 합니다. `(과제야 뭐 어려운 것도 아니고 공부가 더 중요하니 일단 공부 먼저 하려고합니다. 못한지 너무 오래돼씀...)`
-
-### 2026-07-06 [월]
-[2026-07-06 19:58:49]: 정신이 혼미하다. 오늘 7시에 학원와서 부랴부랴 과제(프론트 구현) 컷하고 Socket.IO 배우는데 피곤해서 눈에 잘 들어오지도 않는 바람에 수업 후 2시간정도 직접 실습해보면서 좀 더 알아간 느낌이다. 전체적인 작업은 [여기](workspace\personal\nodeJS\06_websocket)에 있다. 그리고 팀플 조사는 전체적으로 수월하고 팀 느낌도 우상향이여서 개인적으로 만족스럽다. **앞으로는 뭔가 할 때 목적을 정하고 해야겠다. 오늘 좀 목적없이 공부했더니 피곤해서 그런지 잘 하고있는 느낌을 받지 못했다.**
-
-### 2026-07-07 [화]
-[2026-07-07 07:26:06]: 오늘은 좀 나쁘지 않게 잠을 자고와서 괜찮은 것 같습니다. 일단 뭐할지 정해야하는데 이전까지 했던 노드의 복습을 할 수 있고, 네트워크 공부를 더 할 수 있으며, 수학 공부를 더 파거나, 서버 및 리눅스 공부 또한 할 수 있습니다. 운영체제까지 포함해서 `[운영체제, 네트워크, 서버(리눅스), 수학, 웹 프레임워크]` 중에서 고를 수 있을거 같은데 일단 서버쪽을 이전부터 하고싶었기 때문에 이번에는 도커/VM 등을 이용한 서버 실험을 직접 해보도록 하겠습니다. 일단 WSL을 이용한 네트워크, 도커 등을 공부한다음에 필요하면 VM으로 여러 서버를 통한 네트워크 및 여러 운영체제 환경을 사용해보도록 하겠습니다.
-
-### 2026-07-10 [금]
-지금은 `https://github.com/hurwan0629/HURWAN_LangChain_WebRTC_video_chat`에서 작업중.
-
-webrtc쪽 공부하고 google oauth, 서버 구조 등 공부하는느낌. 실습도 해보고
