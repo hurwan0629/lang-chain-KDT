@@ -2,60 +2,54 @@
 
 2026-05-19부터 진행한 KDT 수업, 개인 학습, 실습 프로젝트, 블로그 산출물을 정리한 저장소입니다.
 
-## Folder Map
 
-- `01_class/`: 수업 중 작성한 코드, 실습 파일, 수업 일지
-- `02_self_study/`: 개인 복습, 책 정리, 추가 실습, 개념 노트
-- `03_projects/`: 과제형/프로젝트형 작업물
-- `04_blog/`: 블로그 원문, 티스토리 HTML, 템플릿, 발행 보조 도구
-- `05_resources/`: 공용 리소스, 데이터, 이미지, requirements
-- `90_uncertain/`: 출처나 주제가 애매해서 나중에 다시 확인할 파일
-- `99_legacy/`: 기존 루트 문서, IDE 설정, 개인/메타성 자료, 원래 구조 보존 자료
+## 🚀 수업 빠르게 찾아가기
 
-## Quick Index
+> KDT 수업은 시간의 흐름에 따라 주제가 바뀌어 왔습니다.
+> 아래 목록은 **수업 진행 순서 + 현재 자료 위치**를 함께 보여줍니다.
 
-### Class
+| 시기                 | 수업 분야                    | 주요 내용                                               | 자료                                                                                                                  |
+| ------------------ | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **2026-05**        | Python / Data Analysis   | Python 기초, NumPy, Pandas, 데이터 분석 기초                 | [`01_class/python/`](./01_class/python/)                                                                            |
+| **2026-06 초**      | 자료구조 / 기초 CS             | 자료구조, 알고리즘, 선형대수, ML 기초                             | [`01_class/machine_learning/`](./01_class/machine_learning/)                                                        |
+| **2026-06 중~말**    | Web / JavaScript / Node  | HTML/CSS, JavaScript, Node.js, Express              | [`01_class/html_css/`](./01_class/html_css/) · [`01_class/javascript_node/`](./01_class/javascript_node/)           |
+| **2026-06 말**      | Crawling / API           | Selenium, 크롤링, FastAPI/API 실습                       | [`01_class/crawling/`](./01_class/crawling/) · [`01_class/api_fastapi/`](./01_class/api_fastapi/)                   |
+| **2026-07**        | Server / Network         | WebSocket, WebRTC, RabbitMQ, 서버/네트워크 실습             | [`02_self_study/cs/`](./02_self_study/cs/) · [`03_projects/message_queue/`](./03_projects/message_queue/)           |
+| **2026-08 초~중**    | Machine Learning         | 회귀/분류, sklearn, ML 복습                               | [`01_class/machine_learning/`](./01_class/machine_learning/)                                                        |
+| **2026-08 중~말**    | Deep Learning / PyTorch  | Tensor, Autograd, 학습 루프, CNN, Dataset/DataLoader    | [`01_class/deep_learning/`](./01_class/deep_learning/)                                                              |
+| **2026-08 말~09 초** | Computer Vision / OpenCV | 색공간, Histogram, Threshold, ROI, Contour, Edge       | [`01_class/computer_vision/`](./01_class/computer_vision/)                                                          |
+| **2026-09**        | Object Detection         | Bounding Box, VOC/YOLO Annotation, CNN Architecture | [`01_class/computer_vision/`](./01_class/computer_vision/) · [`01_class/deep_learning/`](./01_class/deep_learning/) |
 
-- Python basics: `01_class/python/`
-- Crawling and Selenium: `01_class/crawling/`
-- HTML/CSS: `01_class/html_css/`
-- JavaScript and Node: `01_class/javascript_node/`
-- FastAPI/API practice: `01_class/api_fastapi/`
-- Machine learning and scikit-learn: `01_class/machine_learning/`
-- PyTorch and deep learning: `01_class/deep_learning/`
-- OpenCV and computer vision: `01_class/computer_vision/`
-- Class diary: `01_class/class_diary/`
+### 📂 목적별 바로가기
 
-### Self Study
+**수업 자료**
+[`Python`](./01_class/python/) ·
+[`Crawling`](./01_class/crawling/) ·
+[`HTML/CSS`](./01_class/html_css/) ·
+[`JavaScript / Node`](./01_class/javascript_node/) ·
+[`FastAPI`](./01_class/api_fastapi/) ·
+[`Machine Learning`](./01_class/machine_learning/) ·
+[`Deep Learning`](./01_class/deep_learning/) ·
+[`Computer Vision`](./01_class/computer_vision/)
 
-- Python language: `02_self_study/python/`
-- Data analysis: `02_self_study/data_analysis/`
-- Statistics: `02_self_study/statistics/`
-- Math and linear algebra: `02_self_study/math/`
-- Algorithms and data structures: `02_self_study/algorithms/`
-- C language: `02_self_study/c_language/`
-- CS, OS, network: `02_self_study/cs/`
-- Software engineering: `02_self_study/software_engineering/`
-- DevOps: `02_self_study/devops/`
-- AI/LLM notes: `02_self_study/ai_llm/`
+**개인 학습**
+[`Data Analysis`](./02_self_study/data_analysis/) ·
+[`Statistics`](./02_self_study/statistics/) ·
+[`Math`](./02_self_study/math/) ·
+[`Algorithms`](./02_self_study/algorithms/) ·
+[`CS / OS / Network`](./02_self_study/cs/) ·
+[`DevOps`](./02_self_study/devops/)
 
-### Projects
+**프로젝트**
+[`Hackerton`](./03_projects/hackerton/) ·
+[`Crawling Exam`](./03_projects/crawling_exam/) ·
+[`Message Queue`](./03_projects/message_queue/) ·
+[`Computer Vision Mid Project`](./03_projects/computer_vision_mid_project/)
 
-- Hackerton: `03_projects/hackerton/`
-- Crawling exam: `03_projects/crawling_exam/`
-- Message queue project: `03_projects/message_queue/`
-- Computer vision mid project: `03_projects/computer_vision_mid_project/`
-- Mixed small projects: `03_projects/small_project/`
+---
 
-## Timeline
+### 🗓️ 날짜별 수업 기록
 
-- 2026-05: Python basics, data analysis basics, statistics, blog templates
-- 2026-06: C, data structures, HTML/CSS, JavaScript, Node, crawling, ML basics
-- 2026-07: Hackerton, network/server practice, WebSocket, WebRTC, RabbitMQ, React
-- 2026-08: ML/DL review, PyTorch, CNN, OpenCV
-- 2026-09: Computer vision project, object detection, annotation conversion
+초기 수업 일지는 [`01_class/class_diary/`](./01_class/class_diary/)에서 확인할 수 있습니다.
 
-## Notes
-
-Some folders were split by actual content rather than original folder name. For example, PyTorch/CNN files that were under the old `workspace/python/14_scikit_learn/` path are now under `01_class/deep_learning/pytorch_cnn_from_14_scikit_learn/`.
-
+더 세부적인 날짜별 학습 내용은 Git Commit History와 각 수업 폴더의 Notebook / Markdown 기록을 기준으로 확인합니다.
