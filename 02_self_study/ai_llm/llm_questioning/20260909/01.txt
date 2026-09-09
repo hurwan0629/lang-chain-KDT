@@ -1,0 +1,35 @@
+YOLO 모델의 경우에는 
+
+Dataset, DataLoader 생성, augmentation, loss 계산 backward, optimizer.step, validation, checkpoint 저장을 모두 Ultralytics에서 감쌌다고 말함
+
+
+폴더 와 그 폴더를 설명하는 YAML을 이용해서 model이 자동으로 폴더를 탐색해서 label(어노테이션)과 images를 찾고, class 정보 또한 받게 됨.
+
+? 여기에서 custom_voc.yaml하고 data.yaml 차이가 뭐지? custom_voc에는 path, train, val, test가 추가된거 말고는 큰 차이가 없는데.
+
+그리고 Dataset/DataLoaer을 자동으로 만들어서 이미지 전처리부터 증강, 내부 모듈을 이용해서 예측하고, 정답 annotation과 비교한다음에 loss를 하는 방식이구나.
+
+이게 순전파도 꽤 복잡한 형태인거같던데 여러 후보 박스를 만들고 거기에서 처음으로 conf를 이용해서 거른다음에 남은것들 중에서 iou를 이용해서 한번 더 거르는거 같던데 이게 평가시에 사용되는 iou를 말하는건가? 약간 다른거같은데. 그리고나서 iou 오차에 벌점을 주거나 이것도 뭔가 미분을 해서 다시 학습시킨다고 보면 되는건가
+
+먼저 폴더 위치를 찾은 다음에 거기에 맞는 txt를 찾는거고.
+
+Dataset, DataLoader의 경우에도 결국 dataset=ImageFolder 같은걸 걸고나서 laoder = DataLoader을 만드는데 그걸 해주기 전에 ImageFolder을 오버라이딩 한 느낌으로 labels에 정수를 뭔가 변형해서 key: value 또는 다른 형태로 반환한다고 볼 수 있는거구나. 전체적으로 타겟 형태가 다르지만 이를 같은 Dataset, Conv 등을 이용한 제작이 가능한거구나.
+
+그리고 model.predict, model.train 등을 했을 때 imgsz를 넣었을 때 맨 첫번재 conv 레이어 또는 pool 등을 imgsz를 이용해서 쓴다고 보면 되는거구나.
+
+yolo 모델에서는 특징들을 추출하고, 여러 scale? 가 뭔지 모르겠짐나 그런것들을 이용해서 클래스와 박스를 출력하는 형태인거고. yolo가 xmin xmax 가 아니라 x, w 방식을 쓰는것도 뭔가 이런 부분에서 특징을 추출할 때 저 방식이 좋아서일수도 있는건가 그건 사실 중요한건 아닐거같고.
+
+그리고 벌점같은 경우도 confidence score을 기반으로 줄수도 있는건가
+
+detection에서는 하나의 이미지에서 수백 수천개의 결과가 나온다는게 결과 shape가 (n) 이 아니라는건가?
+
+(b, object_count, x_cen, y_cen, w, h) 같은 느낌일 수 있는건가?
+
+그러니까 하나의 이미지에서 여러개의 정답 추론을 할 수 있어야하는거잖아? 이걸 판단하는 기준도 좀 알 필요가 있는거같네. 그건 어떤 형태로 나와있는거야?
+
+평가 지표에서도 노트북에도 잇었을텐데 cls, dfl, box loss, Instances, Size, GPU_mem 같은것들 있었는데 이런것들 의미들도 약간 다시 정리하는게 좋을 것 같아.
+
+그리고 평가지표는 어느정도 잡아놨는데 모델이 맞다고 한거를 정렬해서 순서대로 언제까지 잘 맞추는지라고 쉽게 말할 수 있을거같아. 
+
+best.pt도 우리가 써왔던 total_loss과 best_val_loss 를 기준으로 저장하던걸 그대로 채용했다고 보면 되겟네.
+
