@@ -1,0 +1,8 @@
+torch
+transformers
+pillow
+numpy
+opencv-python
+yt-dlp
+huggingface_hub
+pyarrow

@@ -1,0 +1,8 @@
+data/raw/_downloads/
+data/processed/
+data/videocua/
+data/pie2f_processed/
+data/PIE2F/_video_cache/
+checkpoints/*.pt
+*.csv
+__pycache__/
