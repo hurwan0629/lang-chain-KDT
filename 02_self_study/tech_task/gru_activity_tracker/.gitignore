@@ -4,5 +4,8 @@ data/videocua/
 data/pie2f_processed/
 data/PIE2F/_video_cache/
 checkpoints/*.pt
+bundle_assets/
+../build/
+../dist/
 *.csv
 __pycache__/

@@ -1,31 +1,100 @@
-# PC Activity Tracking
+# PC Activity Tracker
 
-Windows PC의 사용 행동을 수집하고, 스크린샷 묶음으로 현재 작업 상태를 추론하는 실험 프로젝트입니다.
+Windows 화면의 **시간적 흐름**을 바탕으로 현재 작업 활동을 자동 분류하고 기록하는 실험 프로젝트입니다.
 
-## active_window_tracker.py
-- 입력: `--interval`, `--output`
-- 수집: foreground 창의 PID, 프로세스명, window title
-- 출력: foreground 사용 세션 CSV
-- 구조: 창이 바뀌면 이전 세션의 시작/종료/지속 시간을 기록
-- 특이사항: Win32 API 직접 사용, Windows 전용
+[프로젝트 문서 보기 (Notion)](https://app.notion.com/p/3ef117a41d4d808dadbcf91fce5bc9d8)
 
-## activity_collector.py
-- 입력: `--foreground`, `--visible-windows`, `--system-usage`, `--all`
-- 수집: foreground 창, visible 창, 프로세스별 CPU/RAM
-- 출력: `foreground.csv`, `visible_windows.csv`, `process_usage.csv`
-- 구조: 각 수집기를 서로 다른 주기로 선택 실행
-- 특이사항: CPU/RAM 수집은 `psutil` 필요, Windows 전용
+<p align="center">
+  <img src="./image-0.png" width="32%" />
+  <img src="./image-1.png" width="32%" />
+  <img src="./image-2.png" width="32%" />
+</p>
 
-## screen_capture.py
-- 입력: `--output-dir`, `--interval`
-- 처리: Win32 GDI로 주 화면 캡처
-- 출력: `screenshots/screen_*.bmp`
-- 구조: 1회 캡처 또는 지정 간격 반복 캡처
-- 특이사항: 외부 캡처 라이브러리 없이 BMP 직접 저장, Windows 전용
+## 주요 기능
 
-## clip_activity_classifier.py
-- 입력: `--folder`, `--offset`, `--limit`
-- 처리: 여러 이미지 → CLIP embedding → 정규화 → 평균 → 재정규화
-- 출력: 행동 label별 cosine similarity와 최종 예측
-- 구조: 평균 image embedding과 text embeddings를 내적해 가장 가까운 행동 선택
-- 특이사항: `openai/clip-vit-base-patch32` 사용, 이후 이미지 목록 직접 입력 구조로 확장 가능
+- Windows 화면 실시간 캡처
+- CLIP 기반 화면 이미지 embedding
+- GRU 기반 시간적 맥락 추론
+- CLIP text embedding과 비교해 activity label 예측
+- 활동 변경 시 CSV 세션 기록
+- PySide6 GUI에서 현재 활동, 신뢰도, 타임라인, 최근 기록 표시
+- PyInstaller 기반 Windows EXE / ZIP 배포
+
+## 모델 구조
+
+현재 모델은 **CLIP + GRU** 구조를 사용합니다.
+
+- **CLIP Image Encoder**: 화면을 512차원 embedding으로 변환
+- **GRU**: 연속된 화면 embedding의 시간적 맥락 학습
+- **Projection Layer**: GRU 출력을 CLIP text space로 투영
+- **CLIP Text Encoder**: activity label prompt를 text embedding으로 변환
+- **Prediction**: projected GRU output과 text embeddings의 cosine similarity를 비교해 최종 activity 선택
+
+## 진행 과정
+
+1. **PC 사용 정보 수집**
+   - `active_window_tracker.py`: foreground 창 / 프로세스 세션 기록
+   - `activity_collector.py`: 창 정보와 CPU / RAM 사용량 수집
+   - `screen_capture.py`: Windows 화면 캡처
+
+2. **이미지 기반 활동 분류 실험**
+   - `clip_activity_classifier.py`: CLIP zero-shot 기반 활동 분류
+   - `xclip_activity_tracker/`: X-CLIP 기반 시간축 분류 실험
+
+3. **현재 구현**
+   - `gru_activity_tracker/`: CLIP frame embedding + GRU temporal model
+   - PIE2F-LongHorizon 기반 학습
+   - 실시간 stateful GRU inference
+   - PySide6 GUI
+   - PyInstaller Windows 배포
+
+## 프로젝트 구조
+
+```text
+.
+├─ active_window_tracker.py
+├─ activity_collector.py
+├─ screen_capture.py
+├─ clip_activity_classifier.py
+├─ xclip_activity_tracker/
+└─ gru_activity_tracker/
+   ├─ gui/             # PySide6 UI
+   ├─ runtime/         # CLIP + GRU 실시간 추론
+   ├─ packaging/       # PyInstaller 설정
+   ├─ train.py         # GRU 학습
+   ├─ prepare_pie2f.py # PIE2F 전처리
+   └─ build_and_run.bat
+```
+
+## 실행
+
+GUI를 소스에서 실행:
+
+```powershell
+python -m gru_activity_tracker.app
+```
+
+Windows 배포본 빌드 후 실행:
+
+```powershell
+.\gru_activity_tracker\build_and_run.bat
+```
+
+빌드 결과:
+
+```text
+dist/ActivityTracker/ActivityTracker.exe
+dist/ActivityTracker-windows.zip
+```
+
+활동 기록 CSV는 기본적으로 다음 위치에 저장됩니다.
+
+```text
+%LOCALAPPDATA%\GRUActivityTracker\gru_activity_log.csv
+```
+
+## 문서
+
+브레인스토밍, 설계 의사결정, 단위 테스트, 시행착오, 개발 과정, 데이터/모델 구조는 Notion에 정리하고 있습니다.
+
+**Notion:** https://app.notion.com/p/3ef117a41d4d808dadbcf91fce5bc9d8

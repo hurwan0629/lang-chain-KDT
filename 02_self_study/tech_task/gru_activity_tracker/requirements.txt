@@ -2,6 +2,7 @@ torch
 transformers
 pillow
 numpy
+PySide6
 opencv-python
 yt-dlp
 huggingface_hub

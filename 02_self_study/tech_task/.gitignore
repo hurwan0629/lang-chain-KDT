@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Build / release
+build/
+dist/
+!dist/ActivityTracker-windows.zip
+*.spec.bak
+
+# Generated logs and captures
+*.csv
+screenshots/
+*.bmp
+
+# Model / dataset artifacts
+gru_activity_tracker/checkpoints/
+gru_activity_tracker/bundle_assets/
+gru_activity_tracker/data/pie2f_processed/
+gru_activity_tracker/data/PIE2F/_video_cache/
+gru_activity_tracker/data/raw/_downloads/
+gru_activity_tracker/data/videocua/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

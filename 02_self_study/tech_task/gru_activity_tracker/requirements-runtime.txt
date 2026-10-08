@@ -1,0 +1,7 @@
+# Minimal packages required to build and run the packaged tracker.
+torch
+transformers
+pillow
+numpy
+PySide6
+pyinstaller

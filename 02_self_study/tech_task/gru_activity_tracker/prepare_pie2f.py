@@ -311,17 +311,22 @@ def prepare_pie2f(
     for index, session_row in enumerate(sessions, start=1):
         session_id = resolve_session_id(session_row)
 
+        split = normalize_split(
+            str(maybe_existing(session_row, ["split", "dataset_split"]) or ""),
+            session_id,
+        )
+
         if session_id in completed:
             continue
         if session_id not in segments_by_session:
             continue
         if max_sessions > 0 and processed_session_count >= max_sessions:
             break
+        if False:
+            if split not in {"val", "test"}:
+              continue
 
-        split = normalize_split(
-            str(maybe_existing(session_row, ["split", "dataset_split"]) or ""),
-            session_id,
-        )
+        
         repo_path = resolve_video_repo_path(
             session_row,
             session_id,

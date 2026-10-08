@@ -95,27 +95,89 @@ python -m gru_activity_tracker.test
 
 ## Live Tracker
 
+Development run:
+
 ```bash
 python -m gru_activity_tracker.run_tracker --interval 1
 ```
 
 The tracker captures the full screen, updates the GRU hidden state continuously, and writes activity sessions to CSV.
 
+## Windows GUI / EXE Release
+
+The EXE entry point now launches the PySide6 dark dashboard under `gui/`.
+Actual CLIP + GRU inference runs in a background `QThread`, so the UI remains responsive while screen activity is classified and logged.
+
+The packaged runtime is separated under `runtime/`, while training and dataset code stays outside the EXE import path.
+The release builder uses a project-local `.venv/`. If it does not exist, it is created automatically with `py -3.12 -m venv .venv`, then only `requirements-runtime.txt` is installed.
+The PyInstaller spec excludes training/data-science packages that are not used by the GUI + CLIP + GRU runtime.
+
+The build copies the trained checkpoint and saves CLIP locally so the release can run without downloading a model on the target PC.
+
+From Windows Explorer, double-click:
+
+```text
+gru_activity_tracker/build_release.bat
+```
+
+This produces both:
+
+```text
+dist/ActivityTracker/ActivityTracker.exe
+dist/ActivityTracker-windows.zip
+```
+
+To build, zip, and immediately launch the tracker, double-click:
+
+```text
+gru_activity_tracker/build_and_run.bat
+```
+
+After a release already exists, `run_release.bat` launches it without rebuilding.
+Runtime logs are written to:
+
+```text
+%LOCALAPPDATA%/GRUActivityTracker/gru_activity_log.csv
+```
+
+The first release build may download `openai/clip-vit-base-patch32`. Later builds reuse `bundle_assets/clip/`.
+The trained `checkpoints/activity_gru.pt` is automatically copied into the release assets during each build when needed.
+
 ## Project Structure
 
 ```text
 gru_activity_tracker/
-├─ prepare_pie2f.py     # PIE2F index → download/process/delete
-├─ prepare_videocua.py  # VideoCUA → video + minimal timeline
-├─ prepare_dataset.py   # local/videoCUA → CLIP embedding sequences
-├─ train.py             # GRU training
-├─ test.py              # test split evaluation
-├─ run_tracker.py       # real-time tracker
-├─ clip_encoder.py      # frozen CLIP encoder
-├─ model.py             # GRU + projection
+├─ gui/
+│  ├─ main_window.py      # application shell / sidebar / lifecycle
+│  ├─ dashboard.py        # live dashboard composition
+│  ├─ tracker_worker.py   # background inference QThread
+│  ├─ current_panel.py
+│  ├─ timeline_widget.py
+│  ├─ activity_table.py
+│  ├─ donut_chart.py
+│  └─ theme.py
+├─ runtime/
+│  ├─ predictor.py        # stateful CLIP + GRU inference
+│  ├─ tracker.py          # console runtime kept for development
+│  └─ paths.py            # source/PyInstaller/user-data paths
+├─ packaging/
+│  ├─ prepare_assets.py   # checkpoint + offline CLIP preparation
+│  └─ ActivityTracker.spec
+├─ app.py                 # PySide6 EXE entry point
+├─ build_release.ps1      # build + zip automation
+├─ build_release.bat      # double-click build
+├─ build_and_run.bat      # double-click build + launch
+├─ run_release.bat        # launch existing release
+├─ requirements-runtime.txt
+├─ prepare_pie2f.py       # training/data preparation
+├─ prepare_videocua.py
+├─ prepare_dataset.py
+├─ train.py
+├─ test.py
+├─ run_tracker.py
+├─ clip_encoder.py
+├─ model.py
 ├─ dataset.py
 ├─ activity_store.py
-├─ screen_capture.py
-└─ data/
-   └─ sources.csv
+└─ screen_capture.py
 ```
