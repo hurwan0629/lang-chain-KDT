@@ -1,0 +1,30 @@
+# Python environments and build/test artifacts.
+.venv/
+.venv-*/
+.pytest_cache/
+pytest-cache-files-*/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Secrets and experiment artifacts; bundled source data remains tracked.
+.env
+.env.*
+!.env.example
+/data/
+!src/mini_moe/data/
+!src/mini_moe/data/**
+/datasets/
+/checkpoints/
+/runs/
+/logs/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Keep bytecode ignored after the source-data exception above.
+__pycache__/
+*.py[cod]
