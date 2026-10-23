@@ -1,0 +1,8 @@
+{
+  "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "model_type": "llama",
+  "torch_version": "2.14.0+cu130",
+  "transformers_version": "5.20.2",
+  "huggingface_hub_version": "1.32.0"
+}
