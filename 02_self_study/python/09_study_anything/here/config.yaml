@@ -1,0 +1,7 @@
+model: model1
+epochs: 200
+output: here
+classes:
+- bottle
+- can
+- paper

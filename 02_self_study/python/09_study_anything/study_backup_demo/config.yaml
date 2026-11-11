@@ -1,0 +1,4 @@
+model: yolo11n
+epochs: 7
+batch_size: 16
+output: study_backup_demo
