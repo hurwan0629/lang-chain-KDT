@@ -13,6 +13,7 @@
 - `machine_learning/`: scikit-learn, 회귀/분류, 데이터셋 기반 ML 실습
 - `deep_learning/`: PyTorch, CNN, AlexNet, 모델 학습 실습
 - `computer_vision/`: OpenCV, 이미지/영상 처리, 객체 검출 수업 자료
+- `2026_11_ai_agent/`: AI Agent, LangGraph, Retriever/RAG, SQL RAG, 멀티 에이전트, ASR(Qwen3-ASR), 화자 분리(pyannote), 회의록 앱(FastAPI+Gradio)
 
 ## Sorting Rule
 

@@ -1,0 +1,344 @@
+import os
+import numpy as np
+import sounddevice as sd
+import torch
+from dotenv import load_dotenv
+from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command
+from qwen_asr import Qwen3ASRModel
+from pyannote.audio import Inference, Model, Pipeline[오전 9:37]load_dotenv()
+HF_TOKEN = os.getenv("HF_TOKEN")
+if not HF_TOKEN:
+    raise ValueError("HF_TOKEN Error!")[오전 9:41]SR = 16000 # 16kHz 모노. 1초 = 16,000 샘플
+MIN_RMS = 0.008 # 이 값보다 RMS가 작으면 말이 없는 구간으로 보고 전사하지 않음
+PAUSE_SECONDS = 0.6 # 말이 이 시간만큼 끊기면 한 구간으로 넘김. 더 길어지면 말 중간이라도 넘김 수 있음
+MAX_CHUNK = 12.0
+MATCH_THRESHOLD = 0.60 # 정규화 임베딩의 내적(코사인 유사도)이 이 값보다 늦으면 등록된 사람으로 보지 않음[오전 9:43]embedding_model = Model.from_pretrained("pyannote/embedding", token=HF_TOKEN)
+embedding_model.to(DEVICE)
+embedder = Inference(embedding_model, window="whole")[오전 9:47]# 화자 분리 파이프라인
+diarization = Pipeline.from_pretrained("pyannote/speaker-diarization-community-1", token=HF_TOKEN)
+diarization.to(DEVICE)
+
+ASR_MODEL_ID = "Qwen/Qwen3-ASR-1.7B"
+asr_dtype = (torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16) if torch.cuda.is_available() else torch.float32
+
+asr_model = Qwen3ASRModel.from_pretrained(
+    ASR_MODEL_ID, dtype=asr_dtype, device_map="cuda" if torch.cuda.is_available() else "cpu", max_inference_batch_size=1, max_new_tokens=256
+)류지  [오전 10:11]
+def record_voice(seconds=12, prompt=True):
+    if prompt:
+        print(f"{seconds}초 녹음 중... 자연스럽게 말하세요.")
+    recording = sd.rec(int(SR * seconds), samplerate=SR, channels=1, dtype="float32")
+    sd.wait()
+    return recording[:, 0].copy()
+
+def embedding_of(wave):
+    wave = np.asanyarray(wave, dtype=np.float32).reshape(-1)
+    if len(wave) < SR:
+        raise ValueError("화자 식별에는 최소 1초 이상의 음성이 필요합니다.")
+    # (샘플 수,) > (1, 샘플 수). pyannote는 (채널, 시간) 형태로 넣어야 함
+    tensor = torch.from_numpy(wave).unsqueeze(0)
+    with torch.inference_mode():
+        vector = np.asarray(
+            embedder({"waveform": tensor, "sample_rate": SR})
+        ).reshape(-1)
+    norm = np.linalg.norm(vector)
+    if norm < 1e-10:
+        raise ValueError("유효한 화자 특징을 추출하지 못했습니다")
+    return vector / norm[오전 10:15]registered = {}
+
+def enroll(name, seconds=12):
+    name = name.strip()
+    if not name:
+        raise ValueError("이름을 입력하세요")
+    audio = record_voice(seconds)
+    rms = float(np.sqrt(np.mean(audio.astype(np.float64) **2)))
+    if rms < MIN_RMS:
+        raise ValueError("녹음 음량이 너무 작습니다. 다시 등록하세요")
+    registered[name] = embedding_of(audio)
+    print(f"등록 완료: {name} (RMS={rms:.4f})")[오전 10:19]def match_speaker(vector):
+    if not registered:
+        raise ValueError("등록된 참석자가 없습니다")
+    scores = {name: float(np.dot(reference, vector)) for name, reference in registered.items()}
+    best = max(scores, key=scores.get)
+    if scores[best] < MATCH_THRESHOLD:
+        return "미등록"
+    return best류지  [오전 10:36]
+class MeetingMic:
+    def __init__(self):
+        self._parts = []
+        self._samples = 0
+        self._silent_samples = 0
+        self._heard = False
+        self._lock = threading.Lock()
+        self._ready = queue.Queue()
+        self._stream = sd.InputStream(
+            samplerate=SR,
+            channels=1,
+            dtype="float32",
+            blocksize=int(SR * 0.1),
+            callback=self._on_audio
+        )류지  [오전 10:51]
+    def _reset(self, keep_tail=False):
+        if keep_tail and self._parts:
+            tail = np.concatenate(self._parts)[-int(0.3 * SR):]
+            self._parts = [tail] if len(tail) else []
+            self._samples = int(len(tail))
+        else:
+            self._parts = []
+            self._samples = 0
+        self._silent_samples = 0
+        self._heard = False류지  [오전 11:25]
+    def _on_audio(self, indata, frames, time_info, status):
+        block = indata[:, 0].copy()
+        rms = float(np.sqrt(np.mean(block.astype(np.float64) **2)))
+        item = None
+        with self._lock:
+            self._parts.append(block)
+            self._samples += len(block)
+            if rms < MIN_RMS:
+                self._silent_samples += len(block)
+            else:
+                self._silent_samples = 0
+                self._heard = True
+            dur = self._samples / SR
+            if not self._heard:
+                if dur >= 2.0:
+                    self._reset(keep_tail=True)
+                return
+            cut_for_pause = dur >= 1.0 and self._silent_samples / SR >= PAUSE_SECONDS
+            cut_for_len = dur >= MAX_CHUNK
+            if not (cut_for_pause or cut_for_len):
+                return
+            audio = np.concatenate(self._parts)
+            started = datetime.now() - timedelta(seconds=len(audio) / SR)
+            if cut_for_pause and not cut_for_len:
+                keep = max(int(0.3 * SR), len(audio) - self._silent_samples + int(0.15 * SR))
+                audio = audio[:keep]
+            self._reset()
+            item = (audio, started)
+        self._ready.put(item)류지  [오전 11:43]
+class MeetingMic:
+    def __init__(self):
+        self._parts = []                # 수집된 음성 블록 저장
+        self._samples = 0               # 현재까지 누적된 전체 샘플 개수
+        self._silent_samples = 0        # 연속적으로 감지된 무음 샘플 개수
+        self._heard = False             # 현재 구간에서 발화로 간주되는 소리가 감지되었는지 여부
+        self._lock = threading.Lock()   # 여러 스레드의 동시 접근 방지
+        self._ready = queue.Queue()     # 처리가 완료된 음성 구간 저장
+        self._stream = sd.InputStream(  # 마이크 입력 스트림 객체
+            samplerate=SR,
+            channels=1,
+            dtype="float32",
+            blocksize=int(SR * 0.1),
+            callback=self._on_audio     # 음성 블록이 준비될 때 실행할 함수
+        )
+
+    def _reset(self, keep_tail=False):
+        if keep_tail and self._parts:
+            tail = np.concatenate(self._parts)[-int(0.3 * SR):]
+            self._parts = [tail] if len(tail) else []
+            self._samples = int(len(tail))
+        else:
+            # 현재까지 수집된 음성과 관련 상태를 모두 초기화
+            # 주로 하나의 음성 구간이 완성되어 Queue에 전달할 때 사용
+            self._parts = []
+            self._samples = 0
+        self._silent_samples = 0
+        self._heard = False
+
+    # indata: 마이크에서 수집된 실제 음성 데이터
+    # frames: 전달된 오디오 프레임 개수
+    # time_info: 오디오 입력과 콜백 실행에 관견된 시간 정보
+    # status: 입력 오버플로 등의 스트림 상태 정보
+    # 해당 매개변수들은 직접 전달하는 것이 아니라, sounddevice가 콜백 함수를 호출할 때 자동으로 전달됨
+    def _on_audio(self, indata, frames, time_info, status):
+        block = indata[:, 0].copy()
+        rms = float(np.sqrt(np.mean(block.astype(np.float64) **2)))
+        item = None
+        with self._lock:
+            self._parts.append(block)
+            self._samples += len(block)
+            if rms < MIN_RMS:
+                self._silent_samples += len(block)
+            else:
+                self._silent_samples = 0
+                self._heard = True
+            dur = self._samples / SR
+            if not self._heard:
+                if dur >= 2.0:
+                    self._reset(keep_tail=True)
+                return
+
+            # 최소 버터 길이를 충족하고 일정 시간 이상 연속 무음이 발생
+            cut_for_pause = dur >= 1.0 and self._silent_samples / SR >= PAUSE_SECONDS
+            # 최대 음성 버퍼 길이에 도달
+            cut_for_len = dur >= MAX_CHUNK
+            # 두 조건 모두 만족하지 않으면 아직 음성 구간이 완성되지 않았다고 판단하여 현재 콜백만 종료
+            if not (cut_for_pause or cut_for_len):
+                return
+            audio = np.concatenate(self._parts)
+            # 현재 시각에서 녹음된 음성의 길이만큼 빼서 해당 음성 구간의 시작 시각을 계산
+            started = datetime.now() - timedelta(seconds=len(audio) / SR)
+            # 끝부분의 무음 제거
+            if cut_for_pause and not cut_for_len:
+                # RMS 기반 무음 판단은 완벽하지 않기 때문에 발화의 마지막 음절이나 작은 소리가 잘릴 수 있음 > 이를 완화하기 위해 여유 구간을 남겨둠
+                # 마지막 연속 무음만 제거
+                keep = max(int(0.3 * SR), len(audio) - self._silent_samples + int(0.15 * SR))
+                audio = audio[:keep]
+            self._reset()
+            item = (audio, started)
+        self._ready.put(item)[오전 11:47]class MeetingMic:
+    def __init__(self):
+        self._parts = []                # 수집된 음성 블록 저장
+        self._samples = 0               # 현재까지 누적된 전체 샘플 개수
+        self._silent_samples = 0        # 연속적으로 감지된 무음 샘플 개수
+        self._heard = False             # 현재 구간에서 발화로 간주되는 소리가 감지되었는지 여부
+        self._lock = threading.Lock()   # 여러 스레드의 동시 접근 방지
+        self._ready = queue.Queue()     # 처리가 완료된 음성 구간 저장
+        self._stream = sd.InputStream(  # 마이크 입력 스트림 객체
+            samplerate=SR,
+            channels=1,
+            dtype="float32",
+            blocksize=int(SR * 0.1),
+            callback=self._on_audio     # 음성 블록이 준비될 때 실행할 함수
+        )
+
+    def _reset(self, keep_tail=False):
+        if keep_tail and self._parts:
+            tail = np.concatenate(self._parts)[-int(0.3 * SR):]
+            self._parts = [tail] if len(tail) else []
+            self._samples = int(len(tail))
+        else:
+            # 현재까지 수집된 음성과 관련 상태를 모두 초기화
+            # 주로 하나의 음성 구간이 완성되어 Queue에 전달할 때 사용
+            self._parts = []
+            self._samples = 0
+        self._silent_samples = 0
+        self._heard = False
+
+    # indata: 마이크에서 수집된 실제 음성 데이터
+    # frames: 전달된 오디오 프레임 개수
+    # time_info: 오디오 입력과 콜백 실행에 관견된 시간 정보
+    # status: 입력 오버플로 등의 스트림 상태 정보
+    # 해당 매개변수들은 직접 전달하는 것이 아니라, sounddevice가 콜백 함수를 호출할 때 자동으로 전달됨
+    def _on_audio(self, indata, frames, time_info, status):
+        block = indata[:, 0].copy()
+        rms = float(np.sqrt(np.mean(block.astype(np.float64) **2)))
+        item = None
+        with self._lock:
+            self._parts.append(block)
+            self._samples += len(block)
+            if rms < MIN_RMS:
+                self._silent_samples += len(block)
+            else:
+                self._silent_samples = 0
+                self._heard = True
+            dur = self._samples / SR
+            if not self._heard:
+                if dur >= 2.0:
+                    self._reset(keep_tail=True)
+                return
+
+            # 최소 버터 길이를 충족하고 일정 시간 이상 연속 무음이 발생
+            cut_for_pause = dur >= 1.0 and self._silent_samples / SR >= PAUSE_SECONDS
+            # 최대 음성 버퍼 길이에 도달
+            cut_for_len = dur >= MAX_CHUNK
+            # 두 조건 모두 만족하지 않으면 아직 음성 구간이 완성되지 않았다고 판단하여 현재 콜백만 종료
+            if not (cut_for_pause or cut_for_len):
+                return
+            audio = np.concatenate(self._parts)
+            # 현재 시각에서 녹음된 음성의 길이만큼 빼서 해당 음성 구간의 시작 시각을 계산
+            started = datetime.now() - timedelta(seconds=len(audio) / SR)
+            # 끝부분의 무음 제거
+            if cut_for_pause and not cut_for_len:
+                # RMS 기반 무음 판단은 완벽하지 않기 때문에 발화의 마지막 음절이나 작은 소리가 잘릴 수 있음 > 이를 완화하기 위해 여유 구간을 남겨둠
+                # 마지막 연속 무음만 제거
+                keep = max(int(0.3 * SR), len(audio) - self._silent_samples + int(0.15 * SR))
+                audio = audio[:keep]
+            self._reset()
+            item = (audio, started)
+        self._ready.put(item)
+
+    def start(self):
+        with self._lock:
+            self._reset()
+        while True:
+            try:
+                self._ready.get_nowait()
+            except queue.Empty:
+                break
+        if not self._stream.active:
+            self._stream.start()
+
+    def stop(self):
+        if self._stream.active:
+
+            self._stream.stop()
+
+    def close(self):
+        self.stop()
+        self._stream.close()
+
+    def take(self):
+        return self._ready.get()
+
+
+if "meeting_mic" in globals():
+    meeting_mic.close()
+
+meeting_mic = MeetingMic()[오전 11:52]class MeetingState(TypedDict, total=False):
+    audio: np.ndarray           # 말이 끊긴 16kHz 모노 구간
+    started: datetime           # 시작 시각
+    rms: float                  # 구간 음량
+    silent: bool                # MIN_RMS 미만이면 True
+    turns: list                 # 화자 분리가 나눈 발화
+    names: dict                 # 임시 라벨 > 등록 이름 또는 미등록
+    turn_index: int             # 지금 처리 중인 발화
+    asr_index: int              # 전사가 끝난 발화 번호
+    text: str                   # 인식된 문장
+    line: str                   # 화면에 찍은 회의록 한 줄류지  [오후 12:22]
+def supervisor(state: MeetingState) -> Command[Literal["capture", "diarize", "identify", "asr", "report", "__end__"]]:
+    if "audio" not in state:
+        return Command(goto="capture")
+    if state.get("silent"):
+        return Command(goto=END)
+    if "turns" not in state:
+        return Command(goto="diarize")
+    turns = state['turns']
+    if not turns:
+        return Command(goto=END)
+    if "names" not in state:
+        return Command(goto="identify")
+    idx = state.get("turn_index", 0)
+    if idx >= len(turns):
+        return Command(goto=END)
+    if state.get("asr_index") != idx:
+        return Command(goto="asr")
+    return Command(goto="report")[오후 12:25]def capture(state: MeetingState) -> Command[Literal["supervisor"]]:
+    audio, started = meeting_mic.take()
+    rms = float(np.sqrt(np.mean(audio.astype(np.float64) **2)))
+    return Command(
+        update={"audio":audio, "started": started, "rms": rms, "silent": rms < MIN_RMS}, goto="supervisor"
+    )류지  [오후 12:33]
+def diarize(state: MeetingState) -> Command[Literal["supervisor"]]:
+    audio = np.asarray(state["audio"], dtype=np.float32)
+    waveform = torch.from_numpy(audio).unsqueeze(0)
+    output = diarization({"waveform": waveform, "sample_rate": SR})
+    annotation = output.exclusive_speaker_diarization
+    tracks = list(annotation.itertracks(yield_label=True))
+    if not tracks:
+        tracks = list(output.speaker_diarization.itertracks(yield_label=True))
+    turns = []
+    for turn, _, speaker in tracks:
+        if turn.end - turn.start < 0.3:
+            continue
+        label = str(speaker)
+        if turns and turns[-1]["label"] == label and turn.start - turns[-1]["end"] <= 0.4:
+            turns[-1]["end"] = float(turn.end)
+            continue
+        turns.append({"start": float(turn.start), "end": float(turn.end), "label": label})
+    if not turns and len(audio) < 2 * SR:
+        turns = [{"start": 0.0, "end": len(audio) / SR, "label": "SPEAKER_00"}]
+    return Command(update={"turns": turns, "turn_index": 0}, goto="supervisor")따라잡을 시간 절약ProSlack의 Pro 플랜을 이용하면 AI를 사용하여 이 채널에서 읽지 않은 모든 메시지를 요약할 수 있습니다.플랜 비교자세히 알아보기
+1_랭체인_ai_영상객체탐지분석_시즌2에 메시지 보내기
